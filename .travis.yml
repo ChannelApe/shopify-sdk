@@ -5,7 +5,7 @@ addons:
   sonarcloud:
     organization: channelape-github
     token:
-      secure: WfMJlhjcwgvmKZ2pEDCoEsSq5ivdBoqRbBeKx8wTgX6g3BlWsjpu9hWphNCmwIL9wgF4ov7Jd8/jp0XJkijGdu8BwrUNB8Z0KxiX5Akm02ZaHa+pK6ovyepuYLPwlHu0+/ChSss72PfrVfCya+/udUwSFb42xDWBiUwo0LFMK/U5D7nzQXE7MFSeW49SCk/uKqkRMj3GCKQiEedeI4COvQagKfZgQdkntZ6zRNDmOdqjSt8rqKHxG62MDhHKpeIJKuhSTy6a94A4v/wASai+B4kfE3mpCR7S3u1ukL+/6hJs3OnTasVa2j1qTqXubzOWtncA4UNAFqJ8eQm4/93R3zDqev1adyzDTjRhRUIM4i5121sorWyX7gCjlBIy0H8KIwlXdtiSTzqGG75Dscjwv9prZ1uz+vUIarDCSFiIMSit+aav+Yfd+lk0cLhWFaTHP8F/4RsjzP4pPqGtucHQTJhrW2EhXoTp9NrFPUeQbMVtn+kLGej9w1QhhlV1aPMPiwtpU1+MwTnPz1d5p7HAuMU2R/TiOMTrcTBNxUrp4G5R7PDicHAbzYAXijHTBdQmvENphSaUUGxAgajCWCZKPF9+dFdYRJM/rlNSah4RSY54u6EbETA4h6r+duqjybpkTN6bKklgjC8/D2k7GZseq4EBGD1wZ/jvQzu0RYOl/t4=
+      secure: t/ptO2JeFG41R8Udic/Rh4wXuEi3cDPXG6KLKhikZXmr5A4PdEJ8B/J66Pq8b0TAROc8elm0xGY6AbVSB0NHC3IxiMke+3doRw9r1tzDT08RQKca7CijAZp9RJHzQ2AeWq31sTKQbc8EcN/I7sKOO8imDyQb14p75nalWE/82hlA0sCzx+/YAF5mpzZ6bjptm0zIES8qXUl3wee6+OZ9NmwvLRqz7QVZKncA0vq2tVV04TrvHXpYaBjXliJPdxSKWIkeeF7JY+fI5OJXBsPNmcBkgWyBMflEu7Jh/gjmySFvnzYe+o/nX6wcYv9RHCfFQnjH4suuU/oeo03SzC8NUgqhh6ZK9fvzeQNRkxoJdKkDWZ8+PSIkKm1gbAAZKjNXb6Z86WAGn4wz2cy5m0ppHi5FFpJSsc1W1qopMUKMBVmnG64rNw1NK7rFRfX09TEoU2t7up9osqKF71qfyGcTgYyOL1fz1EWOdZHrRhm9YyEDl++ukBlwvmyxqQOgnzo94PSnvE2AnuLq3xLHL7c9r1M3VYAo0/0vOmiLO03v8YSXxWCiq7J4PamK+eezfnwcql4Y/DWIpDSNRC4NjOQaoMnZQNgHF3nWXFR7EpfJWF3IiDQyhi79iQjFYj3YkvIuPvGOhpLOIIKWmw4cVpJ5RylsiHA//zPeGsFd/lWq4I0=
 jdk:
 - oraclejdk8
 script:
@@ -24,5 +24,4 @@ deploy:
   skip_cleanup: true
   on:
     repo: ChannelApe/shopify-sdk
-    tags: true
     jdk: oraclejdk8
