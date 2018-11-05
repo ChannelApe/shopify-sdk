@@ -930,7 +930,7 @@ public class ShopifySdkTest {
 		shopifyTransaction.setAmount(new BigDecimal(11.23));
 		shopifyTransaction.setCurrency(Currency.getInstance("USD"));
 		shopifyTransaction.setGateway("bogus");
-		shopifyTransaction.setKind("full_refund");
+		shopifyTransaction.setKind("suggested_refund");
 		shopifyTransaction.setMaximumRefundable(new BigDecimal(11.23));
 		shopifyTransaction.setOrderId("123123");
 		shopifyTransaction.setParentId("44444");
@@ -995,12 +995,53 @@ public class ShopifySdkTest {
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("currency").asText());
 		assertEquals("bogus",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("gateway").asText());
-		assertEquals("full_refund",
+		assertEquals("suggested_refund",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("kind").asText());
 		assertEquals("123123",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("order_id").asText());
 		assertEquals("44444",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("parent_id").asText());
+
+		assertEquals("999999", refundRequestBody.getContent().get("refund").get("id").asText());
+		assertEquals("123123", refundRequestBody.getContent().get("refund").get("order_id").asText());
+		assertEquals(false, refundRequestBody.getContent().get("refund").get("restock").asBoolean());
+		assertEquals("USD", refundRequestBody.getContent().get("refund").get("currency").asText());
+		assertEquals(SOME_DATE_TIME.toString(),
+				refundRequestBody.getContent().get("refund").get("created_at").asText());
+		assertEquals(SOME_DATE_TIME.toString(),
+				refundRequestBody.getContent().get("refund").get("processed_at").asText());
+
+		assertEquals(true, refundRequestBody.getContent().get("refund").get("shipping").get("full_refund").asBoolean());
+		assertEquals(BigDecimal.valueOf(99.11),
+				refundRequestBody.getContent().get("refund").get("shipping").get("amount").decimalValue());
+		assertEquals(BigDecimal.valueOf(92.11),
+				refundRequestBody.getContent().get("refund").get("shipping").get("maximum_refundable").decimalValue());
+		assertEquals(BigDecimal.valueOf(11.44),
+				refundRequestBody.getContent().get("refund").get("shipping").get("tax").decimalValue());
+
+		assertEquals(1, refundRequestBody.getContent().get("refund").get("refund_line_items").size());
+		assertEquals("718273812", refundRequestBody.getContent().get("refund").get("refund_line_items").path(0)
+				.get("line_item_id").asText());
+		assertEquals("no_restock", refundRequestBody.getContent().get("refund").get("refund_line_items").path(0)
+				.get("restock_type").asText());
+		assertEquals(3,
+				refundRequestBody.getContent().get("refund").get("refund_line_items").path(0).get("quantity").asInt());
+
+		assertEquals(1, refundRequestBody.getContent().get("refund").get("transactions").size());
+		assertEquals(BigDecimal.valueOf(11.23),
+				refundRequestBody.getContent().get("refund").get("transactions").path(0).get("amount").decimalValue());
+		assertEquals(BigDecimal.valueOf(11.23), refundRequestBody.getContent().get("refund").get("transactions").path(0)
+				.get("maximum_refundable").decimalValue());
+		assertEquals("USD",
+				refundRequestBody.getContent().get("refund").get("transactions").path(0).get("currency").asText());
+		assertEquals("bogus",
+				refundRequestBody.getContent().get("refund").get("transactions").path(0).get("gateway").asText());
+		assertEquals("refund",
+				refundRequestBody.getContent().get("refund").get("transactions").path(0).get("kind").asText());
+		assertEquals("123123",
+				refundRequestBody.getContent().get("refund").get("transactions").path(0).get("order_id").asText());
+		assertEquals("44444",
+				refundRequestBody.getContent().get("refund").get("transactions").path(0).get("parent_id").asText());
 
 		assertNotNull(actualShopifyRefund);
 		assertEquals(shopifyRefund.getId(), actualShopifyRefund.getId());

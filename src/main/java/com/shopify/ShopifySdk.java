@@ -79,6 +79,7 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	static final String REFUND_KIND = "refund";
 	static final String SET = "set";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifySdk.class);
 	private static final String HTTPS = "https://";
@@ -526,6 +527,9 @@ public class ShopifySdk {
 	public ShopifyRefund refund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
 
 		final ShopifyRefund calculatedShopifyRefund = calculateRefund(shopifyRefundCreationRequest);
+		calculatedShopifyRefund.getTransactions().forEach(transaction -> {
+			transaction.setKind(REFUND_KIND);
+		});
 
 		final WebTarget path = getWebTarget().path(ORDERS).path(shopifyRefundCreationRequest.getRequest().getOrderId())
 				.path(REFUNDS);
