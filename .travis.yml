@@ -1,0 +1,28 @@
+language: java
+sudo: false
+install: true
+addons:
+  sonarcloud:
+    organization: channelape-github
+    token:
+      secure: WfMJlhjcwgvmKZ2pEDCoEsSq5ivdBoqRbBeKx8wTgX6g3BlWsjpu9hWphNCmwIL9wgF4ov7Jd8/jp0XJkijGdu8BwrUNB8Z0KxiX5Akm02ZaHa+pK6ovyepuYLPwlHu0+/ChSss72PfrVfCya+/udUwSFb42xDWBiUwo0LFMK/U5D7nzQXE7MFSeW49SCk/uKqkRMj3GCKQiEedeI4COvQagKfZgQdkntZ6zRNDmOdqjSt8rqKHxG62MDhHKpeIJKuhSTy6a94A4v/wASai+B4kfE3mpCR7S3u1ukL+/6hJs3OnTasVa2j1qTqXubzOWtncA4UNAFqJ8eQm4/93R3zDqev1adyzDTjRhRUIM4i5121sorWyX7gCjlBIy0H8KIwlXdtiSTzqGG75Dscjwv9prZ1uz+vUIarDCSFiIMSit+aav+Yfd+lk0cLhWFaTHP8F/4RsjzP4pPqGtucHQTJhrW2EhXoTp9NrFPUeQbMVtn+kLGej9w1QhhlV1aPMPiwtpU1+MwTnPz1d5p7HAuMU2R/TiOMTrcTBNxUrp4G5R7PDicHAbzYAXijHTBdQmvENphSaUUGxAgajCWCZKPF9+dFdYRJM/rlNSah4RSY54u6EbETA4h6r+duqjybpkTN6bKklgjC8/D2k7GZseq4EBGD1wZ/jvQzu0RYOl/t4=
+jdk:
+- oraclejdk8
+script:
+- if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then mvn clean install; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn --settings .travis/settings.xml
+  clean install; fi
+after_success:
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn sonar:sonar; fi
+cache:
+  directories:
+  - "$HOME/.m2"
+  - "$HOME/.sonar/cache"
+deploy:
+- provider: script
+  script: ".travis/deploy.sh"
+  skip_cleanup: true
+  on:
+    repo: ChannelApe/shopify-sdk
+    tags: true
+    jdk: oraclejdk8
