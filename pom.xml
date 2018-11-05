@@ -18,16 +18,36 @@
 		<jersey.version>2.25.1</jersey.version>
 	</properties>
 
+	<developers>
+		<developer>
+			<name>R.J. Davis</name>
+			<email>rjdavis@channelape.com</email>
+			<organizationUrl>https://channelape.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Ryan Kazokas</name>
+			<email>rkazokas@channelape.com</email>
+			<organizationUrl>https://channelape.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/channelape/shopify-sdk.git</connection>
+		<developerConnection>scm:git:ssh://github.com:channelape/shopify-sdk.git</developerConnection>
+		<url>https://github.com/channelape/shopify-sdk/tree/master</url>
+	</scm>
+
 	<distributionManagement>
 		<snapshotRepository>
-			<id>snapshots</id>
-			<url>http://maven.channelape.com:8081/nexus/content/repositories/snapshots/</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>releases</id>
-			<url>http://maven.channelape.com:8081/nexus/content/repositories/releases/</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
