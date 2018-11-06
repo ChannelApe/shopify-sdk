@@ -7,7 +7,7 @@
 	<artifactId>shopify-sdk</artifactId>
 	<name>Shopify SDK</name>
 	<description>Java SDK for Shopify REST API.</description>
-	<version>1.0.0.REFUNDS-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<properties>
 		<sonar.coverage.exclusions>src/main/java/com/shopify/client/impl/**/*</sonar.coverage.exclusions>
