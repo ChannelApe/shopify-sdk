@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 public class TagsAdapter extends XmlAdapter<String, Set<String>> {
 
@@ -26,7 +25,7 @@ public class TagsAdapter extends XmlAdapter<String, Set<String>> {
 
 	@Override
 	public String marshal(final Set<String> tags) throws Exception {
-		if (CollectionUtils.isEmpty(tags)) {
+		if ((tags == null) || tags.isEmpty()) {
 			return null;
 		}
 
