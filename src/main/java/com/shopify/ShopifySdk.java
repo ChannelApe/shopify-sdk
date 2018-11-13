@@ -46,6 +46,9 @@ import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGiftCard;
+import com.shopify.model.ShopifyGiftCardCreationRequest;
+import com.shopify.model.ShopifyGiftCardRoot;
 import com.shopify.model.ShopifyImageRoot;
 import com.shopify.model.ShopifyInventoryLevel;
 import com.shopify.model.ShopifyInventoryLevelRoot;
@@ -79,6 +82,7 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	static final String GIFT_CARDS = "gift_cards";
 	static final String REFUND_KIND = "refund";
 	static final String SET = "set";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifySdk.class);
@@ -88,19 +92,19 @@ public class ShopifySdk {
 	static final String OAUTH = "oauth";
 	private static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
-	private static final String PRODUCTS = "products";
+	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
 	private static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
 	private static final String ACTIVATE = "activate";
-	private static final String IMAGES = "images";
+	static final String IMAGES = "images";
 	static final String SHOP = "shop";
-	private static final String COUNT = "count";
-	private static final String CLOSE = "close";
+	static final String COUNT = "count";
+	static final String CLOSE = "close";
 	static final String CANCEL = "cancel";
 	static final String METAFIELDS = "metafields";
-	private static final String RISKS = "risks";
+	static final String RISKS = "risks";
 	static final String LOCATIONS = "locations";
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String JSON = ".json";
@@ -537,6 +541,15 @@ public class ShopifySdk {
 		final ShopifyRefundRoot shopifyRefundRootResponse = response.readEntity(ShopifyRefundRoot.class);
 		return shopifyRefundRootResponse.getRefund();
 
+	}
+
+	public ShopifyGiftCard createGiftCard(final ShopifyGiftCardCreationRequest shopifyGiftCardCreationRequest) {
+		final ShopifyGiftCardRoot shopifyGiftCardRoot = new ShopifyGiftCardRoot();
+		final ShopifyGiftCard shopifyGiftCard = shopifyGiftCardCreationRequest.getRequest();
+		shopifyGiftCardRoot.setGiftCard(shopifyGiftCard);
+		final Response response = post(getWebTarget().path(GIFT_CARDS), shopifyGiftCardRoot);
+		final ShopifyGiftCardRoot shopifyOrderRootResponse = response.readEntity(ShopifyGiftCardRoot.class);
+		return shopifyOrderRootResponse.getGiftCard();
 	}
 
 	public String getAccessToken() {
