@@ -46,6 +46,9 @@ import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGiftCard;
+import com.shopify.model.ShopifyGiftCardCreationRequest;
+import com.shopify.model.ShopifyGiftCardRoot;
 import com.shopify.model.ShopifyImageRoot;
 import com.shopify.model.ShopifyInventoryLevel;
 import com.shopify.model.ShopifyInventoryLevelRoot;
@@ -79,6 +82,7 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	static final String GIFT_CARDS = "gift_cards";
 	static final String REFUND_KIND = "refund";
 	static final String SET = "set";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifySdk.class);
@@ -537,6 +541,15 @@ public class ShopifySdk {
 		final ShopifyRefundRoot shopifyRefundRootResponse = response.readEntity(ShopifyRefundRoot.class);
 		return shopifyRefundRootResponse.getRefund();
 
+	}
+
+	public ShopifyGiftCard createGiftCard(final ShopifyGiftCardCreationRequest shopifyGiftCardCreationRequest) {
+		final ShopifyGiftCardRoot shopifyGiftCardRoot = new ShopifyGiftCardRoot();
+		final ShopifyGiftCard shopifyGiftCard = shopifyGiftCardCreationRequest.getRequest();
+		shopifyGiftCardRoot.setGiftCard(shopifyGiftCard);
+		final Response response = post(getWebTarget().path(GIFT_CARDS), shopifyGiftCardRoot);
+		final ShopifyGiftCardRoot shopifyOrderRootResponse = response.readEntity(ShopifyGiftCardRoot.class);
+		return shopifyOrderRootResponse.getGiftCard();
 	}
 
 	public String getAccessToken() {

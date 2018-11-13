@@ -46,6 +46,9 @@ import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentRoot;
+import com.shopify.model.ShopifyGiftCard;
+import com.shopify.model.ShopifyGiftCardCreationRequest;
+import com.shopify.model.ShopifyGiftCardRoot;
 import com.shopify.model.ShopifyInventoryLevel;
 import com.shopify.model.ShopifyInventoryLevelRoot;
 import com.shopify.model.ShopifyLineItem;
@@ -1080,6 +1083,62 @@ public class ShopifySdkTest {
 				actualShopifyRefund.getTransactions().get(0).getMaximumRefundable());
 		assertEquals(shopifyRefund.getTransactions().get(0).getParentId(),
 				actualShopifyRefund.getTransactions().get(0).getParentId());
+	}
+
+	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenCreatingGiftCardThenCreateAndReturn()
+			throws Exception {
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.GIFT_CARDS).toString();
+		final ShopifyGiftCardRoot shopifyGiftCardRoot = new ShopifyGiftCardRoot();
+		final ShopifyGiftCard shopifyGiftCard = new ShopifyGiftCard();
+
+		shopifyGiftCard.setInitialValue(new BigDecimal(41.21));
+		shopifyGiftCard.setCode("ABCDEFGHIJKLMNOP");
+		shopifyGiftCard.setBalance(new BigDecimal(41.21));
+		final DateTime someDateTime = new DateTime();
+		shopifyGiftCard.setExpiresOn(someDateTime);
+		shopifyGiftCard.setCreatedAt(someDateTime);
+		shopifyGiftCard.setCurrency("USD");
+		shopifyGiftCard.setLastCharacters("MNOP");
+		shopifyGiftCard.setId("1");
+		shopifyGiftCard.setNote("Happy Birthday!");
+
+		shopifyGiftCardRoot.setGiftCard(shopifyGiftCard);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyGiftCardRoot.class, shopifyGiftCardRoot);
+
+		final Status expectedStatus = Status.CREATED;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.POST)
+						.capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyGiftCardCreationRequest shopifyGiftCardCreationRequest = ShopifyGiftCardCreationRequest
+				.newBuilder().withInitialValue(new BigDecimal(42.21)).withCode("ABCDEFGHIJKLMNOP").withCurrency("USD")
+				.build();
+		final ShopifyGiftCard actualShopifyGiftCard = shopifySdk.createGiftCard(shopifyGiftCardCreationRequest);
+
+		assertEquals("ABCDEFGHIJKLMNOP", actualRequestBody.getContent().get("gift_card").get("code").asText());
+		assertEquals("USD", actualRequestBody.getContent().get("gift_card").get("currency").asText());
+		assertEquals(BigDecimal.valueOf(42.21),
+				actualRequestBody.getContent().get("gift_card").get("initial_value").decimalValue());
+
+		assertEquals(shopifyGiftCard.getId(), actualShopifyGiftCard.getId());
+		assertEquals(shopifyGiftCard.getApiClientId(), actualShopifyGiftCard.getApiClientId());
+		assertEquals(shopifyGiftCard.getInitialValue(), actualShopifyGiftCard.getInitialValue());
+		assertEquals(0, shopifyGiftCard.getCreatedAt().compareTo(actualShopifyGiftCard.getCreatedAt()));
+		assertEquals(shopifyGiftCard.getBalance(), actualShopifyGiftCard.getBalance());
+		assertEquals(shopifyGiftCard.getCode(), actualShopifyGiftCard.getCode());
+		assertEquals(0, shopifyGiftCard.getExpiresOn().compareTo(actualShopifyGiftCard.getExpiresOn()));
+		assertNull(actualShopifyGiftCard.getDisabledAt());
+		assertEquals(shopifyGiftCard.getLineItemId(), actualShopifyGiftCard.getLineItemId());
+		assertEquals(shopifyGiftCard.getNote(), actualShopifyGiftCard.getNote());
+		assertEquals(shopifyGiftCard.getLastCharacters(), actualShopifyGiftCard.getLastCharacters());
+		assertEquals(shopifyGiftCard.getTemplateSuffix(), actualShopifyGiftCard.getTemplateSuffix());
+		assertNull(actualShopifyGiftCard.getUpdatedAt());
 	}
 
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JAXBException {
