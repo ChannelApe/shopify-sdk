@@ -100,11 +100,11 @@ public class ShopifySdk {
 	private static final String ACTIVATE = "activate";
 	static final String IMAGES = "images";
 	static final String SHOP = "shop";
-	private static final String COUNT = "count";
+	static final String COUNT = "count";
 	static final String CLOSE = "close";
 	static final String CANCEL = "cancel";
 	static final String METAFIELDS = "metafields";
-	private static final String RISKS = "risks";
+	static final String RISKS = "risks";
 	static final String LOCATIONS = "locations";
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String JSON = ".json";
