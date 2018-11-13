@@ -92,7 +92,7 @@ public class ShopifySdk {
 	static final String OAUTH = "oauth";
 	private static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
-	private static final String PRODUCTS = "products";
+	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
 	private static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
@@ -101,7 +101,7 @@ public class ShopifySdk {
 	private static final String IMAGES = "images";
 	static final String SHOP = "shop";
 	private static final String COUNT = "count";
-	private static final String CLOSE = "close";
+	static final String CLOSE = "close";
 	static final String CANCEL = "cancel";
 	static final String METAFIELDS = "metafields";
 	private static final String RISKS = "risks";
