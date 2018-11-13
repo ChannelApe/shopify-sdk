@@ -98,7 +98,7 @@ public class ShopifySdk {
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
 	private static final String ACTIVATE = "activate";
-	private static final String IMAGES = "images";
+	static final String IMAGES = "images";
 	static final String SHOP = "shop";
 	private static final String COUNT = "count";
 	static final String CLOSE = "close";
