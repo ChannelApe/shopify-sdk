@@ -94,7 +94,7 @@ public class ShopifySdk {
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
-	private static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
+	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
 	private static final String ACTIVATE = "activate";
