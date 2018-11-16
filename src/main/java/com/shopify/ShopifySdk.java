@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.jaxbproviders.MarshalingFeature;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -143,7 +143,7 @@ public class ShopifySdk {
 
 	final Client client = ClientBuilder.newClient()
 			.property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
-			.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(MoxyJsonFeature.class);
+			.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(MarshalingFeature.class);
 
 	public static interface BuildStep {
 		ShopifySdk build();

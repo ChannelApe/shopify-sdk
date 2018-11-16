@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,12 +17,7 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
-import org.eclipse.persistence.jaxb.JAXBContextFactory;
-import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
@@ -32,12 +26,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.jaxbproviders.ShopifySdkJsonProvider;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -99,7 +97,7 @@ public class ShopifySdkTest {
 	public ClientDriverRule driver = new ClientDriverRule();
 
 	@Before
-	public void setUp() throws JAXBException {
+	public void setUp() throws JsonProcessingException {
 		final String subdomainUrl = driver.getBaseUrl();
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.SHOP).toString();
@@ -125,7 +123,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeClientCredentialsWhenCallinglToTheShopifyApiThenExpectAccessTokenToBeGeneratedAfterCallIsMade()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final String subdomainUrl = driver.getBaseUrl();
 
@@ -173,7 +171,7 @@ public class ShopifySdkTest {
 
 	@Test(expected = ShopifyClientException.class)
 	public void givenSomeClientCredentialsAndUnexpectedStatusWhenCallingToTheShopifyApiThenExpectExpectShopifyClientException()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final String subdomainUrl = driver.getBaseUrl();
 
@@ -201,7 +199,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeShopifyFulfillmenmtCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillment()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
@@ -237,7 +235,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeShopifyFulfillmenmtUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillment()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
@@ -273,7 +271,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomePageAndCreatedAtMinAndCreatedAtMaxOrdersWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues()
-			throws JAXBException {
+			throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
 		final DateTime maximumCreationDate = new DateTime();
 		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
@@ -386,7 +384,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomePageAndCreatedAtMinAndCreatedAtMaxOrdersAndAppIdWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues()
-			throws JAXBException {
+			throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
 		final DateTime maximumCreationDate = new DateTime();
 		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
@@ -449,7 +447,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeOrderIdWhenClosingOrderThenCloseAndReturnOrder() throws JAXBException {
+	public void givenSomeOrderIdWhenClosingOrderThenCloseAndReturnOrder() throws JsonProcessingException {
 		final String someOrderId = "1234";
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS)
@@ -479,7 +477,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeOrderIdAndReasonWhenCancelingOrderThenCancelAndReturnOrder() throws JAXBException {
+	public void givenSomeOrderIdAndReasonWhenCancelingOrderThenCancelAndReturnOrder() throws JsonProcessingException {
 		final String someOrderId = "1234";
 		final String someCanceledReason = "Customer didn't like the quality of the product";
 
@@ -509,7 +507,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomePageAndCreatedAtMinOrdersWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues()
-			throws JAXBException {
+			throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
 
 		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
@@ -569,7 +567,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainWhenGettingShopifyLocationThenReturnShopifyLocations()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.LOCATIONS)
 				.append(ShopifySdk.JSON).toString();
@@ -616,7 +614,7 @@ public class ShopifySdkTest {
 
 	@Test(expected = ShopifyErrorResponseException.class)
 	public void givenSomeExceptionIsThrownWhenGettingShopifyLocationsThenExpectShopifyClientException()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.LOCATIONS)
 				.append(ShopifySdk.JSON).toString();
@@ -642,7 +640,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestAndUpdatingInventoryLevelThenUpdateAndReturnInventoryLevel()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.INVENTORY_LEVELS)
 				.append("/").append(ShopifySdk.SET).toString();
@@ -678,7 +676,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestAndUpdatingVariantThenUpdateAndReturnVariant()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final ShopifyVariantRoot shopifyVariantRoot = new ShopifyVariantRoot();
 
@@ -787,7 +785,8 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeProductCreationRequestWhenCreatingProductThenCreateAndReturnProduct() throws JAXBException {
+	public void givenSomeProductCreationRequestWhenCreatingProductThenCreateAndReturnProduct()
+			throws JsonProcessingException {
 		final String expectedCreationPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
 				.toString();
 		final String expectedUpdatePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
@@ -918,7 +917,8 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeProductUpdateRequestWhenUpdatingProductThenUpdateAndReturnProduct() throws JAXBException {
+	public void givenSomeProductUpdateRequestWhenUpdatingProductThenUpdateAndReturnProduct()
+			throws JsonProcessingException {
 		final String expectedCreationPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
 				.append(FORWARD_SLASH).append("123").toString();
 		final String expectedUpdatePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
@@ -1052,7 +1052,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenRetrievingOrderMetafieldsThenReturnOrderMetafields()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final Metafield metafield = new Metafield();
 		metafield.setKey("channelape_order_id");
@@ -1090,7 +1090,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenCancelingFulfillmentsThenCancelFulfillments()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
@@ -1124,7 +1124,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndProductIdWhenGettingProductThenGetProduct()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final ShopifyProductRoot shopifyProductRoot = new ShopifyProductRoot();
 		final ShopifyProduct shopifyProduct = new ShopifyProduct();
@@ -1204,7 +1204,8 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeProductIdWhenRetrievingProductMetaFieldsThenRetrieveProductMetafields() throws JAXBException {
+	public void givenSomeProductIdWhenRetrievingProductMetaFieldsThenRetrieveProductMetafields()
+			throws JsonProcessingException {
 		final MetafieldsRoot metafieldsRoot = new MetafieldsRoot();
 		final Metafield metafield1 = new Metafield();
 		metafield1.setCreatedAt(new DateTime());
@@ -1262,7 +1263,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeOrderIdWhenRetrievingOrderThenRetrieveOrder() throws JAXBException {
+	public void givenSomeOrderIdWhenRetrievingOrderThenRetrieveOrder() throws JsonProcessingException {
 		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
 
 		final ShopifyOrder shopifyOrder = new ShopifyOrder();
@@ -1287,7 +1288,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomePageWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues() throws JAXBException {
+	public void givenSomePageWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues() throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
 
 		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
@@ -1343,7 +1344,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeOrderIdWhenRetrievingOrderRisksThenRetrieveOrderRisks() throws JAXBException {
+	public void givenSomeOrderIdWhenRetrievingOrderRisksThenRetrieveOrderRisks() throws JsonProcessingException {
 		final ShopifyOrderRisksRoot shopifyOrderRisksRoot = new ShopifyOrderRisksRoot();
 		final ShopifyOrderRisk shopifyOrderRisk1 = new ShopifyOrderRisk();
 		shopifyOrderRisk1.setCauseCancel(true);
@@ -1405,7 +1406,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeValidRequestWhenGettingProductCount() throws JAXBException {
+	public void givenSomeValidRequestWhenGettingProductCount() throws JsonProcessingException {
 		final Count count = new Count();
 		count.setCount(231);
 		final String expectedResponseBodyString = getJsonString(Count.class, count);
@@ -1426,7 +1427,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeProductIdWhenDeletingProductThenDeleteProductAndReturnTrue() throws JAXBException {
+	public void givenSomeProductIdWhenDeletingProductThenDeleteProductAndReturnTrue() throws JsonProcessingException {
 
 		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
 				.append(FORWARD_SLASH).append("123").toString();
@@ -1444,7 +1445,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndVariantIdWhenGettinVariantThenGetVariant()
-			throws JAXBException {
+			throws JsonProcessingException {
 
 		final ShopifyVariantRoot shopifyVariantRoot = new ShopifyVariantRoot();
 
@@ -1499,7 +1500,7 @@ public class ShopifySdkTest {
 
 	@Test(expected = ShopifyErrorResponseException.class)
 	public void givenSomeInvalidStatusWhenUpdatingInventoryLevelThenExpectShopifyErrorResponseException()
-			throws JAXBException {
+			throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.INVENTORY_LEVELS)
 				.append("/").append(ShopifySdk.SET).toString();
 		final ShopifyInventoryLevelRoot shopifyInventoryLevelRoot = new ShopifyInventoryLevelRoot();
@@ -1524,12 +1525,12 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenUpdatingVariantThenUpdateAndReturnVariant()
-			throws JAXBException {
+			throws JsonProcessingException {
 		final ShopifyVariant currentShopifyVariant = new ShopifyVariant();
 		currentShopifyVariant.setId("98746868985974");
 		currentShopifyVariant.setTitle("UK 8");
 		currentShopifyVariant.setPrice(new BigDecimal("10.00"));
-		currentShopifyVariant.setInventoryQuantity(1337);
+		currentShopifyVariant.setInventoryQuantity(Long.valueOf(1337));
 		currentShopifyVariant.setBarcode("897563254789");
 
 		final String newBarcode = "459876235897";
@@ -2036,15 +2037,11 @@ public class ShopifySdkTest {
 		assertNull(actualShopifyGiftCard.getUpdatedAt());
 	}
 
-	private <T> String getJsonString(final Class<T> clazz, final T object) throws JAXBException {
-		final JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] { clazz }, null);
-		final Marshaller marshaller = jaxbContext.createMarshaller();
-		marshaller.setProperty(MarshallerProperties.JSON_INCLUDE_ROOT, false);
-		marshaller.setProperty(MarshallerProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+	private <T> String getJsonString(final Class<T> clazz, final T object) throws JsonProcessingException {
+		final JacksonJsonProvider jacksonJaxbJsonProvider = new ShopifySdkJsonProvider();
+		final ObjectMapper objectMapper = jacksonJaxbJsonProvider.locateMapper(clazz, MediaType.APPLICATION_JSON_TYPE);
 
-		final StringWriter stringWriter = new StringWriter();
-		marshaller.marshal(object, stringWriter);
-		return stringWriter.toString();
+		return objectMapper.writeValueAsString(object);
 	}
 
 	private void assertValidFulfillment(final ShopifyFulfillment expectedShopifyFulfillment,

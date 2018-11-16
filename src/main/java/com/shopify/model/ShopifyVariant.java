@@ -32,7 +32,7 @@ public class ShopifyVariant {
 	private long grams;
 	@XmlElement(name = "inventory_quantity")
 	@XmlJavaTypeAdapter(InventoryQuantityAdapter.class)
-	private long inventoryQuantity;
+	private Long inventoryQuantity;
 	@XmlElement(name = "image_id")
 	private String imageId;
 	@XmlJavaTypeAdapter(InventoryPolicyAdapter.class)
@@ -131,11 +131,11 @@ public class ShopifyVariant {
 		this.grams = grams;
 	}
 
-	public long getInventoryQuantity() {
+	public Long getInventoryQuantity() {
 		return inventoryQuantity;
 	}
 
-	public void setInventoryQuantity(final long inventoryQuantity) {
+	public void setInventoryQuantity(final Long inventoryQuantity) {
 		this.inventoryQuantity = inventoryQuantity;
 	}
 
