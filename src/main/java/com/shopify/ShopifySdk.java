@@ -90,14 +90,14 @@ public class ShopifySdk {
 	private static final String API_TARGET = ".myshopify.com/admin";
 	static final String ACCESS_TOKEN_HEADER = "X-Shopify-Access-Token";
 	static final String OAUTH = "oauth";
-	private static final String REVOKE = "revoke";
+	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
-	private static final String ACTIVATE = "activate";
+	static final String ACTIVATE = "activate";
 	static final String IMAGES = "images";
 	static final String SHOP = "shop";
 	static final String COUNT = "count";
