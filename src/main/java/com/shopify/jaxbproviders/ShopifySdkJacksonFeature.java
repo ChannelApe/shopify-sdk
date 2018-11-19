@@ -5,7 +5,7 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-public class MarshalingFeature implements Feature {
+public class ShopifySdkJacksonFeature implements Feature {
 
 	@Override
 	public boolean configure(final FeatureContext context) {

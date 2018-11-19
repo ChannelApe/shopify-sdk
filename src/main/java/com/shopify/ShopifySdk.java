@@ -31,7 +31,7 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
-import com.shopify.jaxbproviders.MarshalingFeature;
+import com.shopify.jaxbproviders.ShopifySdkJacksonFeature;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -146,7 +146,7 @@ public class ShopifySdk {
 
 	final Client client = ClientBuilder.newClient()
 			.property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
-			.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(MarshalingFeature.class);
+			.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(ShopifySdkJacksonFeature.class);
 
 	public static interface BuildStep {
 		ShopifySdk build();
