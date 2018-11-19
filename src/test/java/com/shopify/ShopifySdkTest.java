@@ -28,14 +28,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
-import com.shopify.jaxbproviders.ShopifySdkJsonProvider;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -2522,9 +2520,8 @@ public class ShopifySdkTest {
 	}
 
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JsonProcessingException {
-		final JacksonJsonProvider jacksonJaxbJsonProvider = new ShopifySdkJsonProvider();
 
-		final ObjectMapper objectMapper = jacksonJaxbJsonProvider.locateMapper(clazz, MediaType.APPLICATION_JSON_TYPE);
+		final ObjectMapper objectMapper = ShopifySdk.buildMapper();
 
 		return objectMapper.writeValueAsString(object);
 	}

@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.core.MediaType;
-
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -23,8 +21,6 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.shopify.jaxbproviders.ShopifySdkJsonProvider;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
@@ -508,9 +504,7 @@ public class ShopifySdkDriver {
 		final ShopifyGiftCardCreationRequest giftCard = ShopifyGiftCardCreationRequest.newBuilder()
 				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZZ4CAPE").withCurrency("USD").build();
 
-		final JacksonJsonProvider jsonProvider = new ShopifySdkJsonProvider();
-		final ObjectMapper mapper = jsonProvider.locateMapper(ShopifyGiftCardCreationRequest.class,
-				MediaType.APPLICATION_JSON_TYPE);
+		final ObjectMapper mapper = ShopifySdk.buildMapper();
 		final String dtoAsString = mapper.writeValueAsString(giftCard);
 		System.out.println(dtoAsString);
 		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(giftCard);

@@ -22,6 +22,15 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.github.rholder.retry.Attempt;
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.RetryListener;
@@ -31,7 +40,6 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
-import com.shopify.jaxbproviders.ShopifySdkJacksonFeature;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -144,9 +152,7 @@ public class ShopifySdk {
 	private WebTarget webTarget;
 	private String accessToken;
 
-	final Client client = ClientBuilder.newClient()
-			.property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
-			.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(ShopifySdkJacksonFeature.class);
+	final Client client = buildClient();
 
 	public static interface BuildStep {
 		ShopifySdk build();
@@ -754,6 +760,27 @@ public class ShopifySdk {
 					shop.getName());
 		}
 		return webTarget;
+	}
+
+	private Client buildClient() {
+		final ObjectMapper mapper = buildMapper();
+		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
+		provider.setMapper(mapper);
+		return ClientBuilder.newClient().property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
+				.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(provider);
+	}
+
+	static ObjectMapper buildMapper() {
+		final ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+		final AnnotationIntrospector pair = AnnotationIntrospector.pair(
+				new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()), new JacksonAnnotationIntrospector());
+		mapper.setAnnotationIntrospector(pair);
+
+		mapper.enable(MapperFeature.USE_ANNOTATIONS);
+		return mapper;
 	}
 
 }
