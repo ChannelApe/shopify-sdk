@@ -75,6 +75,8 @@ import com.shopify.model.ShopifyRefund;
 import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyShop;
+import com.shopify.model.ShopifyTransaction;
+import com.shopify.model.ShopifyTransactionsRoot;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
@@ -82,6 +84,7 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	static final String TRANSACTIONS = "transactions";
 	static final String GIFT_CARDS = "gift_cards";
 	static final String REFUND_KIND = "refund";
 	static final String SET = "set";
@@ -378,6 +381,13 @@ public class ShopifySdk {
 		final Response response = get(getWebTarget().path(ORDERS).path(orderId));
 		final ShopifyOrderRoot shopifyOrderRootResponse = response.readEntity(ShopifyOrderRoot.class);
 		return shopifyOrderRootResponse.getOrder();
+	}
+
+	public List<ShopifyTransaction> getOrderTransactions(final String orderId) {
+		final Response response = get(getWebTarget().path(ORDERS).path(orderId).path(TRANSACTIONS));
+		final ShopifyTransactionsRoot shopifyTransactionsRootResponse = response
+				.readEntity(ShopifyTransactionsRoot.class);
+		return shopifyTransactionsRootResponse.getTransactions();
 	}
 
 	public List<ShopifyOrder> getOrders(final int page) {

@@ -12,7 +12,7 @@ public class EscapedStringsAdapter extends XmlAdapter<Collection<String>, Collec
 	@Override
 	public Collection<String> unmarshal(final Collection<String> escapedStrings) throws Exception {
 		return (escapedStrings == null) ? null
-				: escapedStrings.stream().map(StringEscapeUtils::unescapeHtml4).collect(Collectors.toSet());
+				: escapedStrings.stream().map(StringEscapeUtils::unescapeHtml4).collect(Collectors.toList());
 	}
 
 	@Override

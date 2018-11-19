@@ -28,6 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
 import com.github.restdriver.clientdriver.ClientDriverRule;
@@ -35,7 +36,6 @@ import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
-import com.shopify.jaxbproviders.ShopifySdkJsonProvider;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -83,6 +83,8 @@ import com.shopify.model.ShopifyRefundShippingDetails;
 import com.shopify.model.ShopifyShippingLine;
 import com.shopify.model.ShopifyShop;
 import com.shopify.model.ShopifyTransaction;
+import com.shopify.model.ShopifyTransactionReceipt;
+import com.shopify.model.ShopifyTransactionsRoot;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantCreationRequest;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
@@ -2458,8 +2460,70 @@ public class ShopifySdkTest {
 
 	}
 
+	@Test
+	public void givenSomeOrderIdWhenGettingOrderTransactionsThenRetrieveOrderTransactions() throws Exception {
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS)
+				.append(FORWARD_SLASH).append("Some-Order_id").append(FORWARD_SLASH).append(ShopifySdk.TRANSACTIONS)
+				.toString();
+
+		final ShopifyTransactionsRoot shopifyTransactionsRoot = new ShopifyTransactionsRoot();
+		final ShopifyTransaction shopifyTransaction1 = new ShopifyTransaction();
+		shopifyTransaction1.setAmount(new BigDecimal(11.11));
+		shopifyTransaction1.setCurrency(Currency.getInstance("USD"));
+		shopifyTransaction1.setGateway("bogus");
+		shopifyTransaction1.setKind("sale");
+
+		final ShopifyTransactionReceipt shopifyTransactionReceipt1 = new ShopifyTransactionReceipt();
+		shopifyTransactionReceipt1.setApplePay(true);
+		shopifyTransaction1.setReceipt(shopifyTransactionReceipt1);
+
+		final ShopifyTransaction shopifyTransaction2 = new ShopifyTransaction();
+		shopifyTransaction2.setAmount(new BigDecimal(11.11));
+		shopifyTransaction2.setCurrency(Currency.getInstance("CAD"));
+		shopifyTransaction2.setGateway("bogus2");
+		shopifyTransaction2.setKind("sale2");
+
+		final ShopifyTransactionReceipt shopifyTransactionReceipt2 = new ShopifyTransactionReceipt();
+		shopifyTransactionReceipt2.setApplePay(false);
+		shopifyTransaction2.setReceipt(shopifyTransactionReceipt2);
+
+		shopifyTransactionsRoot.setTransactions(Arrays.asList(shopifyTransaction1, shopifyTransaction2));
+
+		final String expectedResponseBodyString = getJsonString(ShopifyTransactionsRoot.class, shopifyTransactionsRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyTransaction> actualShopifyTransactions = shopifySdk.getOrderTransactions("Some-Order_id");
+
+		assertNotNull(actualShopifyTransactions);
+		assertEquals(2, actualShopifyTransactions.size());
+		assertEquals(shopifyTransaction1.getCurrency(), actualShopifyTransactions.get(0).getCurrency());
+		assertEquals(0, shopifyTransaction1.getAmount().compareTo(actualShopifyTransactions.get(0).getAmount()));
+		assertEquals(shopifyTransaction1.getGateway(), actualShopifyTransactions.get(0).getGateway());
+		assertEquals(shopifyTransaction1.getKind(), actualShopifyTransactions.get(0).getKind());
+		assertEquals(shopifyTransaction1.getOrderId(), actualShopifyTransactions.get(0).getOrderId());
+		assertEquals(shopifyTransaction1.getParentId(), actualShopifyTransactions.get(0).getParentId());
+		assertEquals(shopifyTransaction1.getReceipt().isApplePay(),
+				actualShopifyTransactions.get(0).getReceipt().isApplePay());
+
+		assertEquals(shopifyTransaction2.getCurrency(), actualShopifyTransactions.get(1).getCurrency());
+		assertEquals(0, shopifyTransaction2.getAmount().compareTo(actualShopifyTransactions.get(1).getAmount()));
+		assertEquals(shopifyTransaction2.getGateway(), actualShopifyTransactions.get(1).getGateway());
+		assertEquals(shopifyTransaction2.getKind(), actualShopifyTransactions.get(1).getKind());
+		assertEquals(shopifyTransaction2.getOrderId(), actualShopifyTransactions.get(1).getOrderId());
+		assertEquals(shopifyTransaction2.getParentId(), actualShopifyTransactions.get(1).getParentId());
+		assertEquals(shopifyTransaction2.getReceipt().isApplePay(),
+				actualShopifyTransactions.get(1).getReceipt().isApplePay());
+	}
+
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JsonProcessingException {
-		final JacksonJsonProvider jacksonJaxbJsonProvider = new ShopifySdkJsonProvider();
+		final JacksonJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
+
 		final ObjectMapper objectMapper = jacksonJaxbJsonProvider.locateMapper(clazz, MediaType.APPLICATION_JSON_TYPE);
 
 		return objectMapper.writeValueAsString(object);
