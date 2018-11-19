@@ -30,6 +30,8 @@ import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGiftCard;
+import com.shopify.model.ShopifyGiftCardCreationRequest;
 import com.shopify.model.ShopifyInventoryLevel;
 import com.shopify.model.ShopifyLineItem;
 import com.shopify.model.ShopifyLocation;
@@ -485,6 +487,15 @@ public class ShopifySdkDriver {
 
 		final ShopifyRefund actualShopifyRefund = shopifySdk.refund(shopifyCreationRequest);
 		assertNotNull(actualShopifyRefund);
+	}
+
+	@Test
+	public void givenSomeGiftCardCreationRequestWhenCreatingGiftCardThenCreateGiftCard() throws Exception {
+		final ShopifyGiftCardCreationRequest request = ShopifyGiftCardCreationRequest.newBuilder()
+				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZ").withCurrency("USD").build();
+
+		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(request);
+		assertNotNull(shopifyGiftCard);
 	}
 
 	@Test

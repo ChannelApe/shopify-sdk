@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,15 +38,25 @@ import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.model.Count;
+import com.shopify.model.Image;
+import com.shopify.model.ImageAltTextCreationRequest;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
 import com.shopify.model.MetafieldsRoot;
+import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
+import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
+import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGiftCard;
+import com.shopify.model.ShopifyGiftCardCreationRequest;
+import com.shopify.model.ShopifyGiftCardRoot;
+import com.shopify.model.ShopifyImageRoot;
 import com.shopify.model.ShopifyInventoryLevel;
 import com.shopify.model.ShopifyInventoryLevelRoot;
 import com.shopify.model.ShopifyLineItem;
@@ -53,8 +64,14 @@ import com.shopify.model.ShopifyLocation;
 import com.shopify.model.ShopifyLocationsRoot;
 import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
+import com.shopify.model.ShopifyOrderRisk;
+import com.shopify.model.ShopifyOrderRisksRoot;
 import com.shopify.model.ShopifyOrderRoot;
 import com.shopify.model.ShopifyOrdersRoot;
+import com.shopify.model.ShopifyProduct;
+import com.shopify.model.ShopifyProductCreationRequest;
+import com.shopify.model.ShopifyProductRoot;
+import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyRefund;
 import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundLineItem;
@@ -64,6 +81,7 @@ import com.shopify.model.ShopifyShippingLine;
 import com.shopify.model.ShopifyShop;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyVariant;
+import com.shopify.model.ShopifyVariantCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
 
@@ -178,6 +196,78 @@ public class ShopifySdkTest {
 
 		assertNull(shopifySdk.getAccessToken());
 		shopifySdk.getShop();
+
+	}
+
+	@Test
+	public void givenSomeShopifyFulfillmenmtCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillment()
+			throws JAXBException {
+
+		final ShopifyLineItem lineItem = new ShopifyLineItem();
+		lineItem.setId("some_line_item_id");
+		lineItem.setSku("some_sku");
+		lineItem.setQuantity(5L);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).append("/1234/")
+				.append(ShopifySdk.FULFILLMENTS).toString();
+		final ShopifyFulfillment currentFulfillment = buildShopifyFulfillment(lineItem);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		shopifyFulfillmentRoot.setFulfillment(currentFulfillment);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyFulfillmentRoot.class, shopifyFulfillmentRoot);
+
+		final Status expectedStatus = Status.CREATED;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
+				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
+
+		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.createFulfillment(request);
+
+		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
+
+	}
+
+	@Test
+	public void givenSomeShopifyFulfillmenmtUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillment()
+			throws JAXBException {
+
+		final ShopifyLineItem lineItem = new ShopifyLineItem();
+		lineItem.setId("some_line_item_id");
+		lineItem.setSku("some_sku");
+		lineItem.setQuantity(5L);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).append("/1234/")
+				.append(ShopifySdk.FULFILLMENTS).append("/4567").toString();
+		final ShopifyFulfillment currentFulfillment = buildShopifyFulfillment(lineItem);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		shopifyFulfillmentRoot.setFulfillment(currentFulfillment);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyFulfillmentRoot.class, shopifyFulfillmentRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.PUT)
+						.capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyFulfillmentUpdateRequest request = ShopifyFulfillmentUpdateRequest.newBuilder()
+				.withCurrentShopifyFulfillment(currentFulfillment).withTrackingCompany("USPS")
+				.withTrackingNumber("12341234").withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
+				.withLocationId("1").withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
+
+		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.updateFulfillment(request);
+
+		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
 
 	}
 
@@ -359,6 +449,65 @@ public class ShopifySdkTest {
 	}
 
 	@Test
+	public void givenSomeOrderIdWhenClosingOrderThenCloseAndReturnOrder() throws JAXBException {
+		final String someOrderId = "1234";
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS)
+				.append(FORWARD_SLASH).append(someOrderId).append(FORWARD_SLASH).append(ShopifySdk.CLOSE).toString();
+
+		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
+		final ShopifyOrder shopifyOrder = new ShopifyOrder();
+		shopifyOrder.setId(someOrderId);
+		shopifyOrderRoot.setOrder(shopifyOrder);
+		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final StringBodyCapture actualRequestBody = new StringBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(someOrderId);
+
+		assertEquals(
+				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
+				actualRequestBody.getContent());
+		assertNotNull(actualShopifyOrder);
+		assertEquals(someOrderId, actualShopifyOrder.getId());
+	}
+
+	@Test
+	public void givenSomeOrderIdAndReasonWhenCancelingOrderThenCancelAndReturnOrder() throws JAXBException {
+		final String someOrderId = "1234";
+		final String someCanceledReason = "Customer didn't like the quality of the product";
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS)
+				.append(FORWARD_SLASH).append(someOrderId).append(FORWARD_SLASH).append(ShopifySdk.CANCEL).toString();
+
+		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
+		final ShopifyOrder shopifyOrder = new ShopifyOrder();
+		shopifyOrder.setId(someOrderId);
+		shopifyOrderRoot.setOrder(shopifyOrder);
+		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyOrder actualShopifyOrder = shopifySdk.cancelOrder(someOrderId, someCanceledReason);
+
+		assertEquals(someCanceledReason, actualRequestBody.getContent().get("reason").asText());
+		assertNotNull(actualShopifyOrder);
+		assertEquals(someOrderId, actualShopifyOrder.getId());
+	}
+
+	@Test
 	public void givenSomePageAndCreatedAtMinOrdersWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues()
 			throws JAXBException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
@@ -528,6 +677,380 @@ public class ShopifySdkTest {
 	}
 
 	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestAndUpdatingVariantThenUpdateAndReturnVariant()
+			throws JAXBException {
+
+		final ShopifyVariantRoot shopifyVariantRoot = new ShopifyVariantRoot();
+
+		final ShopifyVariant shopifyVariant = new ShopifyVariant();
+		shopifyVariant.setId("999");
+		shopifyVariant.setInventoryQuantity(3L);
+		shopifyVariant.setBarcode("XYZ-123");
+		shopifyVariant.setSku("ABC-123");
+		shopifyVariant.setImageId("1");
+		shopifyVariant.setPrice(BigDecimal.valueOf(42.11));
+		shopifyVariant.setGrams(12);
+		shopifyVariant.setAvailable(3L);
+		shopifyVariant.setRequiresShipping(true);
+		shopifyVariant.setTaxable(true);
+		shopifyVariant.setOption1("Red");
+		shopifyVariant.setOption2("Blue");
+		shopifyVariant.setOption3("GREEN");
+		shopifyVariant.setFulfillmentService("manual");
+		shopifyVariant.setInventoryItemId("123");
+		shopifyVariant.setProductId("123");
+		shopifyVariantRoot.setVariant(shopifyVariant);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VARIANTS)
+				.append(FORWARD_SLASH).append("999").toString();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyVariantRoot.class, shopifyVariantRoot);
+
+		final ShopifyImageRoot shopifyImageRoot = new ShopifyImageRoot();
+		final Image shopifyImage = new Image();
+		shopifyImage.setId("47382748");
+		final List<Metafield> metafields = ImageAltTextCreationRequest.newBuilder()
+				.withImageAltText(shopifyVariant.getTitle()).build();
+		shopifyImage.setMetafields(metafields);
+		shopifyImage.setVariantIds(Arrays.asList("999"));
+		shopifyImage.setSource("https://channelape.com/1.png");
+		shopifyImageRoot.setImage(shopifyImage);
+
+		final String expectedImageResponseBodyString = getJsonString(ShopifyImageRoot.class, shopifyImageRoot);
+
+		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").append(FORWARD_SLASH).append(ShopifySdk.IMAGES).toString();
+
+		final Status expectedImageStatus = Status.OK;
+		final int expectedImageStatusCode = expectedImageStatus.getStatusCode();
+		final JsonBodyCapture actualImageRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualImageRequestBody),
+				giveResponse(expectedImageResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedImageStatusCode));
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.PUT)
+						.capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyVariantUpdateRequest shopifyVariantUpdateRequest = ShopifyVariantUpdateRequest.newBuilder()
+				.withCurrentShopifyVariant(shopifyVariant).withSamePrice().withSameCompareAtPrice().withSameSku()
+				.withSameBarcode().withSameWeight().withAvailable(3).withSameFirstOption().withSameSecondOption()
+				.withSameThirdOption().withImageSource("test").withSameInventoryManagement().withSameInventoryPolicy()
+				.withSameFulfillmentService().withSameRequiresShipping().withSameTaxable().withSameInventoryItemId()
+				.build();
+
+		final ShopifyVariant actualShopifyVariant = shopifySdk.updateVariant(shopifyVariantUpdateRequest);
+
+		assertNotNull(actualShopifyVariant);
+		assertEquals(shopifyVariant.getId(), actualRequestBody.getContent().get("variant").get("id").asText());
+		assertEquals(shopifyVariant.getBarcode(),
+				actualRequestBody.getContent().get("variant").get("barcode").asText());
+		assertEquals(shopifyVariant.getSku(), actualRequestBody.getContent().get("variant").get("sku").asText());
+		assertEquals(shopifyVariant.getFulfillmentService(),
+				actualRequestBody.getContent().get("variant").get("fulfillment_service").asText());
+		assertEquals(shopifyVariant.getInventoryItemId(),
+				actualRequestBody.getContent().get("variant").get("inventory_item_id").asText());
+		assertEquals(shopifyVariant.getImageId(),
+				actualRequestBody.getContent().get("variant").get("image_id").asText());
+		assertEquals(shopifyVariant.getOption1(),
+				actualRequestBody.getContent().get("variant").get("option1").asText());
+		assertEquals(shopifyVariant.getOption2(),
+				actualRequestBody.getContent().get("variant").get("option2").asText());
+		assertEquals(shopifyVariant.getOption3(),
+				actualRequestBody.getContent().get("variant").get("option3").asText());
+		assertEquals(shopifyVariant.getPrice(),
+				actualRequestBody.getContent().get("variant").get("price").decimalValue());
+		assertEquals(shopifyVariant.isRequiresShipping(),
+				actualRequestBody.getContent().get("variant").get("requires_shipping").asBoolean());
+		assertEquals(shopifyVariant.getProductId(),
+				actualRequestBody.getContent().get("variant").get("product_id").asText());
+
+		assertEquals(shopifyVariant.getId(), actualShopifyVariant.getId());
+		assertEquals(shopifyVariant.getBarcode(), actualShopifyVariant.getBarcode());
+		assertEquals(shopifyVariant.getSku(), actualShopifyVariant.getSku());
+		assertEquals(shopifyVariant.getFulfillmentService(), actualShopifyVariant.getFulfillmentService());
+		assertEquals(shopifyVariant.getInventoryItemId(), actualShopifyVariant.getInventoryItemId());
+		assertEquals("1", actualShopifyVariant.getImageId());
+		assertEquals(shopifyVariant.getOption1(), actualShopifyVariant.getOption1());
+		assertEquals(shopifyVariant.getOption2(), actualShopifyVariant.getOption2());
+		assertEquals(shopifyVariant.getOption3(), actualShopifyVariant.getOption3());
+		assertEquals(shopifyVariant.getPrice(), actualShopifyVariant.getPrice());
+		assertEquals(shopifyVariant.isRequiresShipping(), actualShopifyVariant.isRequiresShipping());
+		assertEquals(shopifyVariant.getProductId(), actualShopifyVariant.getProductId());
+
+	}
+
+	@Test
+	public void givenSomeProductCreationRequestWhenCreatingProductThenCreateAndReturnProduct() throws JAXBException {
+		final String expectedCreationPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.toString();
+		final String expectedUpdatePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").toString();
+		final ShopifyProductRoot shopifyProductRoot = new ShopifyProductRoot();
+		final ShopifyProduct shopifyProduct = new ShopifyProduct();
+		shopifyProduct.setId("123");
+
+		final Image image = new Image();
+		image.setName("Some image 1");
+		image.setPosition(0);
+		image.setProductId("123");
+		image.setSource("http://channelape.com/1.png");
+		shopifyProduct.setImages(Arrays.asList(image));
+		shopifyProduct.setProductType("Shoes");
+		shopifyProduct.setBodyHtml("Some Description");
+		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
+		shopifyProduct.setPublished(true);
+		shopifyProduct.setTitle("Some Title");
+		shopifyProduct.setVendor("Some Vendor");
+		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
+
+		final ShopifyVariant shopifyVariant = new ShopifyVariant();
+		shopifyVariant.setId("999");
+		shopifyVariant.setInventoryQuantity(3L);
+		shopifyProduct.setVariants(Arrays.asList(shopifyVariant));
+		shopifyProductRoot.setProduct(shopifyProduct);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyProductRoot.class, shopifyProductRoot);
+
+		final Status expectedCreationStatus = Status.CREATED;
+		final int expectedCreationStatusCode = expectedCreationStatus.getStatusCode();
+
+		final JsonBodyCapture actualCreateRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedCreationPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualCreateRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedCreationStatusCode));
+
+		final Status expectedUpdatedStatus = Status.OK;
+		final int expectedUpdateStatusCode = expectedUpdatedStatus.getStatusCode();
+		final JsonBodyCapture actualUpdateRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedUpdatePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.PUT).capturingBodyIn(actualUpdateRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedUpdateStatusCode));
+
+		final BigDecimal somePrice = BigDecimal.valueOf(42.11);
+		final ShopifyVariantCreationRequest shopifyVariantCreationRequest = ShopifyVariantCreationRequest.newBuilder()
+				.withPrice(somePrice).withCompareAtPrice(somePrice).withSku("ABC-123").withBarcode("XYZ-123")
+				.withWeight(somePrice).withAvailable(13).withFirstOption("Shoes").withSecondOption("Red")
+				.withThirdOption("Green").withImageSource("http://channelape.com/1.png")
+				.withDefaultInventoryManagement().withDefaultInventoryPolicy().withDefaultFulfillmentService()
+				.withRequiresShipping(true).withTaxable(true).build();
+		final ShopifyProductCreationRequest shopifyProductCreationRequest = ShopifyProductCreationRequest.newBuilder()
+				.withTitle("Some Product Title").withMetafieldsGlobalTitleTag("Some Metafields Global Title Tag")
+				.withProductType("Shoes").withBodyHtml("Some Description")
+				.withMetafieldsGlobalDescriptionTag("Some Metafields Tag").withVendor("Some Vendor")
+				.withTags(Collections.emptySet()).withSortedOptionNames(Collections.emptyList())
+				.withImageSources(Arrays.asList("http://channelape.com/1.png", "http://channelape.com/2.png"))
+				.withVariantCreationRequests(Arrays.asList(shopifyVariantCreationRequest)).withPublished(true).build();
+
+		final ShopifyProduct actualShopifyProduct = shopifySdk.createProduct(shopifyProductCreationRequest);
+
+		assertEquals(shopifyProductCreationRequest.getRequest().getVendor(),
+				actualCreateRequestBody.getContent().get("product").get("vendor").asText());
+		assertEquals(shopifyProductCreationRequest.getRequest().getMetafieldsGlobalTitleTag(),
+				actualCreateRequestBody.getContent().get("product").get("metafields_global_title_tag").asText());
+		assertEquals(shopifyProductCreationRequest.getRequest().getMetafieldsGlobalDescriptionTag(),
+				actualCreateRequestBody.getContent().get("product").get("metafields_global_description_tag").asText());
+		assertEquals(shopifyProductCreationRequest.getRequest().getProductType(),
+				actualCreateRequestBody.getContent().get("product").get("product_type").asText());
+		assertEquals(shopifyProductCreationRequest.getRequest().getPublishedAt(),
+				actualCreateRequestBody.getContent().get("product").get("published_at").asText());
+		assertEquals(shopifyProductCreationRequest.getRequest().getTitle(),
+				actualCreateRequestBody.getContent().get("product").get("title").asText());
+		assertEquals(shopifyProductCreationRequest.getRequest().getImages().get(0).getName(),
+				actualCreateRequestBody.getContent().get("product").get("images").get(0).get("name"));
+		assertEquals(shopifyProductCreationRequest.getRequest().getImages().get(0).getPosition(),
+				actualCreateRequestBody.getContent().get("product").get("images").get(0).get("position").asInt());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getBarcode(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("barcode").asText());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getSku(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("sku").asText());
+		assertEquals(somePrice,
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("price").decimalValue());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getGrams(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("grams").asLong());
+		assertNull(actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("available"));
+		assertEquals(shopifyVariantCreationRequest.getRequest().getOption1(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("option1").asText());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getOption2(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("option2").asText());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getOption3(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("option3").asText());
+		assertEquals(shopifyVariantCreationRequest.getRequest().isRequiresShipping(), actualCreateRequestBody
+				.getContent().get("product").get("variants").get(0).get("requires_shipping").asBoolean());
+		assertEquals(shopifyVariantCreationRequest.getRequest().isTaxable(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("taxable").asBoolean());
+
+		assertNotNull(actualShopifyProduct);
+		assertEquals(shopifyProduct.getId(), actualShopifyProduct.getId());
+		assertEquals(shopifyProduct.getBodyHtml(), actualShopifyProduct.getBodyHtml());
+		assertEquals(shopifyProduct.getImage(), actualShopifyProduct.getImage());
+		assertEquals(shopifyProduct.getImages().get(0).getId(), actualShopifyProduct.getImages().get(0).getId());
+		assertEquals(shopifyProduct.getImages().get(0).getName(), actualShopifyProduct.getImages().get(0).getName());
+		assertEquals(shopifyProduct.getImages().get(0).getPosition(),
+				actualShopifyProduct.getImages().get(0).getPosition());
+		assertEquals(shopifyProduct.getImages().get(0).getSource(),
+				actualShopifyProduct.getImages().get(0).getSource());
+		assertEquals(shopifyProduct.getMetafieldsGlobalDescriptionTag(),
+				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
+		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
+		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
+		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
+		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
+		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
+		assertEquals(shopifyProduct.getVariants().get(0).getAvailable(),
+				actualShopifyProduct.getVariants().get(0).getAvailable());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption1(),
+				actualShopifyProduct.getVariants().get(0).getOption1());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption2(),
+				actualShopifyProduct.getVariants().get(0).getOption2());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption3(),
+				actualShopifyProduct.getVariants().get(0).getOption3());
+	}
+
+	@Test
+	public void givenSomeProductUpdateRequestWhenUpdatingProductThenUpdateAndReturnProduct() throws JAXBException {
+		final String expectedCreationPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").toString();
+		final String expectedUpdatePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").toString();
+		final ShopifyProductRoot shopifyProductRoot = new ShopifyProductRoot();
+		final ShopifyProduct shopifyProduct = new ShopifyProduct();
+		shopifyProduct.setId("123");
+
+		final Image image = new Image();
+		image.setName("Some image 1");
+		image.setPosition(0);
+		image.setProductId("123");
+		image.setSource("http://channelape.com/1.png");
+		shopifyProduct.setImages(Arrays.asList(image));
+		shopifyProduct.setProductType("Shoes");
+		shopifyProduct.setBodyHtml("Some Description");
+		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
+		shopifyProduct.setPublished(true);
+		shopifyProduct.setTitle("Some Title");
+		shopifyProduct.setVendor("Some Vendor");
+		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
+		shopifyProduct.setMetafieldsGlobalDescriptionTag("Some tags");
+		shopifyProduct.setMetafieldsGlobalTitleTag("some title tags");
+
+		final ShopifyVariant shopifyVariant = new ShopifyVariant();
+		shopifyVariant.setId("999");
+		shopifyVariant.setInventoryQuantity(3L);
+		shopifyVariant.setBarcode("XYZ-123");
+		shopifyVariant.setSku("ABC-123");
+		shopifyVariant.setImageId("1");
+		shopifyVariant.setPrice(BigDecimal.valueOf(42.11));
+		shopifyVariant.setGrams(12);
+		shopifyVariant.setAvailable(3L);
+		shopifyVariant.setRequiresShipping(true);
+		shopifyVariant.setTaxable(true);
+		shopifyVariant.setOption1("Red");
+		shopifyVariant.setOption2("Blue");
+		shopifyVariant.setOption3("GREEN");
+		shopifyProduct.setVariants(Arrays.asList(shopifyVariant));
+		shopifyProductRoot.setProduct(shopifyProduct);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyProductRoot.class, shopifyProductRoot);
+
+		final Status expectedCreationStatus = Status.OK;
+		final int expectedCreationStatusCode = expectedCreationStatus.getStatusCode();
+
+		final JsonBodyCapture actualCreateRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedCreationPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.PUT).capturingBodyIn(actualCreateRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedCreationStatusCode));
+
+		final Status expectedUpdatedStatus = Status.OK;
+		final int expectedUpdateStatusCode = expectedUpdatedStatus.getStatusCode();
+		final JsonBodyCapture actualUpdateRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedUpdatePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.PUT).capturingBodyIn(actualUpdateRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedUpdateStatusCode));
+
+		final ShopifyProductUpdateRequest shopifyProductUpdateRequest = ShopifyProductUpdateRequest.newBuilder()
+				.withCurrentShopifyProduct(shopifyProduct).withSameTitle().withSameMetafieldsGlobalTitleTag()
+				.withSameProductType().withSameBodyHtml().withSameMetafieldsGlobalDescriptionTag().withSameVendor()
+				.withSameTags().withSameOptions().withSameImages().withSameVariants().withPublished(true).build();
+
+		final ShopifyProduct actualShopifyProduct = shopifySdk.updateProduct(shopifyProductUpdateRequest);
+
+		assertEquals(shopifyProduct.getVendor(),
+				actualCreateRequestBody.getContent().get("product").get("vendor").asText());
+		assertEquals(shopifyProduct.getMetafieldsGlobalTitleTag(),
+				actualCreateRequestBody.getContent().get("product").get("metafields_global_title_tag").asText());
+		assertEquals(shopifyProduct.getMetafieldsGlobalDescriptionTag(),
+				actualCreateRequestBody.getContent().get("product").get("metafields_global_description_tag").asText());
+		assertEquals(shopifyProduct.getProductType(),
+				actualCreateRequestBody.getContent().get("product").get("product_type").asText());
+		assertEquals(shopifyProduct.getPublishedAt(),
+				actualCreateRequestBody.getContent().get("product").get("published_at").asText());
+		assertEquals(shopifyProduct.getTitle(),
+				actualCreateRequestBody.getContent().get("product").get("title").asText());
+		assertEquals(shopifyProduct.getImages().get(0).getName(),
+				actualCreateRequestBody.getContent().get("product").get("images").get(0).get("name").asText());
+		assertEquals(shopifyProduct.getImages().get(0).getPosition(),
+				actualCreateRequestBody.getContent().get("product").get("images").get(0).get("position").asInt());
+		assertEquals(shopifyProduct.getVariants().get(0).getBarcode(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("barcode").asText());
+		assertEquals(shopifyProduct.getVariants().get(0).getSku(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("sku").asText());
+		assertEquals(shopifyProduct.getVariants().get(0).getPrice(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("price").decimalValue());
+		assertEquals(shopifyProduct.getVariants().get(0).getGrams(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("grams").asLong());
+		assertNull(actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("available"));
+		assertEquals(shopifyProduct.getVariants().get(0).getOption1(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("option1").asText());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption2(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("option2").asText());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption3(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("option3").asText());
+		assertEquals(shopifyProduct.getVariants().get(0).isRequiresShipping(), actualCreateRequestBody.getContent()
+				.get("product").get("variants").get(0).get("requires_shipping").asBoolean());
+		assertEquals(shopifyProduct.getVariants().get(0).isTaxable(),
+				actualCreateRequestBody.getContent().get("product").get("variants").get(0).get("taxable").asBoolean());
+
+		assertNotNull(actualShopifyProduct);
+		assertEquals(shopifyProduct.getId(), actualShopifyProduct.getId());
+		assertEquals(shopifyProduct.getBodyHtml(), actualShopifyProduct.getBodyHtml());
+		assertEquals(shopifyProduct.getImage(), actualShopifyProduct.getImage());
+		assertEquals(shopifyProduct.getImages().get(0).getId(), actualShopifyProduct.getImages().get(0).getId());
+		assertEquals(shopifyProduct.getImages().get(0).getName(), actualShopifyProduct.getImages().get(0).getName());
+		assertEquals(shopifyProduct.getImages().get(0).getPosition(),
+				actualShopifyProduct.getImages().get(0).getPosition());
+		assertEquals(shopifyProduct.getImages().get(0).getSource(),
+				actualShopifyProduct.getImages().get(0).getSource());
+		assertEquals(shopifyProduct.getMetafieldsGlobalDescriptionTag(),
+				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
+		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
+		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
+		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
+		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
+		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
+
+		assertEquals(shopifyProduct.getVariants().get(0).getOption1(),
+				actualShopifyProduct.getVariants().get(0).getOption1());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption2(),
+				actualShopifyProduct.getVariants().get(0).getOption2());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption3(),
+				actualShopifyProduct.getVariants().get(0).getOption3());
+	}
+
+	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenRetrievingOrderMetafieldsThenReturnOrderMetafields()
 			throws JAXBException {
 
@@ -597,6 +1120,381 @@ public class ShopifySdkTest {
 		assertEquals(0, actualRequestBody.getContent().get("tracking_urls").size());
 
 		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
+	}
+
+	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndProductIdWhenGettingProductThenGetProduct()
+			throws JAXBException {
+
+		final ShopifyProductRoot shopifyProductRoot = new ShopifyProductRoot();
+		final ShopifyProduct shopifyProduct = new ShopifyProduct();
+		shopifyProduct.setId("123");
+
+		final Image image = new Image();
+		image.setName("Some image 1");
+		image.setPosition(0);
+		image.setProductId("123");
+		image.setSource("http://channelape.com/1.png");
+		shopifyProduct.setImages(Arrays.asList(image));
+		shopifyProduct.setProductType("Shoes");
+		shopifyProduct.setBodyHtml("Some Description");
+		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
+		shopifyProduct.setPublished(true);
+		shopifyProduct.setTitle("Some Title");
+		shopifyProduct.setVendor("Some Vendor");
+		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
+		shopifyProduct.setMetafieldsGlobalDescriptionTag("Some tags");
+		shopifyProduct.setMetafieldsGlobalTitleTag("some title tags");
+
+		final ShopifyVariant shopifyVariant = new ShopifyVariant();
+		shopifyVariant.setId("999");
+		shopifyVariant.setInventoryQuantity(3L);
+		shopifyVariant.setBarcode("XYZ-123");
+		shopifyVariant.setSku("ABC-123");
+		shopifyVariant.setImageId("1");
+		shopifyVariant.setPrice(BigDecimal.valueOf(42.11));
+		shopifyVariant.setGrams(12);
+		shopifyVariant.setAvailable(3L);
+		shopifyVariant.setRequiresShipping(true);
+		shopifyVariant.setTaxable(true);
+		shopifyVariant.setOption1("Red");
+		shopifyVariant.setOption2("Blue");
+		shopifyVariant.setOption3("GREEN");
+		shopifyProduct.setVariants(Arrays.asList(shopifyVariant));
+		shopifyProductRoot.setProduct(shopifyProduct);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").toString();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyProductRoot.class, shopifyProductRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyProduct actualShopifyProduct = shopifySdk.getProduct("123");
+		assertNotNull(actualShopifyProduct);
+		assertEquals(shopifyProduct.getId(), actualShopifyProduct.getId());
+		assertEquals(shopifyProduct.getBodyHtml(), actualShopifyProduct.getBodyHtml());
+		assertEquals(shopifyProduct.getImage(), actualShopifyProduct.getImage());
+		assertEquals(shopifyProduct.getImages().get(0).getId(), actualShopifyProduct.getImages().get(0).getId());
+		assertEquals(shopifyProduct.getImages().get(0).getName(), actualShopifyProduct.getImages().get(0).getName());
+		assertEquals(shopifyProduct.getImages().get(0).getPosition(),
+				actualShopifyProduct.getImages().get(0).getPosition());
+		assertEquals(shopifyProduct.getImages().get(0).getSource(),
+				actualShopifyProduct.getImages().get(0).getSource());
+		assertEquals(shopifyProduct.getMetafieldsGlobalDescriptionTag(),
+				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
+		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
+		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
+		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
+		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
+		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
+
+		assertEquals(shopifyProduct.getVariants().get(0).getOption1(),
+				actualShopifyProduct.getVariants().get(0).getOption1());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption2(),
+				actualShopifyProduct.getVariants().get(0).getOption2());
+		assertEquals(shopifyProduct.getVariants().get(0).getOption3(),
+				actualShopifyProduct.getVariants().get(0).getOption3());
+
+	}
+
+	@Test
+	public void givenSomeProductIdWhenRetrievingProductMetaFieldsThenRetrieveProductMetafields() throws JAXBException {
+		final MetafieldsRoot metafieldsRoot = new MetafieldsRoot();
+		final Metafield metafield1 = new Metafield();
+		metafield1.setCreatedAt(new DateTime());
+		metafield1.setId("123");
+		metafield1.setKey("channelape_product_id");
+		metafield1.setNamespace("channelape");
+		metafield1.setOwnerId("123");
+		metafield1.setOwnerResource("product");
+		metafield1.setValue("38728743");
+
+		final Metafield metafield2 = new Metafield();
+		metafield2.setCreatedAt(new DateTime());
+		metafield2.setId("123");
+		metafield2.setKey("channelape_variant_id");
+		metafield2.setNamespace("channelape");
+		metafield2.setOwnerId("123");
+		metafield2.setOwnerResource("product");
+		metafield2.setValue("87987456");
+
+		metafieldsRoot.setMetafields(Arrays.asList(metafield1, metafield2));
+		final String expectedImageResponseBodyString = getJsonString(MetafieldsRoot.class, metafieldsRoot);
+
+		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").append(FORWARD_SLASH).append(ShopifySdk.METAFIELDS).toString();
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedImageResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedStatusCode));
+
+		final List<Metafield> productMetafields = shopifySdk.getProductMetafields("123");
+		assertNotNull(productMetafields);
+		assertEquals(metafield1.getId(), productMetafields.get(0).getId());
+		assertEquals(0, metafield1.getCreatedAt().compareTo(productMetafields.get(0).getCreatedAt()));
+		assertEquals(metafield1.getKey(), productMetafields.get(0).getKey());
+		assertEquals(metafield1.getNamespace(), productMetafields.get(0).getNamespace());
+		assertEquals(metafield1.getOwnerId(), productMetafields.get(0).getOwnerId());
+		assertEquals(metafield1.getOwnerResource(), productMetafields.get(0).getOwnerResource());
+		assertEquals(metafield1.getUpdatedAt(), productMetafields.get(0).getUpdatedAt());
+		assertEquals(metafield1.getValue(), productMetafields.get(0).getValue());
+		assertEquals(metafield1.getValueType(), productMetafields.get(0).getValueType());
+
+		assertEquals(metafield2.getId(), productMetafields.get(1).getId());
+		assertEquals(0, metafield2.getCreatedAt().compareTo(productMetafields.get(1).getCreatedAt()));
+		assertEquals(metafield2.getKey(), productMetafields.get(1).getKey());
+		assertEquals(metafield2.getNamespace(), productMetafields.get(1).getNamespace());
+		assertEquals(metafield2.getOwnerId(), productMetafields.get(1).getOwnerId());
+		assertEquals(metafield2.getOwnerResource(), productMetafields.get(1).getOwnerResource());
+		assertEquals(metafield2.getUpdatedAt(), productMetafields.get(1).getUpdatedAt());
+		assertEquals(metafield2.getValue(), productMetafields.get(1).getValue());
+		assertEquals(metafield2.getValueType(), productMetafields.get(1).getValueType());
+	}
+
+	@Test
+	public void givenSomeOrderIdWhenRetrievingOrderThenRetrieveOrder() throws JAXBException {
+		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
+
+		final ShopifyOrder shopifyOrder = new ShopifyOrder();
+		shopifyOrder.setId("123");
+		shopifyOrderRoot.setOrder(shopifyOrder);
+		final String expectedImageResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
+
+		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS)
+				.append(FORWARD_SLASH).append("123").toString();
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedImageResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedStatusCode));
+
+		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder("123");
+		assertEquals("123", actualShopifyOrder.getId());
+
+	}
+
+	@Test
+	public void givenSomePageWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues() throws JAXBException {
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
+
+		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
+
+		final ShopifyOrder shopifyOrder1 = new ShopifyOrder();
+		shopifyOrder1.setId("someId");
+		shopifyOrder1.setEmail("ryan.kazokas@gmail.com");
+		shopifyOrder1.setCustomer(SOME_CUSTOMER);
+
+		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
+		shopifyLineItem1.setId("1234565");
+		shopifyLineItem1.setSku("847289374");
+		shopifyLineItem1.setName("Really Cool Product");
+		shopifyOrder1.setLineItems(Arrays.asList(shopifyLineItem1));
+
+		final ShopifyFulfillment shopifyFulfillment = new ShopifyFulfillment();
+		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
+		shopifyFulfillment.setId("somelineitemid1");
+		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
+		shopifyFulfillment.setTrackingUrl(null);
+		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
+		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
+		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrdersRoot.class, shopifyOrdersRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+				.withParam("status", "any").withParam("limit", 250).withParam("page", "1").withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(1);
+
+		assertEquals(shopifyOrder1.getId(), shopifyOrders.get(0).getId());
+		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.get(0).getEmail());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
+				shopifyOrders.get(0).getFulfillments().get(0).getId());
+		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
+				.compareTo(shopifyOrders.get(0).getFulfillments().get(0).getCreatedAt()) == 0);
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
+				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrl());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
+				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrls());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getId());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getId());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getSku(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getSku());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getName());
+	}
+
+	@Test
+	public void givenSomeOrderIdWhenRetrievingOrderRisksThenRetrieveOrderRisks() throws JAXBException {
+		final ShopifyOrderRisksRoot shopifyOrderRisksRoot = new ShopifyOrderRisksRoot();
+		final ShopifyOrderRisk shopifyOrderRisk1 = new ShopifyOrderRisk();
+		shopifyOrderRisk1.setCauseCancel(true);
+		shopifyOrderRisk1.setCheckoutId("93284932");
+		shopifyOrderRisk1.setDisplay(true);
+		shopifyOrderRisk1.setId("9872347234");
+		shopifyOrderRisk1.setMerchantMessage("Some merch message");
+		shopifyOrderRisk1.setOrderId("123");
+		shopifyOrderRisk1.setRecommendation(OrderRiskRecommendation.ACCEPT);
+		shopifyOrderRisk1.setScore(new BigDecimal(11.11));
+		shopifyOrderRisk1.setSource("some source");
+
+		final ShopifyOrderRisk shopifyOrderRisk2 = new ShopifyOrderRisk();
+		shopifyOrderRisk2.setCauseCancel(true);
+		shopifyOrderRisk2.setCheckoutId("284932");
+		shopifyOrderRisk2.setDisplay(true);
+		shopifyOrderRisk2.setId("987427234");
+		shopifyOrderRisk2.setMerchantMessage("Some merch message2");
+		shopifyOrderRisk2.setOrderId("123");
+		shopifyOrderRisk2.setRecommendation(OrderRiskRecommendation.CANCEL);
+		shopifyOrderRisk2.setScore(new BigDecimal(12.11));
+		shopifyOrderRisk2.setSource("some source2");
+
+		shopifyOrderRisksRoot.setRisks(Arrays.asList(shopifyOrderRisk1, shopifyOrderRisk2));
+		final String expectedImageResponseBodyString = getJsonString(ShopifyOrderRisksRoot.class,
+				shopifyOrderRisksRoot);
+
+		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS)
+				.append(FORWARD_SLASH).append("123").append(FORWARD_SLASH).append(ShopifySdk.RISKS).toString();
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedImageResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedStatusCode));
+
+		final List<ShopifyOrderRisk> actualShopifyOrderRisks = shopifySdk.getOrderRisks("123");
+
+		assertEquals(shopifyOrderRisk1.getCheckoutId(), actualShopifyOrderRisks.get(0).getCheckoutId());
+		assertEquals(shopifyOrderRisk1.getId(), actualShopifyOrderRisks.get(0).getId());
+		assertEquals(shopifyOrderRisk1.getMerchantMessage(), actualShopifyOrderRisks.get(0).getMerchantMessage());
+		assertEquals(shopifyOrderRisk1.getMessage(), actualShopifyOrderRisks.get(0).getMessage());
+		assertEquals(shopifyOrderRisk1.getOrderId(), actualShopifyOrderRisks.get(0).getOrderId());
+		assertEquals(shopifyOrderRisk1.getRecommendation(), actualShopifyOrderRisks.get(0).getRecommendation());
+		assertEquals(shopifyOrderRisk1.getScore(), actualShopifyOrderRisks.get(0).getScore());
+		assertEquals(shopifyOrderRisk1.getSource(), actualShopifyOrderRisks.get(0).getSource());
+
+		assertEquals(shopifyOrderRisk2.getCheckoutId(), actualShopifyOrderRisks.get(1).getCheckoutId());
+		assertEquals(shopifyOrderRisk2.getId(), actualShopifyOrderRisks.get(1).getId());
+		assertEquals(shopifyOrderRisk2.getMerchantMessage(), actualShopifyOrderRisks.get(1).getMerchantMessage());
+		assertEquals(shopifyOrderRisk2.getMessage(), actualShopifyOrderRisks.get(1).getMessage());
+		assertEquals(shopifyOrderRisk2.getOrderId(), actualShopifyOrderRisks.get(1).getOrderId());
+		assertEquals(shopifyOrderRisk2.getRecommendation(), actualShopifyOrderRisks.get(1).getRecommendation());
+		assertEquals(shopifyOrderRisk2.getScore(), actualShopifyOrderRisks.get(1).getScore());
+		assertEquals(shopifyOrderRisk2.getSource(), actualShopifyOrderRisks.get(1).getSource());
+
+	}
+
+	@Test
+	public void givenSomeValidRequestWhenGettingProductCount() throws JAXBException {
+		final Count count = new Count();
+		count.setCount(231);
+		final String expectedResponseBodyString = getJsonString(Count.class, count);
+
+		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append(ShopifySdk.COUNT).toString();
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final int actualProductCount = shopifySdk.getProductCount();
+		assertEquals(231, actualProductCount);
+
+	}
+
+	@Test
+	public void givenSomeProductIdWhenDeletingProductThenDeleteProductAndReturnTrue() throws JAXBException {
+
+		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.append(FORWARD_SLASH).append("123").toString();
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+				.withMethod(Method.DELETE),
+				giveResponse("{}", MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final boolean isProductDeleted = shopifySdk.deleteProduct("123");
+		assertEquals(true, isProductDeleted);
+
+	}
+
+	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndVariantIdWhenGettinVariantThenGetVariant()
+			throws JAXBException {
+
+		final ShopifyVariantRoot shopifyVariantRoot = new ShopifyVariantRoot();
+
+		final ShopifyVariant shopifyVariant = new ShopifyVariant();
+		shopifyVariant.setId("999");
+		shopifyVariant.setInventoryQuantity(3L);
+		shopifyVariant.setBarcode("XYZ-123");
+		shopifyVariant.setSku("ABC-123");
+		shopifyVariant.setImageId("1");
+		shopifyVariant.setPrice(BigDecimal.valueOf(42.11));
+		shopifyVariant.setGrams(12);
+		shopifyVariant.setAvailable(3L);
+		shopifyVariant.setRequiresShipping(true);
+		shopifyVariant.setTaxable(true);
+		shopifyVariant.setOption1("Red");
+		shopifyVariant.setOption2("Blue");
+		shopifyVariant.setOption3("GREEN");
+		shopifyVariantRoot.setVariant(shopifyVariant);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VARIANTS)
+				.append(FORWARD_SLASH).append("999").toString();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyVariantRoot.class, shopifyVariantRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyVariant actualShopifyVariant = shopifySdk.getVariant("999");
+		assertNotNull(actualShopifyVariant);
+
+		assertEquals(shopifyVariant.getId(), actualShopifyVariant.getId());
+		assertEquals(shopifyVariant.getPrice(), actualShopifyVariant.getPrice());
+		assertEquals(shopifyVariant.getGrams(), actualShopifyVariant.getGrams());
+		assertEquals(shopifyVariant.getImageId(), actualShopifyVariant.getImageId());
+		assertEquals(shopifyVariant.getInventoryPolicy(), actualShopifyVariant.getInventoryPolicy());
+		assertEquals(shopifyVariant.getSku(), actualShopifyVariant.getSku());
+		assertEquals(shopifyVariant.getPosition(), actualShopifyVariant.getPosition());
+		assertEquals(shopifyVariant.getProductId(), actualShopifyVariant.getProductId());
+		assertEquals(shopifyVariant.getTitle(), actualShopifyVariant.getTitle());
+		assertEquals(shopifyVariant.getCompareAtPrice(), actualShopifyVariant.getCompareAtPrice());
+		assertEquals(shopifyVariant.getBarcode(), actualShopifyVariant.getBarcode());
+		assertEquals(shopifyVariant.getFulfillmentService(), actualShopifyVariant.getFulfillmentService());
+		assertEquals(shopifyVariant.getOption1(), actualShopifyVariant.getOption1());
+		assertEquals(shopifyVariant.getOption2(), actualShopifyVariant.getOption2());
+		assertEquals(shopifyVariant.getOption3(), actualShopifyVariant.getOption3());
+
 	}
 
 	@Test(expected = ShopifyErrorResponseException.class)
@@ -1080,6 +1978,62 @@ public class ShopifySdkTest {
 				actualShopifyRefund.getTransactions().get(0).getMaximumRefundable());
 		assertEquals(shopifyRefund.getTransactions().get(0).getParentId(),
 				actualShopifyRefund.getTransactions().get(0).getParentId());
+	}
+
+	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenCreatingGiftCardThenCreateAndReturn()
+			throws Exception {
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.GIFT_CARDS).toString();
+		final ShopifyGiftCardRoot shopifyGiftCardRoot = new ShopifyGiftCardRoot();
+		final ShopifyGiftCard shopifyGiftCard = new ShopifyGiftCard();
+
+		shopifyGiftCard.setInitialValue(new BigDecimal(41.21));
+		shopifyGiftCard.setCode("ABCDEFGHIJKLMNOP");
+		shopifyGiftCard.setBalance(new BigDecimal(41.21));
+		final DateTime someDateTime = new DateTime();
+		shopifyGiftCard.setExpiresOn(someDateTime);
+		shopifyGiftCard.setCreatedAt(someDateTime);
+		shopifyGiftCard.setCurrency("USD");
+		shopifyGiftCard.setLastCharacters("MNOP");
+		shopifyGiftCard.setId("1");
+		shopifyGiftCard.setNote("Happy Birthday!");
+
+		shopifyGiftCardRoot.setGiftCard(shopifyGiftCard);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyGiftCardRoot.class, shopifyGiftCardRoot);
+
+		final Status expectedStatus = Status.CREATED;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.POST)
+						.capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyGiftCardCreationRequest shopifyGiftCardCreationRequest = ShopifyGiftCardCreationRequest
+				.newBuilder().withInitialValue(new BigDecimal(42.21)).withCode("ABCDEFGHIJKLMNOP").withCurrency("USD")
+				.build();
+		final ShopifyGiftCard actualShopifyGiftCard = shopifySdk.createGiftCard(shopifyGiftCardCreationRequest);
+
+		assertEquals("ABCDEFGHIJKLMNOP", actualRequestBody.getContent().get("gift_card").get("code").asText());
+		assertEquals("USD", actualRequestBody.getContent().get("gift_card").get("currency").asText());
+		assertEquals(BigDecimal.valueOf(42.21),
+				actualRequestBody.getContent().get("gift_card").get("initial_value").decimalValue());
+
+		assertEquals(shopifyGiftCard.getId(), actualShopifyGiftCard.getId());
+		assertEquals(shopifyGiftCard.getApiClientId(), actualShopifyGiftCard.getApiClientId());
+		assertEquals(shopifyGiftCard.getInitialValue(), actualShopifyGiftCard.getInitialValue());
+		assertEquals(0, shopifyGiftCard.getCreatedAt().compareTo(actualShopifyGiftCard.getCreatedAt()));
+		assertEquals(shopifyGiftCard.getBalance(), actualShopifyGiftCard.getBalance());
+		assertEquals(shopifyGiftCard.getCode(), actualShopifyGiftCard.getCode());
+		assertEquals(0, shopifyGiftCard.getExpiresOn().compareTo(actualShopifyGiftCard.getExpiresOn()));
+		assertNull(actualShopifyGiftCard.getDisabledAt());
+		assertEquals(shopifyGiftCard.getLineItemId(), actualShopifyGiftCard.getLineItemId());
+		assertEquals(shopifyGiftCard.getNote(), actualShopifyGiftCard.getNote());
+		assertEquals(shopifyGiftCard.getLastCharacters(), actualShopifyGiftCard.getLastCharacters());
+		assertEquals(shopifyGiftCard.getTemplateSuffix(), actualShopifyGiftCard.getTemplateSuffix());
+		assertNull(actualShopifyGiftCard.getUpdatedAt());
 	}
 
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JAXBException {
