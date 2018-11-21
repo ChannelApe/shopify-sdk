@@ -3,20 +3,18 @@ package com.shopify.model.adapters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shopify.model.adapters.EscapedStringsAdapter;
-
 public class EscapedStringsAdapterTest {
 
-	private static final Set<String> UNESCAPED_STRINGS = new HashSet<>(
+	private static final List<String> UNESCAPED_STRINGS = new ArrayList<>(
 			Arrays.asList("& & & I love this product & & &", "& one more"));
-	private static final Set<String> ESCAPED_STRINGS = new HashSet<>(
+	private static final List<String> ESCAPED_STRINGS = new ArrayList<>(
 			Arrays.asList("&amp; &amp; &amp; I love this product &amp; &amp; &amp;", "&amp; one more"));
 
 	private EscapedStringsAdapter escapedStringsAdapter;

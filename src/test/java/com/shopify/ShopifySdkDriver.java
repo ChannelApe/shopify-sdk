@@ -48,6 +48,7 @@ import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundLineItem;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyRefundShippingDetails;
+import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRequest;
@@ -230,7 +231,7 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenShopifyOrderIdWhenClosingShopifyOrderThenReturnShopifyOrder() {
-		final String orderId = "5464792716";
+		final String orderId = "692381450299";
 
 		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(orderId);
 
@@ -325,12 +326,21 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
+	public void whenRetrievingTransactionsForAnOrderThenExpectNotNull() {
+		final List<ShopifyTransaction> transactions = shopifySdk.getOrderTransactions("595542343780");
+		assertNotNull(transactions);
+		assertEquals(2, transactions.size());
+		assertEquals(false, transactions.get(0).getReceipt().isApplePay());
+		assertEquals(false, transactions.get(1).getReceipt().isApplePay());
+	}
+
+	@Test
 	public void givenValidShopifyProductUpdateRequestWhenUpdatingProductThenReturnUpdatedShopifyProduct() {
 		final String productId = "1696786939963";
 		final ShopifyProduct currentShopifyProduct = shopifySdk.getProduct(productId);
 
-		final String expectedTitle = "Pink Shirt";
-		final String expectedBodyHtml = "This such a stylish shirt.";
+		final String expectedTitle = "Pink Shirt - Wow";
+		final String expectedBodyHtml = "This such a stylish shirt, Update from client Driver.";
 		final List<String> imageSources = Arrays.asList(
 				"https://ae01.alicdn.com/kf/HTB1gE7JbSFRMKJjy0Fhq6x.xpXaw/2018-Summer-Mens-Dress-Shirts-Cotton-Solid-Casual-Shirt-Men-Slim-Fit-Plus-Size-Long-sleeve.jpg_640x640.jpg",
 				"https://5.imimg.com/data5/XS/DT/MY-3747740/mens-shirts-500x500.jpg");
@@ -491,10 +501,13 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenSomeGiftCardCreationRequestWhenCreatingGiftCardThenCreateGiftCard() throws Exception {
-		final ShopifyGiftCardCreationRequest request = ShopifyGiftCardCreationRequest.newBuilder()
-				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZ").withCurrency("USD").build();
+		final ShopifyGiftCardCreationRequest giftCard = ShopifyGiftCardCreationRequest.newBuilder()
+				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZZ4CAPE").withCurrency("USD").build();
 
-		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(request);
+		final ObjectMapper mapper = ShopifySdk.buildMapper();
+		final String dtoAsString = mapper.writeValueAsString(giftCard);
+		System.out.println(dtoAsString);
+		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(giftCard);
 		assertNotNull(shopifyGiftCard);
 	}
 

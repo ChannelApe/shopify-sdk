@@ -26,6 +26,7 @@ public class ShopifyTransaction {
 	private Currency currency;
 	@XmlElement(name = "maximum_refundable")
 	private BigDecimal maximumRefundable;
+	private ShopifyTransactionReceipt receipt;
 
 	public String getOrderId() {
 		return orderId;
@@ -81,6 +82,14 @@ public class ShopifyTransaction {
 
 	public void setCurrency(final Currency currency) {
 		this.currency = currency;
+	}
+
+	public ShopifyTransactionReceipt getReceipt() {
+		return receipt;
+	}
+
+	public void setReceipt(final ShopifyTransactionReceipt receipt) {
+		this.receipt = receipt;
 	}
 
 }

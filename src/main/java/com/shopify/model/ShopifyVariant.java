@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.InventoryManagementAdapter;
 import com.shopify.model.adapters.InventoryPolicyAdapter;
-import com.shopify.model.adapters.InventoryQuantityAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -31,8 +30,7 @@ public class ShopifyVariant {
 	private int position;
 	private long grams;
 	@XmlElement(name = "inventory_quantity")
-	@XmlJavaTypeAdapter(InventoryQuantityAdapter.class)
-	private long inventoryQuantity;
+	private Long inventoryQuantity;
 	@XmlElement(name = "image_id")
 	private String imageId;
 	@XmlJavaTypeAdapter(InventoryPolicyAdapter.class)
@@ -131,12 +129,8 @@ public class ShopifyVariant {
 		this.grams = grams;
 	}
 
-	public long getInventoryQuantity() {
+	public Long getInventoryQuantity() {
 		return inventoryQuantity;
-	}
-
-	public void setInventoryQuantity(final long inventoryQuantity) {
-		this.inventoryQuantity = inventoryQuantity;
 	}
 
 	public String getImageId() {
