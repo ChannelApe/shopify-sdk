@@ -152,7 +152,7 @@ public class ShopifySdk {
 	private WebTarget webTarget;
 	private String accessToken;
 
-	final Client client = buildClient();
+	private static final Client CLIENT = buildClient();
 
 	public static interface BuildStep {
 		ShopifySdk build();
@@ -746,11 +746,11 @@ public class ShopifySdk {
 		if (this.webTarget == null) {
 
 			if (StringUtils.isNotBlank(this.shopSubdomain)) {
-				this.webTarget = client.target(
+				this.webTarget = CLIENT.target(
 						new StringBuilder().append(HTTPS).append(this.shopSubdomain).append(API_TARGET).toString());
 
 			} else {
-				this.webTarget = client.target(this.apiUrl);
+				this.webTarget = CLIENT.target(this.apiUrl);
 			}
 			if (this.accessToken == null) {
 				this.accessToken = generateToken();
@@ -762,7 +762,7 @@ public class ShopifySdk {
 		return webTarget;
 	}
 
-	private Client buildClient() {
+	private static Client buildClient() {
 		final ObjectMapper mapper = buildMapper();
 		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(mapper);
