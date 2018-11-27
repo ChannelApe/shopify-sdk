@@ -18,11 +18,19 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.github.rholder.retry.Attempt;
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.RetryListener;
@@ -75,6 +83,8 @@ import com.shopify.model.ShopifyRefund;
 import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyShop;
+import com.shopify.model.ShopifyTransaction;
+import com.shopify.model.ShopifyTransactionsRoot;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
@@ -82,6 +92,7 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	static final String TRANSACTIONS = "transactions";
 	static final String GIFT_CARDS = "gift_cards";
 	static final String REFUND_KIND = "refund";
 	static final String SET = "set";
@@ -90,14 +101,14 @@ public class ShopifySdk {
 	private static final String API_TARGET = ".myshopify.com/admin";
 	static final String ACCESS_TOKEN_HEADER = "X-Shopify-Access-Token";
 	static final String OAUTH = "oauth";
-	private static final String REVOKE = "revoke";
+	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
-	private static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
+	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
-	private static final String ACTIVATE = "activate";
+	static final String ACTIVATE = "activate";
 	static final String IMAGES = "images";
 	static final String SHOP = "shop";
 	static final String COUNT = "count";
@@ -141,9 +152,7 @@ public class ShopifySdk {
 	private WebTarget webTarget;
 	private String accessToken;
 
-	final Client client = ClientBuilder.newClient()
-			.property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
-			.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(MoxyJsonFeature.class);
+	private static final Client CLIENT = buildClient();
 
 	public static interface BuildStep {
 		ShopifySdk build();
@@ -378,6 +387,13 @@ public class ShopifySdk {
 		final Response response = get(getWebTarget().path(ORDERS).path(orderId));
 		final ShopifyOrderRoot shopifyOrderRootResponse = response.readEntity(ShopifyOrderRoot.class);
 		return shopifyOrderRootResponse.getOrder();
+	}
+
+	public List<ShopifyTransaction> getOrderTransactions(final String orderId) {
+		final Response response = get(getWebTarget().path(ORDERS).path(orderId).path(TRANSACTIONS));
+		final ShopifyTransactionsRoot shopifyTransactionsRootResponse = response
+				.readEntity(ShopifyTransactionsRoot.class);
+		return shopifyTransactionsRootResponse.getTransactions();
 	}
 
 	public List<ShopifyOrder> getOrders(final int page) {
@@ -730,11 +746,11 @@ public class ShopifySdk {
 		if (this.webTarget == null) {
 
 			if (StringUtils.isNotBlank(this.shopSubdomain)) {
-				this.webTarget = client.target(
+				this.webTarget = CLIENT.target(
 						new StringBuilder().append(HTTPS).append(this.shopSubdomain).append(API_TARGET).toString());
 
 			} else {
-				this.webTarget = client.target(this.apiUrl);
+				this.webTarget = CLIENT.target(this.apiUrl);
 			}
 			if (this.accessToken == null) {
 				this.accessToken = generateToken();
@@ -744,6 +760,27 @@ public class ShopifySdk {
 					shop.getName());
 		}
 		return webTarget;
+	}
+
+	private static Client buildClient() {
+		final ObjectMapper mapper = buildMapper();
+		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
+		provider.setMapper(mapper);
+		return ClientBuilder.newClient().property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
+				.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(provider);
+	}
+
+	static ObjectMapper buildMapper() {
+		final ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+		final AnnotationIntrospector pair = AnnotationIntrospector.pair(
+				new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()), new JacksonAnnotationIntrospector());
+		mapper.setAnnotationIntrospector(pair);
+
+		mapper.enable(MapperFeature.USE_ANNOTATIONS);
+		return mapper;
 	}
 
 }
