@@ -10,16 +10,9 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.shopify.model.ShopifyAddress;
-import com.shopify.model.ShopifyAttribute;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyLineItem;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyTaxLine;
-
 public class ShopifyOrderTest {
 
-	private static final int SOME_USER_ID = 123123;
+	private static final String SOME_USER_ID = "123123";
 	private static final int SOME_TOTAL_WEIGHT = 123;
 	private static final BigDecimal SOME_TOTAL_TAX = new BigDecimal(42.03);
 	private static final BigDecimal SOME_TOTAL_PRICE = new BigDecimal(12.00);
@@ -35,7 +28,7 @@ public class ShopifyOrderTest {
 	private static final List<ShopifyAttribute> SOME_NOTE_ATTRIBUTES = Collections.emptyList();
 	private static final String SOME_NOTES = "SomeNOtes";
 	private static final String SOME_ORDER_NAME = "some order name";
-	private static final int SOME_LOCATION_ID = 123;
+	private static final String SOME_LOCATION_ID = "123";
 	private static final List<ShopifyLineItem> SOME_LINE_ITEMS = Collections.emptyList();
 	private static final String SOME_LANDING_SITE = "some landing site";
 	private static final String SOME_ID = "someId";
@@ -107,7 +100,7 @@ public class ShopifyOrderTest {
 		assertEquals(SOME_ID, shopifyOrder.getId());
 		assertEquals(SOME_LANDING_SITE, shopifyOrder.getLandingSite());
 		assertEquals(SOME_LINE_ITEMS, shopifyOrder.getLineItems());
-		assertEquals(Integer.valueOf(SOME_LOCATION_ID), shopifyOrder.getLocationId());
+		assertEquals(SOME_LOCATION_ID, shopifyOrder.getLocationId());
 		assertEquals(SOME_ORDER_NAME, shopifyOrder.getName());
 		assertEquals(SOME_NOTES, shopifyOrder.getNote());
 		assertEquals(SOME_NOTE_ATTRIBUTES, shopifyOrder.getNoteAttributes());
@@ -126,7 +119,7 @@ public class ShopifyOrderTest {
 		assertEquals(SOME_TOTAL_TAX, shopifyOrder.getTotalTax());
 		assertEquals(SOME_TOTAL_WEIGHT, shopifyOrder.getTotalWeight());
 		assertEquals(SOME_DATE, shopifyOrder.getUpdatedAt());
-		assertEquals(Integer.valueOf(SOME_USER_ID), shopifyOrder.getUserId());
+		assertEquals(SOME_USER_ID, shopifyOrder.getUserId());
 
 	}
 
