@@ -67,9 +67,9 @@ public class ShopifyOrder {
 	@XmlElement(name = "cancel_reason")
 	private String cancelReason;
 	@XmlElement(name = "user_id")
-	private Integer userId;
+	private String userId;
 	@XmlElement(name = "location_id")
-	private Integer locationId;
+	private String locationId;
 	@XmlElement(name = "processed_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime processedAt;
@@ -296,19 +296,19 @@ public class ShopifyOrder {
 		this.cancelReason = cancelReason;
 	}
 
-	public Integer getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(final Integer userId) {
+	public void setUserId(final String userId) {
 		this.userId = userId;
 	}
 
-	public Integer getLocationId() {
+	public String getLocationId() {
 		return locationId;
 	}
 
-	public void setLocationId(final Integer locationId) {
+	public void setLocationId(final String locationId) {
 		this.locationId = locationId;
 	}
 
