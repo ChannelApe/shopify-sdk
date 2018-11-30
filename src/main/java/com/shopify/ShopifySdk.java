@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -391,6 +392,7 @@ public class ShopifySdk {
 
 	public List<ShopifyTransaction> getOrderTransactions(final String orderId) {
 		final Response response = get(getWebTarget().path(ORDERS).path(orderId).path(TRANSACTIONS));
+
 		final ShopifyTransactionsRoot shopifyTransactionsRootResponse = response
 				.readEntity(ShopifyTransactionsRoot.class);
 		return shopifyTransactionsRootResponse.getTransactions();
@@ -767,7 +769,8 @@ public class ShopifySdk {
 		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(mapper);
 		return ClientBuilder.newClient().property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
-				.property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS).register(provider);
+				.register(JacksonFeature.class).property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS)
+				.register(provider);
 	}
 
 	static ObjectMapper buildMapper() {
