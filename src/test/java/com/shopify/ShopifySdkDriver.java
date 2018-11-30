@@ -327,11 +327,10 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void whenRetrievingTransactionsForAnOrderThenExpectNotNull() {
-		final List<ShopifyTransaction> transactions = shopifySdk.getOrderTransactions("595542343780");
+		final List<ShopifyTransaction> transactions = shopifySdk.getOrderTransactions("750362787951");
 		assertNotNull(transactions);
-		assertEquals(2, transactions.size());
-		assertEquals(false, transactions.get(0).getReceipt().isApplePay());
-		assertEquals(false, transactions.get(1).getReceipt().isApplePay());
+		assertEquals(1, transactions.size());
+		assertEquals(true, transactions.get(0).getReceipt().isApplePay());
 	}
 
 	@Test
