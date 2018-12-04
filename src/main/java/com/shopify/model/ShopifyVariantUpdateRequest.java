@@ -83,7 +83,7 @@ public class ShopifyVariantUpdateRequest implements ShopifyVariantRequest {
 	}
 
 	public static interface InventoryManagementStep {
-		public InventoryPolicyStep withInventoryManagement(final InventoryManagement inventoryManagement);
+		public InventoryPolicyStep withInventoryManagement(final String inventoryManagement);
 
 		public InventoryPolicyStep withSameInventoryManagement();
 	}
@@ -328,8 +328,8 @@ public class ShopifyVariantUpdateRequest implements ShopifyVariantRequest {
 		}
 
 		@Override
-		public InventoryPolicyStep withInventoryManagement(final InventoryManagement inventoryManagement) {
-			if (shopifyVariant.getInventoryManagement() != inventoryManagement) {
+		public InventoryPolicyStep withInventoryManagement(final String inventoryManagement) {
+			if (!shopifyVariant.getInventoryManagement().equals(inventoryManagement)) {
 				shopifyVariant.setInventoryManagement(inventoryManagement);
 				changed = true;
 			}
