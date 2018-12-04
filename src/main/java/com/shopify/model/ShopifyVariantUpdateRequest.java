@@ -329,7 +329,7 @@ public class ShopifyVariantUpdateRequest implements ShopifyVariantRequest {
 
 		@Override
 		public InventoryPolicyStep withInventoryManagement(final String inventoryManagement) {
-			if (!shopifyVariant.getInventoryManagement().equals(inventoryManagement)) {
+			if (doesNotEqual(shopifyVariant.getInventoryManagement(), inventoryManagement)) {
 				shopifyVariant.setInventoryManagement(inventoryManagement);
 				changed = true;
 			}
