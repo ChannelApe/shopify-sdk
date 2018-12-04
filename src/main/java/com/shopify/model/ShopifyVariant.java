@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.shopify.model.adapters.EscapedStringAdapter;
-import com.shopify.model.adapters.InventoryManagementAdapter;
 import com.shopify.model.adapters.InventoryPolicyAdapter;
 
 @XmlRootElement
@@ -36,9 +35,8 @@ public class ShopifyVariant {
 	@XmlJavaTypeAdapter(InventoryPolicyAdapter.class)
 	@XmlElement(name = "inventory_policy")
 	private InventoryPolicy inventoryPolicy;
-	@XmlJavaTypeAdapter(InventoryManagementAdapter.class)
 	@XmlElement(name = "inventory_management")
-	private InventoryManagement inventoryManagement;
+	private String inventoryManagement;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String option1;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
@@ -149,11 +147,11 @@ public class ShopifyVariant {
 		this.inventoryPolicy = inventoryPolicy;
 	}
 
-	public InventoryManagement getInventoryManagement() {
+	public String getInventoryManagement() {
 		return inventoryManagement;
 	}
 
-	public void setInventoryManagement(final InventoryManagement inventoryManagement) {
+	public void setInventoryManagement(final String inventoryManagement) {
 		this.inventoryManagement = inventoryManagement;
 	}
 

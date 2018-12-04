@@ -50,7 +50,6 @@ import com.shopify.model.MetafieldsRoot;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyCancelOrderRequest;
-import com.shopify.model.ShopifyErrorsRoot;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
@@ -715,9 +714,8 @@ public class ShopifySdk {
 	private boolean hasNotBeenSaved(final Response response) {
 		if (UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus() && response.hasEntity()) {
 			response.bufferEntity();
-			final ShopifyErrorsRoot shopifyErrorsRoot = response.readEntity(ShopifyErrorsRoot.class);
-			final List<String> baseErrors = shopifyErrorsRoot.getErrors().getBase();
-			return Arrays.asList(COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE).equals(baseErrors);
+			final String shopifyErrorResponse = response.readEntity(String.class);
+			return shopifyErrorResponse.contains(COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE);
 		}
 		return false;
 	}
