@@ -21,7 +21,7 @@ public class ShopifyVariantCreationRequestTest {
 	private static final String SOME_SECOND_OPTION = "Lemon";
 	private static final String SOME_THIRD_OPTION = "Left";
 	private static final String SOME_IMAGE_SOURCE = "image1";
-	private static final InventoryManagement SOME_INVENTORY_MANAGEMENT = InventoryManagement.BLANK;
+	private static final String SOME_INVENTORY_MANAGEMENT = "blank";
 	private static final InventoryPolicy SOME_INVENTORY_POLICY = InventoryPolicy.CONTINUE;
 	private static final String SOME_FULFILLMENT_SERVICE = "garage";
 
@@ -47,7 +47,7 @@ public class ShopifyVariantCreationRequestTest {
 		assertEquals(SOME_FIRST_OPTION, actualShopifyVariant.getOption1());
 		assertEquals(SOME_SECOND_OPTION, actualShopifyVariant.getOption2());
 		assertEquals(SOME_THIRD_OPTION, actualShopifyVariant.getOption3());
-		assertEquals(InventoryManagement.SHOPIFY, actualShopifyVariant.getInventoryManagement());
+		assertEquals("shopify", actualShopifyVariant.getInventoryManagement());
 		assertEquals(InventoryPolicy.DENY, actualShopifyVariant.getInventoryPolicy());
 		assertEquals(FulfillmentService.MANUAL.toString(), actualShopifyVariant.getFulfillmentService());
 		assertTrue(actualShopifyVariant.isRequiresShipping());

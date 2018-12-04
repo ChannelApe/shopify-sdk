@@ -59,7 +59,7 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 	}
 
 	public static interface InventoryManagementStep {
-		public InventoryPolicyStep withInventoryManagement(final InventoryManagement inventoryManagement);
+		public InventoryPolicyStep withInventoryManagement(final String inventoryManagement);
 
 		public InventoryPolicyStep withDefaultInventoryManagement();
 	}
@@ -124,7 +124,7 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 	private static class Steps implements PriceStep, CompareAtPriceStep, SkuStep, BarcodeStep, WeightStep,
 			AvailableStep, FirstOptionStep, SecondOptionStep, ThirdOptionStep, ImageSourceStep, InventoryManagementStep,
 			InventoryPolicyStep, FulfillmentServiceStep, RequiresShippingStep, TaxableStep, BuildStep {
-		private static final InventoryManagement DEFAULT_INVENTORY_MANAGEMENT = InventoryManagement.SHOPIFY;
+		private static final String DEFAULT_INVENTORY_MANAGEMENT = "shopify";
 		private static final InventoryPolicy DEFAULT_INVENTORY_POLICY = InventoryPolicy.DENY;
 		private static final String DEFAULT_FULFILLMENT_SERVICE = FulfillmentService.MANUAL.toString();
 		private static final boolean REQUIRES_SHIPPING_DEFAULT = true;
@@ -274,7 +274,7 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 		}
 
 		@Override
-		public InventoryPolicyStep withInventoryManagement(final InventoryManagement inventoryManagement) {
+		public InventoryPolicyStep withInventoryManagement(final String inventoryManagement) {
 			shopifyVariant.setInventoryManagement(inventoryManagement);
 			return this;
 		}
