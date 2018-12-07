@@ -30,7 +30,6 @@ public class ShopifyRefund {
 	@XmlElement(name = "processed_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime processedAt;
-	private boolean restock;
 	@XmlElement(name = "refund_line_items")
 	private List<ShopifyRefundLineItem> refundLineItems;
 	private ShopifyRefundShippingDetails shipping;
@@ -92,14 +91,6 @@ public class ShopifyRefund {
 
 	public void setProcessedAt(final DateTime processedAt) {
 		this.processedAt = processedAt;
-	}
-
-	public boolean isRestock() {
-		return restock;
-	}
-
-	public void setRestock(final boolean restock) {
-		this.restock = restock;
 	}
 
 	public ShopifyRefundShippingDetails getShipping() {
