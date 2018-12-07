@@ -307,7 +307,6 @@ public class ShopifySdkTest {
 		shopifyRefund1.setId("87128371823");
 		shopifyRefund1.setNote("Customer didn't want");
 		shopifyRefund1.setOrderId("someId");
-		shopifyRefund1.setRestock(false);
 		shopifyRefund1.setUserId(null);
 
 		final ShopifyRefundLineItem shopifyRefundedLineItem = new ShopifyRefundLineItem();
@@ -1808,7 +1807,6 @@ public class ShopifySdkTest {
 		shopifyRefund.setCurrency(Currency.getInstance("USD"));
 		shopifyRefund.setId("999999");
 		shopifyRefund.setOrderId("123123");
-		shopifyRefund.setRestock(false);
 
 		final ShopifyRefundShippingDetails shipping = new ShopifyRefundShippingDetails();
 		shipping.setAmount(new BigDecimal(99.11));
