@@ -307,7 +307,6 @@ public class ShopifySdkTest {
 		shopifyRefund1.setId("87128371823");
 		shopifyRefund1.setNote("Customer didn't want");
 		shopifyRefund1.setOrderId("someId");
-		shopifyRefund1.setRestock(false);
 		shopifyRefund1.setUserId(null);
 
 		final ShopifyRefundLineItem shopifyRefundedLineItem = new ShopifyRefundLineItem();
@@ -1808,7 +1807,6 @@ public class ShopifySdkTest {
 		shopifyRefund.setCurrency(Currency.getInstance("USD"));
 		shopifyRefund.setId("999999");
 		shopifyRefund.setOrderId("123123");
-		shopifyRefund.setRestock(false);
 
 		final ShopifyRefundShippingDetails shipping = new ShopifyRefundShippingDetails();
 		shipping.setAmount(new BigDecimal(99.11));
@@ -1861,7 +1859,6 @@ public class ShopifySdkTest {
 
 		assertEquals("999999", calculateRequestBody.getContent().get("refund").get("id").asText());
 		assertEquals("123123", calculateRequestBody.getContent().get("refund").get("order_id").asText());
-		assertEquals(false, calculateRequestBody.getContent().get("refund").get("restock").asBoolean());
 		assertEquals("USD", calculateRequestBody.getContent().get("refund").get("currency").asText());
 		assertEquals(SOME_DATE_TIME.toString(),
 				calculateRequestBody.getContent().get("refund").get("created_at").asText());
@@ -1903,7 +1900,6 @@ public class ShopifySdkTest {
 
 		assertEquals("999999", refundRequestBody.getContent().get("refund").get("id").asText());
 		assertEquals("123123", refundRequestBody.getContent().get("refund").get("order_id").asText());
-		assertEquals(false, refundRequestBody.getContent().get("refund").get("restock").asBoolean());
 		assertEquals("USD", refundRequestBody.getContent().get("refund").get("currency").asText());
 		assertEquals(SOME_DATE_TIME.toString(),
 				refundRequestBody.getContent().get("refund").get("created_at").asText());
