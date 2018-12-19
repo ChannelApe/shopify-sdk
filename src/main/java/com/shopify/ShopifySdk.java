@@ -692,7 +692,7 @@ public class ShopifySdk {
 
 	private Retryer<Response> buildResponseRetyer() {
 
-		return RetryerBuilder.<Response>newBuilder().retryIfResult(this::shouldRetryResponse)
+		return RetryerBuilder.<Response> newBuilder().retryIfResult(this::shouldRetryResponse)
 				.withWaitStrategy(WaitStrategies.randomWait(2, TimeUnit.SECONDS, 30, TimeUnit.SECONDS))
 				.withStopStrategy(StopStrategies.stopAfterDelay(15, TimeUnit.MINUTES))
 				.withRetryListener(new ShopifySdkRetryListener<>(ShopifySdk.class)).build();
@@ -707,12 +707,12 @@ public class ShopifySdk {
 	}
 
 	private boolean isServerError(final Response response) {
-		return Status.Family.SERVER_ERROR == Status.Family.familyOf(response.getStatus())
-				|| LOCKED_STATUS_CODE == response.getStatus();
+		return (Status.Family.SERVER_ERROR == Status.Family.familyOf(response.getStatus()))
+				|| (LOCKED_STATUS_CODE == response.getStatus());
 	}
 
 	private boolean hasNotBeenSaved(final Response response) {
-		if (UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus() && response.hasEntity()) {
+		if ((UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus()) && response.hasEntity()) {
 			response.bufferEntity();
 			final String shopifyErrorResponse = response.readEntity(String.class);
 			return shopifyErrorResponse.contains(COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE);

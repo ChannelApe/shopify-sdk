@@ -36,7 +36,6 @@ import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
-import com.shopify.model.ImageAltTextCreationRequest;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldRoot;
 import com.shopify.model.MetafieldValueType;
@@ -53,7 +52,6 @@ import com.shopify.model.ShopifyFulfillmentUpdateRequest;
 import com.shopify.model.ShopifyGiftCard;
 import com.shopify.model.ShopifyGiftCardCreationRequest;
 import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyImageRoot;
 import com.shopify.model.ShopifyInventoryLevel;
 import com.shopify.model.ShopifyInventoryLevelRoot;
 import com.shopify.model.ShopifyLineItem;
@@ -677,115 +675,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyInventoryLevel.getAvailable(), actualShopifyInventoryLevel.getAvailable());
 		assertEquals(shopifyInventoryLevel.getLocationId(), actualShopifyInventoryLevel.getLocationId());
 		assertEquals(shopifyInventoryLevel.getInventoryItemId(), actualShopifyInventoryLevel.getInventoryItemId());
-	}
-
-	@Test
-	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestAndUpdatingVariantThenUpdateAndReturnVariant()
-			throws JsonProcessingException {
-
-		final ShopifyVariantRoot shopifyVariantRoot = new ShopifyVariantRoot();
-
-		final ShopifyVariant shopifyVariant = new ShopifyVariant();
-		shopifyVariant.setId("999");
-		shopifyVariant.setBarcode("XYZ-123");
-		shopifyVariant.setSku("ABC-123");
-		shopifyVariant.setImageId("1");
-		shopifyVariant.setPrice(BigDecimal.valueOf(42.11));
-		shopifyVariant.setGrams(12);
-		shopifyVariant.setAvailable(3L);
-		shopifyVariant.setRequiresShipping(true);
-		shopifyVariant.setTaxable(true);
-		shopifyVariant.setOption1("Red");
-		shopifyVariant.setOption2("Blue");
-		shopifyVariant.setOption3("GREEN");
-		shopifyVariant.setFulfillmentService("manual");
-		shopifyVariant.setInventoryItemId("123");
-		shopifyVariant.setProductId("123");
-		shopifyVariantRoot.setVariant(shopifyVariant);
-
-		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VARIANTS)
-				.append(FORWARD_SLASH).append("999").toString();
-
-		final String expectedResponseBodyString = getJsonString(ShopifyVariantRoot.class, shopifyVariantRoot);
-
-		final ShopifyImageRoot shopifyImageRoot = new ShopifyImageRoot();
-		final Image shopifyImage = new Image();
-		shopifyImage.setId("47382748");
-		final List<Metafield> metafields = ImageAltTextCreationRequest.newBuilder()
-				.withImageAltText(shopifyVariant.getTitle()).build();
-		shopifyImage.setMetafields(metafields);
-		shopifyImage.setVariantIds(Arrays.asList("999"));
-		shopifyImage.setSource("https://channelape.com/1.png");
-		shopifyImageRoot.setImage(shopifyImage);
-
-		final String expectedImageResponseBodyString = getJsonString(ShopifyImageRoot.class, shopifyImageRoot);
-
-		final String expectedImagePath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
-				.append(FORWARD_SLASH).append("123").append(FORWARD_SLASH).append(ShopifySdk.IMAGES).toString();
-
-		final Status expectedImageStatus = Status.OK;
-		final int expectedImageStatusCode = expectedImageStatus.getStatusCode();
-		final JsonBodyCapture actualImageRequestBody = new JsonBodyCapture();
-		driver.addExpectation(
-				onRequestTo(expectedImagePath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-						.withMethod(Method.POST).capturingBodyIn(actualImageRequestBody),
-				giveResponse(expectedImageResponseBodyString, MediaType.APPLICATION_JSON)
-						.withStatus(expectedImageStatusCode));
-
-		final Status expectedStatus = Status.OK;
-		final int expectedStatusCode = expectedStatus.getStatusCode();
-		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
-		driver.addExpectation(
-				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.PUT)
-						.capturingBodyIn(actualRequestBody),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
-
-		final ShopifyVariantUpdateRequest shopifyVariantUpdateRequest = ShopifyVariantUpdateRequest.newBuilder()
-				.withCurrentShopifyVariant(shopifyVariant).withSamePrice().withSameCompareAtPrice().withSameSku()
-				.withSameBarcode().withSameWeight().withAvailable(3).withSameFirstOption().withSameSecondOption()
-				.withSameThirdOption().withImageSource("test").withSameInventoryManagement().withSameInventoryPolicy()
-				.withSameFulfillmentService().withSameRequiresShipping().withSameTaxable().withSameInventoryItemId()
-				.build();
-
-		final ShopifyVariant actualShopifyVariant = shopifySdk.updateVariant(shopifyVariantUpdateRequest);
-
-		assertNotNull(actualShopifyVariant);
-		assertEquals(shopifyVariant.getId(), actualRequestBody.getContent().get("variant").get("id").asText());
-		assertEquals(shopifyVariant.getBarcode(),
-				actualRequestBody.getContent().get("variant").get("barcode").asText());
-		assertEquals(shopifyVariant.getSku(), actualRequestBody.getContent().get("variant").get("sku").asText());
-		assertEquals(shopifyVariant.getFulfillmentService(),
-				actualRequestBody.getContent().get("variant").get("fulfillment_service").asText());
-		assertEquals(shopifyVariant.getInventoryItemId(),
-				actualRequestBody.getContent().get("variant").get("inventory_item_id").asText());
-		assertEquals(shopifyVariant.getImageId(),
-				actualRequestBody.getContent().get("variant").get("image_id").asText());
-		assertEquals(shopifyVariant.getOption1(),
-				actualRequestBody.getContent().get("variant").get("option1").asText());
-		assertEquals(shopifyVariant.getOption2(),
-				actualRequestBody.getContent().get("variant").get("option2").asText());
-		assertEquals(shopifyVariant.getOption3(),
-				actualRequestBody.getContent().get("variant").get("option3").asText());
-		assertEquals(shopifyVariant.getPrice(),
-				actualRequestBody.getContent().get("variant").get("price").decimalValue());
-		assertEquals(shopifyVariant.isRequiresShipping(),
-				actualRequestBody.getContent().get("variant").get("requires_shipping").asBoolean());
-		assertEquals(shopifyVariant.getProductId(),
-				actualRequestBody.getContent().get("variant").get("product_id").asText());
-
-		assertEquals(shopifyVariant.getId(), actualShopifyVariant.getId());
-		assertEquals(shopifyVariant.getBarcode(), actualShopifyVariant.getBarcode());
-		assertEquals(shopifyVariant.getSku(), actualShopifyVariant.getSku());
-		assertEquals(shopifyVariant.getFulfillmentService(), actualShopifyVariant.getFulfillmentService());
-		assertEquals(shopifyVariant.getInventoryItemId(), actualShopifyVariant.getInventoryItemId());
-		assertEquals("1", actualShopifyVariant.getImageId());
-		assertEquals(shopifyVariant.getOption1(), actualShopifyVariant.getOption1());
-		assertEquals(shopifyVariant.getOption2(), actualShopifyVariant.getOption2());
-		assertEquals(shopifyVariant.getOption3(), actualShopifyVariant.getOption3());
-		assertEquals(shopifyVariant.getPrice(), actualShopifyVariant.getPrice());
-		assertEquals(shopifyVariant.isRequiresShipping(), actualShopifyVariant.isRequiresShipping());
-		assertEquals(shopifyVariant.getProductId(), actualShopifyVariant.getProductId());
-
 	}
 
 	@Test
@@ -1525,11 +1414,12 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenUpdatingVariantThenUpdateAndReturnVariant()
-			throws JsonProcessingException {
+			throws JsonProcessingException, IllegalAccessException {
 		final ShopifyVariant currentShopifyVariant = new ShopifyVariant();
 		currentShopifyVariant.setId("98746868985974");
 		currentShopifyVariant.setTitle("UK 8");
 		currentShopifyVariant.setPrice(new BigDecimal("10.00"));
+		currentShopifyVariant.setInventoryQuantity(1337L);
 
 		currentShopifyVariant.setBarcode("897563254789");
 
@@ -1581,7 +1471,8 @@ public class ShopifySdkTest {
 		assertEquals(shopifyVariantUpdateRequest.getRequest().getId(), actualShopifyVariant.getId());
 		assertEquals(shopifyVariantUpdateRequest.getRequest().getTitle(), actualShopifyVariant.getTitle());
 		assertEquals(shopifyVariantUpdateRequest.getRequest().getPrice(), actualShopifyVariant.getPrice());
-		assertEquals(Long.valueOf(1337), actualShopifyVariant.getInventoryQuantity());
+		assertEquals(shopifyVariantUpdateRequest.getRequest().getInventoryQuantity(),
+				actualShopifyVariant.getInventoryQuantity());
 		assertEquals(shopifyVariantUpdateRequest.getRequest().getBarcode(), actualShopifyVariant.getBarcode());
 	}
 
