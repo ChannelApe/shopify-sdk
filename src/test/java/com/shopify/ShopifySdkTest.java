@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,6 +100,11 @@ public class ShopifySdkTest {
 
 	@Rule
 	public ClientDriverRule driver = new ClientDriverRule();
+
+	@BeforeClass
+	public static void beforeClass() {
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+	}
 
 	@Before
 	public void setUp() throws JsonProcessingException {
@@ -224,7 +230,10 @@ public class ShopifySdkTest {
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
 						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
+						.withHeader(ShopifySdk.DEPRECATED_REASON_HEADER, "Call to be removed from API.")
+						.withHeader("Location", new StringBuilder().append("https://test.myshopify.com/admin")
+								.append(expectedPath).toString()));
 
 		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
 				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
@@ -2466,5 +2475,4 @@ public class ShopifySdkTest {
 		shopifyLocation.setCountryName("United States");
 		return shopifyLocation;
 	}
-
 }

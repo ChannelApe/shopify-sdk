@@ -100,6 +100,7 @@ public class ShopifySdk {
 	private static final String HTTPS = "https://";
 	private static final String API_TARGET = ".myshopify.com/admin";
 	static final String ACCESS_TOKEN_HEADER = "X-Shopify-Access-Token";
+	static final String DEPRECATED_REASON_HEADER = "X-Shopify-API-Deprecated-Reason";
 	static final String OAUTH = "oauth";
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
@@ -139,6 +140,7 @@ public class ShopifySdk {
 	private static final String COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE = "could not successfully be saved";
 	private static final String RETRY_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Retrying due to Response Status Code of {} and Body of:\n{}";
 	private static final String RETRY_FAILED_MESSAGE = "Request retry has failed.";
+	private static final String DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE = "Shopify call is deprecated. Please take note of the X-Shopify-API-Deprecated-Reason and correct the call.\nRequest Location of {}\nResponse Status Code of {}\nResponse headers of:\n{}";
 	static final String GENERAL_ACCESS_TOKEN_EXCEPTION_MESSAGE = "There was a problem generating access token using shop subdomain of %s and authorization code of %s.";
 
 	private static final int ONE_MINUTE_IN_MILLISECONDS = 60000;
@@ -647,6 +649,11 @@ public class ShopifySdk {
 	}
 
 	private Response handleResponse(final Response response, final Status... expectedStatus) {
+		if ((response.getHeaders() != null) && response.getHeaders().containsKey(DEPRECATED_REASON_HEADER)) {
+			LOGGER.error(DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE, response.getLocation(), response.getStatus(),
+					response.getStringHeaders());
+		}
+
 		final List<Integer> expectedStatusCodes = getExpectedStatusCodes(expectedStatus);
 		if (expectedStatusCodes.contains(response.getStatus())) {
 			return response;
