@@ -137,10 +137,11 @@ public class ShopifySdk {
 	private static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
 	private static final int UNPROCESSABLE_ENTITY_STATUS_CODE = 422;
 	private static final int LOCKED_STATUS_CODE = 423;
+	private static final String SHOP_RETRIEVED_MESSAGE = "Starting to make calls for Shopify store with ID of {} and name of {}";
 	private static final String COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE = "could not successfully be saved";
-	private static final String RETRY_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Retrying due to Response Status Code of {} and Body of:\n{}";
+	private static final String RETRY_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 	private static final String RETRY_FAILED_MESSAGE = "Request retry has failed.";
-	private static final String DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE = "Shopify call is deprecated. Please take note of the X-Shopify-API-Deprecated-Reason and correct the call.\nRequest Location of {}\nResponse Status Code of {}\nResponse headers of:\n{}";
+	private static final String DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE = "Shopify call is deprecated. Please take note of the X-Shopify-API-Deprecated-Reason and correct the call.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}";
 	static final String GENERAL_ACCESS_TOKEN_EXCEPTION_MESSAGE = "There was a problem generating access token using shop subdomain of %s and authorization code of %s.";
 
 	private static final int ONE_MINUTE_IN_MILLISECONDS = 60000;
@@ -674,51 +675,28 @@ public class ShopifySdk {
 		}
 	}
 
-	private static class ShopifySdkRetryListener<T> implements RetryListener {
-
-		private final Logger logger;
-
-		public ShopifySdkRetryListener(final Class<T> clientClass) {
-			logger = LoggerFactory.getLogger(clientClass);
-		}
-
-		@Override
-		public <V> void onRetry(final Attempt<V> attempt) {
-			if (attempt.hasException()) {
-				final long delaySinceFirstAttemptInMilliseconds = attempt.getDelaySinceFirstAttempt();
-				final long delaySinceFirstAttemptInSeconds = TimeUnit.SECONDS
-						.convert(delaySinceFirstAttemptInMilliseconds, TimeUnit.MILLISECONDS);
-				final long attemptNumber = attempt.getAttemptNumber();
-				if (logger.isWarnEnabled()) {
-					logger.warn(RETRY_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds, attemptNumber,
-							attempt.getExceptionCause().toString());
-				}
-			}
-		}
-	}
-
 	private Retryer<Response> buildResponseRetyer() {
 
-		return RetryerBuilder.<Response> newBuilder().retryIfResult(this::shouldRetryResponse)
+		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse)
 				.withWaitStrategy(WaitStrategies.randomWait(2, TimeUnit.SECONDS, 30, TimeUnit.SECONDS))
 				.withStopStrategy(StopStrategies.stopAfterDelay(15, TimeUnit.MINUTES))
-				.withRetryListener(new ShopifySdkRetryListener<>(ShopifySdk.class)).build();
+				.withRetryListener(new ShopifySdkRetryListener()).build();
 	}
 
-	private boolean shouldRetryResponse(final Response response) {
+	private static boolean shouldRetryResponse(final Response response) {
 		return isServerError(response) || hasExceededRateLimit(response) || hasNotBeenSaved(response);
 	}
 
-	private boolean hasExceededRateLimit(final Response response) {
+	private static boolean hasExceededRateLimit(final Response response) {
 		return TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus();
 	}
 
-	private boolean isServerError(final Response response) {
+	private static boolean isServerError(final Response response) {
 		return (Status.Family.SERVER_ERROR == Status.Family.familyOf(response.getStatus()))
 				|| (LOCKED_STATUS_CODE == response.getStatus());
 	}
 
-	private boolean hasNotBeenSaved(final Response response) {
+	private static boolean hasNotBeenSaved(final Response response) {
 		if ((UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus()) && response.hasEntity()) {
 			response.bufferEntity();
 			final String shopifyErrorResponse = response.readEntity(String.class);
@@ -763,8 +741,7 @@ public class ShopifySdk {
 				this.accessToken = generateToken();
 			}
 			final Shop shop = this.getShop().getShop();
-			LOGGER.info("Starting to make calls for Shopify store with ID of {} and name of {}.", shop.getId(),
-					shop.getName());
+			LOGGER.info(SHOP_RETRIEVED_MESSAGE, shop.getId(), shop.getName());
 		}
 		return webTarget;
 	}
@@ -789,6 +766,25 @@ public class ShopifySdk {
 
 		mapper.enable(MapperFeature.USE_ANNOTATIONS);
 		return mapper;
+	}
+
+	private static class ShopifySdkRetryListener implements RetryListener {
+
+		@Override
+		public <V> void onRetry(final Attempt<V> attempt) {
+			if (LOGGER.isWarnEnabled() && attempt.hasResult()) {
+				final Response response = (Response) attempt.getResult();
+				response.bufferEntity();
+				if (shouldRetryResponse(response) && !hasExceededRateLimit(response)) {
+					final long delaySinceFirstAttemptInMilliseconds = attempt.getDelaySinceFirstAttempt();
+					final long delaySinceFirstAttemptInSeconds = TimeUnit.SECONDS
+							.convert(delaySinceFirstAttemptInMilliseconds, TimeUnit.MILLISECONDS);
+					LOGGER.warn(RETRY_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds, attempt.getAttemptNumber(),
+							response.getLocation(), response.getStatus(), response.getStringHeaders(),
+							response.readEntity(String.class));
+				}
+			}
+		}
 	}
 
 }

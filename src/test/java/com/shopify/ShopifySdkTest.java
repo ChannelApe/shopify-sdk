@@ -1470,7 +1470,10 @@ public class ShopifySdkTest {
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.PUT)
 						.capturingBodyIn(stringBodyCapture),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Location",
+						new StringBuilder().append("https://test.myshopify.com/admin/products/2180984635510")
+								.append(expectedPath).toString())
+						.withStatus(expectedStatusCode));
 
 		final ShopifyVariant actualShopifyVariant = shopifySdk.updateVariant(shopifyVariantUpdateRequest);
 
