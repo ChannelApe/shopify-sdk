@@ -274,23 +274,27 @@ public class ShopifySdk {
 		return shopifyVariantRootResponse.getVariant();
 	}
 
-	public ShopifyProducts getProducts() {
+	public ShopifyProducts getProducts(final int pageSize) {
 		final List<ShopifyProduct> shopifyProducts = new LinkedList<>();
 
 		List<ShopifyProduct> shopifyProductsPage;
 		int page = 1;
 		do {
-			final Response response = get(getWebTarget().path(PRODUCTS)
-					.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT).queryParam(PAGE_QUERY_PARAMETER, page));
+			final Response response = get(getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+					.queryParam(PAGE_QUERY_PARAMETER, page));
 
 			final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
 			shopifyProductsPage = shopifyProductsRoot.getProducts();
-			final int pageSize = shopifyProductsPage.size();
-			LOGGER.info("Retrieved {} products from page {}", pageSize, page);
+			LOGGER.info("Retrieved {} products from page {}", shopifyProductsPage.size(), page);
 			page++;
 			shopifyProducts.addAll(shopifyProductsPage);
 		} while (!shopifyProductsPage.isEmpty());
+
 		return new ShopifyProducts(shopifyProducts);
+	}
+
+	public ShopifyProducts getProducts() {
+		return getProducts(DEFAULT_REQUEST_LIMIT);
 	}
 
 	public int getProductCount() {
@@ -404,14 +408,22 @@ public class ShopifySdk {
 	}
 
 	public List<ShopifyOrder> getOrders(final int page) {
+		return getOrders(page, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyOrder> getOrders(final int page, final int pageSize) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
-				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT).queryParam(PAGE_QUERY_PARAMETER, page));
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_QUERY_PARAMETER, page));
 		return getOrders(response);
 	}
 
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final int page) {
+		return getOrders(mininumCreationDate, page, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final int page, final int pageSize) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
-				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
 				.queryParam(PAGE_QUERY_PARAMETER, page));
 		return getOrders(response);
@@ -419,8 +431,13 @@ public class ShopifySdk {
 
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
 			final int page) {
+		return getOrders(mininumCreationDate, maximumCreationDate, page, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
+			final int page, final int pageSize) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
-				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
 				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 				.queryParam(PAGE_QUERY_PARAMETER, page));
@@ -429,8 +446,13 @@ public class ShopifySdk {
 
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
 			final int page, final String appId) {
+		return getOrders(mininumCreationDate, maximumCreationDate, page, appId, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
+			final int page, final String appId, final int pageSize) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
-				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
 				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 				.queryParam(ATTRIBUTION_APP_ID_QUERY_PARAMETER, appId).queryParam(PAGE_QUERY_PARAMETER, page));
