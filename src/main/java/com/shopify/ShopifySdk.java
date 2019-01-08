@@ -92,11 +92,8 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
-	static final String TRANSACTIONS = "transactions";
-	static final String GIFT_CARDS = "gift_cards";
-	static final String REFUND_KIND = "refund";
-	static final String SET = "set";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifySdk.class);
+
 	private static final String HTTPS = "https://";
 	private static final String API_TARGET = ".myshopify.com/admin";
 	static final String ACCESS_TOKEN_HEADER = "X-Shopify-Access-Token";
@@ -129,14 +126,19 @@ public class ShopifySdk {
 	static final String ATTRIBUTION_APP_ID_QUERY_PARAMETER = "attribution_app_id";
 	static final String CALCULATE = "calculate";
 	static final String REFUNDS = "refunds";
+	static final String TRANSACTIONS = "transactions";
+	static final String GIFT_CARDS = "gift_cards";
+	static final String REFUND_KIND = "refund";
+	static final String SET = "set";
 	private static final String CLIENT_ID = "client_id";
 	private static final String CLIENT_SECRET = "client_secret";
 	private static final String AUTHORIZATION_CODE = "code";
 
-	private static final int REQUEST_LIMIT = 250;
+	private static final int DEFAULT_REQUEST_LIMIT = 50;
 	private static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
 	private static final int UNPROCESSABLE_ENTITY_STATUS_CODE = 422;
 	private static final int LOCKED_STATUS_CODE = 423;
+
 	private static final String SHOP_RETRIEVED_MESSAGE = "Starting to make calls for Shopify store with ID of {} and name of {}";
 	private static final String COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE = "could not successfully be saved";
 	private static final String RETRY_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
@@ -274,19 +276,20 @@ public class ShopifySdk {
 
 	public ShopifyProducts getProducts() {
 		final List<ShopifyProduct> shopifyProducts = new LinkedList<>();
-		int resultSize = REQUEST_LIMIT;
+
+		List<ShopifyProduct> shopifyProductsPage;
 		int page = 1;
-		while (resultSize == REQUEST_LIMIT) {
-			final Response response = get(getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, REQUEST_LIMIT)
-					.queryParam(PAGE_QUERY_PARAMETER, page));
+		do {
+			final Response response = get(getWebTarget().path(PRODUCTS)
+					.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT).queryParam(PAGE_QUERY_PARAMETER, page));
 
 			final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
-			final List<ShopifyProduct> shopifyProductsPage = shopifyProductsRoot.getProducts();
-			resultSize = shopifyProductsPage.size();
-			LOGGER.info("Retrieved {} products from page {}", resultSize, page);
+			shopifyProductsPage = shopifyProductsRoot.getProducts();
+			final int pageSize = shopifyProductsPage.size();
+			LOGGER.info("Retrieved {} products from page {}", pageSize, page);
 			page++;
 			shopifyProducts.addAll(shopifyProductsPage);
-		}
+		} while (!shopifyProductsPage.isEmpty());
 		return new ShopifyProducts(shopifyProducts);
 	}
 
@@ -402,12 +405,13 @@ public class ShopifySdk {
 
 	public List<ShopifyOrder> getOrders(final int page) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
-				.queryParam(LIMIT_QUERY_PARAMETER, REQUEST_LIMIT).queryParam(PAGE_QUERY_PARAMETER, page));
+				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT).queryParam(PAGE_QUERY_PARAMETER, page));
 		return getOrders(response);
 	}
 
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final int page) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
+				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
 				.queryParam(PAGE_QUERY_PARAMETER, page));
 		return getOrders(response);
@@ -416,6 +420,7 @@ public class ShopifySdk {
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
 			final int page) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
+				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
 				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 				.queryParam(PAGE_QUERY_PARAMETER, page));
@@ -425,6 +430,7 @@ public class ShopifySdk {
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
 			final int page, final String appId) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
+				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
 				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 				.queryParam(ATTRIBUTION_APP_ID_QUERY_PARAMETER, appId).queryParam(PAGE_QUERY_PARAMETER, page));

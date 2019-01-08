@@ -344,9 +344,11 @@ public class ShopifySdkTest {
 
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-						.withParam("status", "any").withParam("created_at_min", minimumCreationDateTime.toString())
-						.withParam("created_at_max", maximumCreationDate.toString()).withParam("page", "1")
-						.withMethod(Method.GET),
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
+						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, maximumCreationDate, 1);
@@ -433,6 +435,7 @@ public class ShopifySdkTest {
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
 						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
 						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
 						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 						.withParam(ShopifySdk.ATTRIBUTION_APP_ID_QUERY_PARAMETER, "current")
@@ -555,8 +558,10 @@ public class ShopifySdkTest {
 		final DateTime minimumCreationDateTime = SOME_DATE_TIME;
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-						.withParam("status", "any").withParam("created_at_min", minimumCreationDateTime.toString())
-						.withParam("page", "1").withMethod(Method.GET),
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
+						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, 1);
@@ -1220,8 +1225,11 @@ public class ShopifySdkTest {
 
 		final Status expectedStatus = Status.OK;
 		final int expectedStatusCode = expectedStatus.getStatusCode();
-		driver.addExpectation(onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-				.withParam("status", "any").withParam("limit", 250).withParam("page", "1").withMethod(Method.GET),
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50).withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1")
+						.withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(1);
@@ -2425,7 +2433,7 @@ public class ShopifySdkTest {
 	@Test
 	public void givenStoreWithNoProductsWhenRetrievingProductsThenReturnEmptyShopifyProducts()
 			throws JsonProcessingException {
-		addProductsPageDriverExpectation(1, 250, 0);
+		addProductsPageDriverExpectation(1, 50, 0);
 
 		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts();
 
@@ -2435,8 +2443,14 @@ public class ShopifySdkTest {
 	@Test
 	public void givenStoreWith305ProductsWhenRetrievingProductsThenReturnShopifyProductsWith305Products()
 			throws JsonProcessingException {
-		addProductsPageDriverExpectation(1, 250, 250);
-		addProductsPageDriverExpectation(2, 250, 55);
+		addProductsPageDriverExpectation(1, 50, 50);
+		addProductsPageDriverExpectation(2, 50, 50);
+		addProductsPageDriverExpectation(3, 50, 50);
+		addProductsPageDriverExpectation(4, 50, 50);
+		addProductsPageDriverExpectation(5, 50, 50);
+		addProductsPageDriverExpectation(6, 50, 50);
+		addProductsPageDriverExpectation(7, 50, 5);
+		addProductsPageDriverExpectation(8, 50, 0);
 
 		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts();
 
