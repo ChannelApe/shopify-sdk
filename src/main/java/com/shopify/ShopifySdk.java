@@ -120,7 +120,7 @@ public class ShopifySdk {
 	static final String LOCATIONS = "locations";
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String JSON = ".json";
-	private static final String LIMIT_QUERY_PARAMETER = "limit";
+	static final String LIMIT_QUERY_PARAMETER = "limit";
 	static final String PAGE_QUERY_PARAMETER = "page";
 	static final String STATUS_QUERY_PARAMETER = "status";
 	static final String ANY_STATUSES = "any";

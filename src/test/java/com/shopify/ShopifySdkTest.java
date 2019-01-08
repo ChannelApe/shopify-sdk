@@ -8,12 +8,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
@@ -69,6 +71,8 @@ import com.shopify.model.ShopifyProductCreationRequest;
 import com.shopify.model.ShopifyProductMetafieldCreationRequest;
 import com.shopify.model.ShopifyProductRoot;
 import com.shopify.model.ShopifyProductUpdateRequest;
+import com.shopify.model.ShopifyProducts;
+import com.shopify.model.ShopifyProductsRoot;
 import com.shopify.model.ShopifyRecurringApplicationCharge;
 import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
 import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
@@ -2416,6 +2420,51 @@ public class ShopifySdkTest {
 		assertEquals(shopifyTransaction2.getParentId(), actualShopifyTransactions.get(1).getParentId());
 		assertEquals(shopifyTransaction2.getReceipt().isApplePay(),
 				actualShopifyTransactions.get(1).getReceipt().isApplePay());
+	}
+
+	@Test
+	public void givenStoreWithNoProductsWhenRetrievingProductsThenReturnEmptyShopifyProducts()
+			throws JsonProcessingException {
+		addProductsPageDriverExpectation(1, 250, 0);
+
+		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts();
+
+		assertEquals(0, actualShopifyProducts.size());
+	}
+
+	@Test
+	public void givenStoreWith305ProductsWhenRetrievingProductsThenReturnShopifyProductsWith305Products()
+			throws JsonProcessingException {
+		addProductsPageDriverExpectation(1, 250, 250);
+		addProductsPageDriverExpectation(2, 250, 55);
+
+		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts();
+
+		assertEquals(305, actualShopifyProducts.size());
+		for (final ShopifyProduct actualShopifyProduct : actualShopifyProducts.values()) {
+			assertNotNull(actualShopifyProduct.getId());
+		}
+	}
+
+	private void addProductsPageDriverExpectation(final int page, final int pageLimit, final int pageSize)
+			throws JsonProcessingException {
+		final ShopifyProductsRoot pageShopifyProductsRoot = new ShopifyProductsRoot();
+		final List<ShopifyProduct> firstPageShopifyProducts = new ArrayList<>(pageLimit);
+		for (int i = 0; i < pageSize; i++) {
+			final ShopifyProduct shopifyProduct = new ShopifyProduct();
+			shopifyProduct.setId(UUID.randomUUID().toString());
+			firstPageShopifyProducts.add(shopifyProduct);
+		}
+		pageShopifyProductsRoot.setProducts(firstPageShopifyProducts);
+
+		final String responseBodyString = getJsonString(ShopifyProductsRoot.class, pageShopifyProductsRoot);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS).toString();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageLimit)
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, page).withMethod(Method.GET),
+				giveResponse(responseBodyString, MediaType.APPLICATION_JSON).withStatus(Status.OK.getStatusCode()));
 	}
 
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JsonProcessingException {
