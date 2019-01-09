@@ -2547,12 +2547,12 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenStoreWithNoProductsAnd200PageSizeWhenRetrievingProductsThenReturnEmptyShopifyProducts()
+	public void givenStoreWithNoProductsAndPage1And200PageSizeWhenRetrievingProductsThenReturnEmptyShopifyProducts()
 			throws JsonProcessingException {
 		final int pageSize = 200;
 		addProductsPageDriverExpectation(1, 200, 0);
 
-		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts(pageSize);
+		final List<ShopifyProduct> actualShopifyProducts = shopifySdk.getProducts(1, pageSize);
 
 		assertEquals(0, actualShopifyProducts.size());
 	}

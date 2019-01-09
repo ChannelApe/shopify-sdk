@@ -274,27 +274,26 @@ public class ShopifySdk {
 		return shopifyVariantRootResponse.getVariant();
 	}
 
-	public ShopifyProducts getProducts(final int pageSize) {
+	public List<ShopifyProduct> getProducts(final int page, final int pageSize) {
+		final Response response = get(getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
+		return shopifyProductsRoot.getProducts();
+	}
+
+	public ShopifyProducts getProducts() {
 		final List<ShopifyProduct> shopifyProducts = new LinkedList<>();
 
 		List<ShopifyProduct> shopifyProductsPage;
 		int page = 1;
 		do {
-			final Response response = get(getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
-					.queryParam(PAGE_QUERY_PARAMETER, page));
-
-			final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
-			shopifyProductsPage = shopifyProductsRoot.getProducts();
+			shopifyProductsPage = getProducts(page, DEFAULT_REQUEST_LIMIT);
 			LOGGER.info("Retrieved {} products from page {}", shopifyProductsPage.size(), page);
 			page++;
 			shopifyProducts.addAll(shopifyProductsPage);
 		} while (!shopifyProductsPage.isEmpty());
 
 		return new ShopifyProducts(shopifyProducts);
-	}
-
-	public ShopifyProducts getProducts() {
-		return getProducts(DEFAULT_REQUEST_LIMIT);
 	}
 
 	public int getProductCount() {
