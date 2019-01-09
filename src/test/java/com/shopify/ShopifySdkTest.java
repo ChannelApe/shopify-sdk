@@ -8,12 +8,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
@@ -69,6 +71,8 @@ import com.shopify.model.ShopifyProductCreationRequest;
 import com.shopify.model.ShopifyProductMetafieldCreationRequest;
 import com.shopify.model.ShopifyProductRoot;
 import com.shopify.model.ShopifyProductUpdateRequest;
+import com.shopify.model.ShopifyProducts;
+import com.shopify.model.ShopifyProductsRoot;
 import com.shopify.model.ShopifyRecurringApplicationCharge;
 import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
 import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
@@ -340,9 +344,11 @@ public class ShopifySdkTest {
 
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-						.withParam("status", "any").withParam("created_at_min", minimumCreationDateTime.toString())
-						.withParam("created_at_max", maximumCreationDate.toString()).withParam("page", "1")
-						.withMethod(Method.GET),
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
+						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, maximumCreationDate, 1);
@@ -429,6 +435,7 @@ public class ShopifySdkTest {
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
 						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
 						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
 						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 						.withParam(ShopifySdk.ATTRIBUTION_APP_ID_QUERY_PARAMETER, "current")
@@ -551,8 +558,10 @@ public class ShopifySdkTest {
 		final DateTime minimumCreationDateTime = SOME_DATE_TIME;
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-						.withParam("status", "any").withParam("created_at_min", minimumCreationDateTime.toString())
-						.withParam("page", "1").withMethod(Method.GET),
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
+						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, 1);
@@ -1216,8 +1225,11 @@ public class ShopifySdkTest {
 
 		final Status expectedStatus = Status.OK;
 		final int expectedStatusCode = expectedStatus.getStatusCode();
-		driver.addExpectation(onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
-				.withParam("status", "any").withParam("limit", 250).withParam("page", "1").withMethod(Method.GET),
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50).withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1")
+						.withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(1);
@@ -1240,6 +1252,112 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getSku());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
 				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getName());
+	}
+
+	@Test
+	public void givenShopWithNoOrdersAndPage1And197PageSizeWhenRetrievingOrdersThenReturnNoOrders()
+			throws JsonProcessingException {
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
+
+		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrdersRoot.class, shopifyOrdersRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final int pageSize = 197;
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageSize)
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(1, pageSize);
+
+		assertEquals(0, shopifyOrders.size());
+	}
+
+	@Test
+	public void givenShopWithNoOrdersAndSomeMininumCreationDateAndPage1And80PageSizeWhenRetrievingOrdersThenReturnNoOrders()
+			throws JsonProcessingException {
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
+
+		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrdersRoot.class, shopifyOrdersRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final int pageSize = 80;
+		final DateTime minimumCreationDateTime = SOME_DATE_TIME;
+		driver.addExpectation(onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+				.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+				.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageSize).withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1")
+				.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+				.withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, 1, pageSize);
+
+		assertEquals(0, shopifyOrders.size());
+	}
+
+	@Test
+	public void givenShopWithNoOrdersAndSomeMininumCreationDateAndSomeMaximumCreationDateAndPage1And70PageSizeWhenRetrievingOrdersThenReturnNoOrders()
+			throws JsonProcessingException {
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
+
+		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrdersRoot.class, shopifyOrdersRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final int pageSize = 70;
+		final DateTime minimumCreationDateTime = SOME_DATE_TIME.minusDays(4);
+		final DateTime maximumCreationDateTime = SOME_DATE_TIME;
+		driver.addExpectation(onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+				.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+				.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageSize).withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1")
+				.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+				.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDateTime.toString())
+				.withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, maximumCreationDateTime,
+				1, pageSize);
+
+		assertEquals(0, shopifyOrders.size());
+	}
+
+	@Test
+	public void givenShopWithNoOrdersAndSomeMininumCreationDateAndSomeMaximumCreationDateAndPage1And51PageSizeAndSomeAppIdWhenRetrievingOrdersThenReturnNoOrders()
+			throws JsonProcessingException {
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
+
+		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrdersRoot.class, shopifyOrdersRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final int pageSize = 51;
+		final String appId = "current";
+		final DateTime minimumCreationDateTime = SOME_DATE_TIME.minusDays(4);
+		final DateTime maximumCreationDateTime = SOME_DATE_TIME;
+		driver.addExpectation(onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+				.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+				.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageSize).withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1")
+				.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
+				.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDateTime.toString())
+				.withParam(ShopifySdk.ATTRIBUTION_APP_ID_QUERY_PARAMETER, appId).withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime, maximumCreationDateTime,
+				1, appId, pageSize);
+
+		assertEquals(0, shopifyOrders.size());
 	}
 
 	@Test
@@ -2416,6 +2534,68 @@ public class ShopifySdkTest {
 		assertEquals(shopifyTransaction2.getParentId(), actualShopifyTransactions.get(1).getParentId());
 		assertEquals(shopifyTransaction2.getReceipt().isApplePay(),
 				actualShopifyTransactions.get(1).getReceipt().isApplePay());
+	}
+
+	@Test
+	public void givenStoreWithNoProductsWhenRetrievingProductsThenReturnEmptyShopifyProducts()
+			throws JsonProcessingException {
+		addProductsPageDriverExpectation(1, 50, 0);
+
+		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts();
+
+		assertEquals(0, actualShopifyProducts.size());
+	}
+
+	@Test
+	public void givenStoreWithNoProductsAndPage1And200PageSizeWhenRetrievingProductsThenReturnEmptyShopifyProducts()
+			throws JsonProcessingException {
+		final int pageSize = 200;
+		addProductsPageDriverExpectation(1, 200, 0);
+
+		final List<ShopifyProduct> actualShopifyProducts = shopifySdk.getProducts(1, pageSize);
+
+		assertEquals(0, actualShopifyProducts.size());
+	}
+
+	@Test
+	public void givenStoreWith305ProductsWhenRetrievingProductsThenReturnShopifyProductsWith305Products()
+			throws JsonProcessingException {
+		addProductsPageDriverExpectation(1, 50, 50);
+		addProductsPageDriverExpectation(2, 50, 50);
+		addProductsPageDriverExpectation(3, 50, 50);
+		addProductsPageDriverExpectation(4, 50, 50);
+		addProductsPageDriverExpectation(5, 50, 50);
+		addProductsPageDriverExpectation(6, 50, 50);
+		addProductsPageDriverExpectation(7, 50, 5);
+		addProductsPageDriverExpectation(8, 50, 0);
+
+		final ShopifyProducts actualShopifyProducts = shopifySdk.getProducts();
+
+		assertEquals(305, actualShopifyProducts.size());
+		for (final ShopifyProduct actualShopifyProduct : actualShopifyProducts.values()) {
+			assertNotNull(actualShopifyProduct.getId());
+		}
+	}
+
+	private void addProductsPageDriverExpectation(final int page, final int pageLimit, final int pageSize)
+			throws JsonProcessingException {
+		final ShopifyProductsRoot pageShopifyProductsRoot = new ShopifyProductsRoot();
+		final List<ShopifyProduct> firstPageShopifyProducts = new ArrayList<>(pageLimit);
+		for (int i = 0; i < pageSize; i++) {
+			final ShopifyProduct shopifyProduct = new ShopifyProduct();
+			shopifyProduct.setId(UUID.randomUUID().toString());
+			firstPageShopifyProducts.add(shopifyProduct);
+		}
+		pageShopifyProductsRoot.setProducts(firstPageShopifyProducts);
+
+		final String responseBodyString = getJsonString(ShopifyProductsRoot.class, pageShopifyProductsRoot);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS).toString();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageLimit)
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, page).withMethod(Method.GET),
+				giveResponse(responseBodyString, MediaType.APPLICATION_JSON).withStatus(Status.OK.getStatusCode()));
 	}
 
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JsonProcessingException {
