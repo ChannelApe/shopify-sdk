@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
@@ -131,8 +133,35 @@ public class ShopifySdkTest {
 						.withStatus(Status.OK.getStatusCode()))
 				.anyTimes();
 
-		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withAccessToken(accessToken).build();
+		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withAccessToken(accessToken)
+				.withMaximumRequestRetryTimeout(3, TimeUnit.SECONDS).withConnectionTimeout(3, TimeUnit.SECONDS).build();
 
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void givenMinimumDelayIsLargerThanMaximumDelayWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
+		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
+				.withMinimumRequestRetryRandomDelay(10, TimeUnit.DAYS)
+				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).withConnectionTimeout(2, TimeUnit.MINUTES)
+				.withReadTimeout(3, TimeUnit.MINUTES).build();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void givenInvalidMaximumRetryTimeoutWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
+		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
+				.withMaximumRequestRetryTimeout(1, TimeUnit.MICROSECONDS).build();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void givenInvalidMiniumRetryDelayWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
+		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
+				.withMinimumRequestRetryRandomDelay(1, TimeUnit.MICROSECONDS).build();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void givenInvalidMaximumRetryDelayWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
+		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
+				.withMaximumRequestRetryRandomDelay(1, TimeUnit.MICROSECONDS).build();
 	}
 
 	@Test
@@ -213,7 +242,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenSomeShopifyFulfillmenmtCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillment()
-			throws JsonProcessingException {
+			throws JsonProcessingException, ConnectException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
@@ -631,6 +660,34 @@ public class ShopifySdkTest {
 		assertEquals(shopifyLocation2.getCountryCode(), actualShopifyLocations.get(1).getCountryCode());
 		assertEquals(shopifyLocation2.getCountryName(), actualShopifyLocations.get(1).getCountryName());
 		assertEquals(shopifyLocation2.getProvinceCode(), actualShopifyLocations.get(1).getProvinceCode());
+	}
+
+	@Test(expected = ShopifyClientException.class)
+	public void givenSomeValidAccessTokenAndSubdomainAndRequestFailsWhenGettingShopifyLocationThenReturnShopifyLocations()
+			throws JsonProcessingException {
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.LOCATIONS)
+				.append(ShopifySdk.JSON).toString();
+		final ShopifyLocationsRoot shopifyLocationsRoot = new ShopifyLocationsRoot();
+		final ShopifyLocation shopifyLocation1 = buildShopifyLocation("Some address1", "Some address2", "78237482374",
+				"Warehouse 1");
+		final ShopifyLocation shopifyLocation2 = buildShopifyLocation("Some address3", "Some address4", "987897984",
+				"Warehouse 2");
+		final List<ShopifyLocation> shopifyLocations = Arrays.asList(shopifyLocation1, shopifyLocation2);
+		shopifyLocationsRoot.setLocations(shopifyLocations);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyLocationsRoot.class, shopifyLocationsRoot);
+
+		final Status expectedStatus = Status.INTERNAL_SERVER_ERROR;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode))
+				.anyTimes();
+
+		shopifySdk.getLocations();
+
 	}
 
 	@Test(expected = ShopifyErrorResponseException.class)
