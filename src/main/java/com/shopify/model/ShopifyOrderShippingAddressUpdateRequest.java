@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyOrderUpdateRequest {
+public class ShopifyOrderShippingAddressUpdateRequest {
 
 	private String id;
 	@XmlElement(name = "shipping_address")
-	private ShopifyAddress shippingAddress;
+	private ShopifyAddressUpdateRequest shippingAddress;
 
 	public static interface OptionalsStep {
-		OptionalsStep withShippingAddress(final ShopifyAddress shippingAddress);
+		OptionalsStep withShippingAddress(final ShopifyAddressUpdateRequest shippingAddress);
 
-		ShopifyOrderUpdateRequest build();
+		ShopifyOrderShippingAddressUpdateRequest build();
 	}
 
 	public static interface IdStep {
@@ -27,24 +27,24 @@ public class ShopifyOrderUpdateRequest {
 		return new Steps();
 	}
 
-	private ShopifyOrderUpdateRequest(final Steps steps) {
+	private ShopifyOrderShippingAddressUpdateRequest(final Steps steps) {
 		this.id = steps.id;
 		this.shippingAddress = steps.shippingAddress;
 	}
 
 	private static class Steps implements IdStep, OptionalsStep {
 		private String id;
-		private ShopifyAddress shippingAddress;
+		private ShopifyAddressUpdateRequest shippingAddress;
 
 		@Override
-		public OptionalsStep withShippingAddress(final ShopifyAddress shippingAddress) {
+		public OptionalsStep withShippingAddress(final ShopifyAddressUpdateRequest shippingAddress) {
 			this.shippingAddress = shippingAddress;
 			return this;
 		}
 
 		@Override
-		public ShopifyOrderUpdateRequest build() {
-			return new ShopifyOrderUpdateRequest(this);
+		public ShopifyOrderShippingAddressUpdateRequest build() {
+			return new ShopifyOrderShippingAddressUpdateRequest(this);
 		}
 
 		@Override
@@ -63,11 +63,11 @@ public class ShopifyOrderUpdateRequest {
 		this.id = id;
 	}
 
-	public ShopifyAddress getShippingAddress() {
+	public ShopifyAddressUpdateRequest getShippingAddress() {
 		return shippingAddress;
 	}
 
-	public void setShippingAddress(final ShopifyAddress shippingAddress) {
+	public void setShippingAddress(final ShopifyAddressUpdateRequest shippingAddress) {
 		this.shippingAddress = shippingAddress;
 	}
 

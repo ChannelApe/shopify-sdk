@@ -2,13 +2,13 @@ package com.shopify.model;
 
 public class ShopifyOrderUpdateRoot {
 
-	private ShopifyOrderUpdateRequest order;
+	private ShopifyOrderShippingAddressUpdateRequest order;
 
-	public ShopifyOrderUpdateRequest getOrder() {
+	public ShopifyOrderShippingAddressUpdateRequest getOrder() {
 		return order;
 	}
 
-	public void setOrder(final ShopifyOrderUpdateRequest order) {
+	public void setOrder(final ShopifyOrderShippingAddressUpdateRequest order) {
 		this.order = order;
 	}
 

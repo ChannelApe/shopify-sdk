@@ -26,6 +26,7 @@ import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyAddressUpdateRequest;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
@@ -38,7 +39,7 @@ import com.shopify.model.ShopifyLocation;
 import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderUpdateRequest;
+import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyProducts;
@@ -556,27 +557,30 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
-		final ShopifyAddress shopifyAddress = new ShopifyAddress();
-		shopifyAddress.setAddress1("224 Wyoming Avenue");
-		shopifyAddress.setAddress2("Suite 100");
-		shopifyAddress.setName("Ryan Kazokas222222222222w");
+		final ShopifyAddressUpdateRequest shopifyAddress = new ShopifyAddressUpdateRequest();
+		final String someAddress1 = "Testing From SDK Driver";
+		shopifyAddress.setAddress1(someAddress1);
+		shopifyAddress.setAddress2(null);
+		shopifyAddress.setName("Ryan Kazokas224444444444444444444444");
 		shopifyAddress.setFirstName("Ryan");
 		shopifyAddress.setLastname("Kazokas");
 		shopifyAddress.setCountry("United States");
+		shopifyAddress.setCity("Scranton");
+
 		shopifyAddress.setCountryCode("US");
 		shopifyAddress.setProvince("PEnnsylvania");
 		shopifyAddress.setProvinceCode("PA");
 		shopifyAddress.setZip("18503");
-		final ShopifyOrderUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderUpdateRequest.newBuilder()
-				.withId("1124214472765").withShippingAddress(shopifyAddress).build();
+		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderShippingAddressUpdateRequest
+				.newBuilder().withId("1124214472765").withShippingAddress(shopifyAddress).build();
 
 		final ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
+		// mapper.setSerializationInclusion(Include.NON_NULL);
 		final String dtoAsString = mapper.writeValueAsString(shopifyOrderUpdateRequest);
 		System.out.println(dtoAsString);
 
-		final ShopifyOrder updateOrder = shopifySdk.updateOrder(shopifyOrderUpdateRequest);
-		assertEquals("224 Wyoming Avenue", updateOrder.getShippingAddress().getAddress1());
+		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
+		assertEquals(someAddress1, updateOrder.getShippingAddress().getAddress1());
 	}
 
 	@After

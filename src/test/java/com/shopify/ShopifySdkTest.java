@@ -49,6 +49,7 @@ import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyAddressUpdateRequest;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
@@ -67,7 +68,7 @@ import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
 import com.shopify.model.ShopifyOrderRisksRoot;
 import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderUpdateRequest;
+import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
 import com.shopify.model.ShopifyOrdersRoot;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductCreationRequest;
@@ -1868,7 +1869,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenUpdatingOrderThenUpdateAndReturnOrder()
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenUpdatingOrderShippingAddressThenUpdateAndReturnOrder()
 			throws JsonProcessingException {
 
 		final String someShopifyOrderId = "99999";
@@ -1923,6 +1924,18 @@ public class ShopifySdkTest {
 
 		shopifyOrderRoot.setOrder(shopifyOrder);
 
+		final ShopifyAddressUpdateRequest shopifyAddressUpdateRequest = new ShopifyAddressUpdateRequest();
+		shopifyAddressUpdateRequest.setAddress1("224 Wyoming Ave");
+		shopifyAddressUpdateRequest.setAddress2("Suite 100");
+		shopifyAddressUpdateRequest.setCompany("channelape");
+		shopifyAddressUpdateRequest.setFirstName("Ryan Kazokas");
+		shopifyAddressUpdateRequest.setLastname("Kazokas");
+		shopifyAddressUpdateRequest.setProvince("PEnnsylvania");
+		shopifyAddressUpdateRequest.setProvinceCode("PA");
+		shopifyAddressUpdateRequest.setZip("18503");
+		shopifyAddressUpdateRequest.setCountry("US");
+		shopifyAddressUpdateRequest.setCountryCode("USA");
+
 		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
 
 		final Status expectedStatus = Status.OK;
@@ -1933,9 +1946,9 @@ public class ShopifySdkTest {
 						.capturingBodyIn(actualRequestBody),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
-		final ShopifyOrderUpdateRequest shopifyOrderRequest = ShopifyOrderUpdateRequest.newBuilder()
-				.withId(someShopifyOrderId).withShippingAddress(address).build();
-		final ShopifyOrder actualShopifyOrder = shopifySdk.updateOrder(shopifyOrderRequest);
+		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderRequest = ShopifyOrderShippingAddressUpdateRequest
+				.newBuilder().withId(someShopifyOrderId).withShippingAddress(shopifyAddressUpdateRequest).build();
+		final ShopifyOrder actualShopifyOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderRequest);
 
 		assertEquals("224 Wyoming Ave",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("address1").asText());

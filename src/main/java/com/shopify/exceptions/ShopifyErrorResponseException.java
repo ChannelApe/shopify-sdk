@@ -6,16 +6,22 @@ public class ShopifyErrorResponseException extends RuntimeException {
 
 	static final String MESSAGE = "Received unexpected Response Status Code of %d\nResponse Headers of:\n%s\nResponse Body of:\n%s";
 
+	private final int statusCode;
 	private static final long serialVersionUID = 5646635633348617058L;
 
 	public ShopifyErrorResponseException(final Response response) {
 		super(buildMessage(response));
+		this.statusCode = response.getStatus();
 	}
 
 	private static String buildMessage(final Response response) {
 		response.bufferEntity();
 		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(),
 				response.readEntity(String.class));
+	}
+
+	public int getStatusCode() {
+		return statusCode;
 	}
 
 }
