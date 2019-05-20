@@ -67,6 +67,7 @@ import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
 import com.shopify.model.ShopifyOrderRisksRoot;
 import com.shopify.model.ShopifyOrderRoot;
+import com.shopify.model.ShopifyOrderUpdateRequest;
 import com.shopify.model.ShopifyOrdersRoot;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductCreationRequest;
@@ -1864,6 +1865,144 @@ public class ShopifySdkTest {
 		assertEquals(shippingLine1.getPrice(), actualShopifyOrder.getShippingLines().get(0).getPrice());
 		assertEquals(shippingLine1.getSource(), actualShopifyOrder.getShippingLines().get(0).getSource());
 		assertEquals(shippingLine1.getTitle(), actualShopifyOrder.getShippingLines().get(0).getTitle());
+	}
+
+	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenUpdatingOrderThenUpdateAndReturnOrder()
+			throws JsonProcessingException {
+
+		final String someShopifyOrderId = "99999";
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("orders").append(FORWARD_SLASH)
+				.append(someShopifyOrderId).toString();
+		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
+		final ShopifyOrder shopifyOrder = new ShopifyOrder();
+		shopifyOrder.setId(someShopifyOrderId);
+		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
+		shopifyCustomer.setId("Customer-Id");
+		shopifyCustomer.setFirstName("Ryan");
+		shopifyCustomer.setLastname("Kazokas");
+
+		final ShopifyAddress address = new ShopifyAddress();
+		address.setAddress1("224 Wyoming Ave");
+		address.setAddress2("Suite 100");
+		address.setCompany("channelape");
+		address.setFirstName("Ryan Kazokas");
+		address.setLastname("Kazokas");
+		address.setProvince("PEnnsylvania");
+		address.setProvinceCode("PA");
+		address.setZip("18503");
+		address.setCountry("US");
+		address.setCountryCode("USA");
+		shopifyCustomer.setEmail("rkazokas@channelape.com");
+		shopifyCustomer.setPhone("87234287384723");
+		shopifyCustomer.setFirstName("Ryan");
+		shopifyCustomer.setLastname("Kazokas");
+
+		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
+		shopifyLineItem1.setQuantity(3);
+		shopifyLineItem1.setVariantId("4123123");
+		final ShopifyLineItem shopifyLineItem2 = new ShopifyLineItem();
+		shopifyLineItem2.setQuantity(4);
+		shopifyLineItem2.setVariantId("5123123");
+		final List<ShopifyLineItem> shopifyLineItems = Arrays.asList(shopifyLineItem1, shopifyLineItem2);
+		final DateTime processedAt = new DateTime(DateTimeZone.UTC);
+
+		shopifyOrder.setName("123456");
+		shopifyOrder.setId("123");
+		shopifyOrder.setCustomer(shopifyCustomer);
+		shopifyOrder.setLineItems(shopifyLineItems);
+		shopifyOrder.setProcessedAt(processedAt);
+		shopifyOrder.setShippingAddress(address);
+		shopifyOrder.setBillingAddress(address);
+		final ShopifyShippingLine shippingLine1 = new ShopifyShippingLine();
+		shippingLine1.setCode("Test");
+		shippingLine1.setSource("Testing Source");
+		shippingLine1.setTitle("Testing Title");
+		shippingLine1.setPrice(new BigDecimal(4.33));
+		shopifyOrder.setShippingLines(Arrays.asList(shippingLine1));
+
+		shopifyOrderRoot.setOrder(shopifyOrder);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.PUT)
+						.capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyOrderUpdateRequest shopifyOrderRequest = ShopifyOrderUpdateRequest.newBuilder()
+				.withId(someShopifyOrderId).withShippingAddress(address).build();
+		final ShopifyOrder actualShopifyOrder = shopifySdk.updateOrder(shopifyOrderRequest);
+
+		assertEquals("224 Wyoming Ave",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("address1").asText());
+		assertEquals("Suite 100",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("address2").asText());
+		assertEquals("PEnnsylvania",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("province").asText());
+		assertEquals("18503", actualRequestBody.getContent().get("order").get("shipping_address").get("zip").asText());
+		assertEquals("channelape",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("company").asText());
+		assertEquals("Ryan Kazokas",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("first_name").asText());
+		assertEquals("Kazokas",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("last_name").asText());
+		assertEquals("US", actualRequestBody.getContent().get("order").get("shipping_address").get("country").asText());
+		assertEquals("USA",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("country_code").asText());
+		assertEquals("PA",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("province_code").asText());
+
+		assertEquals(shopifyOrder.getId(), actualShopifyOrder.getId());
+		assertEquals(shopifyOrder.getName(), actualShopifyOrder.getName());
+		assertEquals(shopifyCustomer.getEmail(), actualShopifyOrder.getCustomer().getEmail());
+		assertEquals(shopifyCustomer.getFirstName(), actualShopifyOrder.getCustomer().getFirstName());
+		assertEquals(shopifyCustomer.getLastname(), actualShopifyOrder.getCustomer().getLastname());
+		assertEquals(shopifyCustomer.getPhone(), actualShopifyOrder.getCustomer().getPhone());
+		assertEquals(2, actualShopifyOrder.getLineItems().size());
+		assertEquals(shopifyOrder.getLineItems().get(0).getVariantId(),
+				actualShopifyOrder.getLineItems().get(0).getVariantId());
+		assertEquals(shopifyOrder.getLineItems().get(0).getQuantity(),
+				actualShopifyOrder.getLineItems().get(0).getQuantity());
+		assertEquals(shopifyOrder.getLineItems().get(1).getVariantId(),
+				actualShopifyOrder.getLineItems().get(1).getVariantId());
+		assertEquals(shopifyOrder.getLineItems().get(1).getQuantity(),
+				actualShopifyOrder.getLineItems().get(1).getQuantity());
+
+		assertEquals(processedAt, actualShopifyOrder.getProcessedAt());
+		assertEquals(address.getAddress1(), actualShopifyOrder.getBillingAddress().getAddress1());
+		assertEquals(address.getAddress2(), actualShopifyOrder.getBillingAddress().getAddress2());
+		assertEquals(address.getCountry(), actualShopifyOrder.getBillingAddress().getCountry());
+		assertEquals(address.getCountryCode(), actualShopifyOrder.getBillingAddress().getCountryCode());
+		assertEquals(address.getFirstName(), actualShopifyOrder.getBillingAddress().getFirstName());
+		assertEquals(address.getLastname(), actualShopifyOrder.getBillingAddress().getLastname());
+		assertEquals(address.getName(), actualShopifyOrder.getBillingAddress().getName());
+		assertEquals(address.getPhone(), actualShopifyOrder.getBillingAddress().getPhone());
+		assertEquals(address.getProvince(), actualShopifyOrder.getBillingAddress().getProvince());
+		assertEquals(address.getProvinceCode(), actualShopifyOrder.getBillingAddress().getProvinceCode());
+		assertEquals(address.getCompany(), actualShopifyOrder.getBillingAddress().getCompany());
+
+		assertEquals(address.getAddress1(), actualShopifyOrder.getShippingAddress().getAddress1());
+		assertEquals(address.getAddress2(), actualShopifyOrder.getShippingAddress().getAddress2());
+		assertEquals(address.getCountry(), actualShopifyOrder.getShippingAddress().getCountry());
+		assertEquals(address.getCountryCode(), actualShopifyOrder.getShippingAddress().getCountryCode());
+		assertEquals(address.getFirstName(), actualShopifyOrder.getShippingAddress().getFirstName());
+		assertEquals(address.getLastname(), actualShopifyOrder.getShippingAddress().getLastname());
+		assertEquals(address.getName(), actualShopifyOrder.getShippingAddress().getName());
+		assertEquals(address.getPhone(), actualShopifyOrder.getShippingAddress().getPhone());
+		assertEquals(address.getProvince(), actualShopifyOrder.getShippingAddress().getProvince());
+		assertEquals(address.getProvinceCode(), actualShopifyOrder.getShippingAddress().getProvinceCode());
+		assertEquals(address.getCompany(), actualShopifyOrder.getShippingAddress().getCompany());
+
+		assertEquals(1, actualShopifyOrder.getShippingLines().size());
+		assertEquals(shippingLine1.getCode(), actualShopifyOrder.getShippingLines().get(0).getCode());
+		assertEquals(shippingLine1.getPrice(), actualShopifyOrder.getShippingLines().get(0).getPrice());
+		assertEquals(shippingLine1.getSource(), actualShopifyOrder.getShippingLines().get(0).getSource());
+		assertEquals(shippingLine1.getTitle(), actualShopifyOrder.getShippingLines().get(0).getTitle());
+
 	}
 
 	@Test

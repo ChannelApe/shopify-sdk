@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.channelape</groupId>
 	<artifactId>shopify-sdk</artifactId>
-	<version>1.4.0.RETRY_CONFIGURATION-SNAPSHOT</version>
+	<version>1.5.0.UPDATE_SHIPPING_ADDRESS-SNAPSHOT</version>
 
 	<name>Shopify SDK</name>
 	<description>Java SDK for Shopify REST API.</description>

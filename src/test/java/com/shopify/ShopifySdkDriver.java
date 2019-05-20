@@ -38,6 +38,7 @@ import com.shopify.model.ShopifyLocation;
 import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
+import com.shopify.model.ShopifyOrderUpdateRequest;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyProducts;
@@ -522,7 +523,7 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomeOrderWhenCreatingOrderThenCreateOrder() throws JsonProcessingException {
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setVariantId("16069122490427");
+		shopifyLineItem1.setVariantId("12262219972712");
 		shopifyLineItem1.setQuantity(44);
 
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
@@ -551,6 +552,31 @@ public class ShopifySdkDriver {
 		System.out.println(dtoAsString);
 		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderCreationRequest);
 		assertNotNull(actualShopifyOrder);
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
+		final ShopifyAddress shopifyAddress = new ShopifyAddress();
+		shopifyAddress.setAddress1("224 Wyoming Avenue");
+		shopifyAddress.setAddress2("Suite 100");
+		shopifyAddress.setName("Ryan Kazokas222222222222w");
+		shopifyAddress.setFirstName("Ryan");
+		shopifyAddress.setLastname("Kazokas");
+		shopifyAddress.setCountry("United States");
+		shopifyAddress.setCountryCode("US");
+		shopifyAddress.setProvince("PEnnsylvania");
+		shopifyAddress.setProvinceCode("PA");
+		shopifyAddress.setZip("18503");
+		final ShopifyOrderUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderUpdateRequest.newBuilder()
+				.withId("1124214472765").withShippingAddress(shopifyAddress).build();
+
+		final ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		final String dtoAsString = mapper.writeValueAsString(shopifyOrderUpdateRequest);
+		System.out.println(dtoAsString);
+
+		final ShopifyOrder updateOrder = shopifySdk.updateOrder(shopifyOrderUpdateRequest);
+		assertEquals("224 Wyoming Avenue", updateOrder.getShippingAddress().getAddress1());
 	}
 
 	@After

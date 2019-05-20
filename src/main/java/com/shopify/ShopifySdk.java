@@ -67,6 +67,8 @@ import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
 import com.shopify.model.ShopifyOrderRisksRoot;
 import com.shopify.model.ShopifyOrderRoot;
+import com.shopify.model.ShopifyOrderUpdateRequest;
+import com.shopify.model.ShopifyOrderUpdateRoot;
 import com.shopify.model.ShopifyOrdersRoot;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductCreationRequest;
@@ -566,6 +568,15 @@ public class ShopifySdk {
 		final ShopifyOrder shopifyOrder = shopifyOrderCreationRequest.getRequest();
 		shopifyOrderRoot.setOrder(shopifyOrder);
 		final Response response = post(getWebTarget().path(ORDERS), shopifyOrderRoot);
+		final ShopifyOrderRoot shopifyOrderRootResponse = response.readEntity(ShopifyOrderRoot.class);
+		return shopifyOrderRootResponse.getOrder();
+	}
+
+	public ShopifyOrder updateOrder(final ShopifyOrderUpdateRequest shopifyOrderUpdateRequest) {
+		final ShopifyOrderUpdateRoot shopifyOrderRoot = new ShopifyOrderUpdateRoot();
+		shopifyOrderRoot.setOrder(shopifyOrderUpdateRequest);
+		final Response response = put(getWebTarget().path(ORDERS).path(shopifyOrderUpdateRequest.getId()),
+				shopifyOrderRoot);
 		final ShopifyOrderRoot shopifyOrderRootResponse = response.readEntity(ShopifyOrderRoot.class);
 		return shopifyOrderRootResponse.getOrder();
 	}
