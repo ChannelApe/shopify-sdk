@@ -20,6 +20,17 @@ final ShopifySdk shopifySdk = ShopifySdk.newBuilder()
 final ShopifyShop shopifyShop = shopifySdk.getShop();
 ```
 
+## Optional Configuration
+The final parameters of the SDK builder are optional and will use default values when not supplied:
+
+| Parameter   | Description | Default |
+|-----------|---------|--------|
+|Minimum Request Retry Random Delay|Shopify SDK uses a random wait strategy when calculating to perform the next attempt. This is the minimum duration to wait before performing the failed request.|1 second|
+|Maximum Request Retry Random Delay|Shopify SDK uses a random wait strategy when calculating to perform the next attempt. This is the maximum duration to wait before performing the failed request.|5 seconds|
+|Maximum Request Retry Timeout|The maximum time to keep retrying failed requests.|3 minutes|
+|Connection Timeout|The duration to attempt to read a response from Shopify's API.|1 minute|
+|Read Timeout|The duration to attempt to read a response from Shopify's API.|15 Seconds|
+
 ## Building from source
 
 	1. Install Maven
