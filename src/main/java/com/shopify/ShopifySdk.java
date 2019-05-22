@@ -180,7 +180,7 @@ public class ShopifySdk {
 		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
 		 * time to wait before retrying a failed request. Value must also be less than
 		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
-		 * Retry Random Delay}.<br />
+		 * Retry Random Delay}.<br>
 		 * Default value is: 1 second.
 		 *
 		 * @param duration
@@ -193,7 +193,7 @@ public class ShopifySdk {
 		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
 		 * time to wait before retrying a failed request. Value must also be more than
 		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
-		 * Retry Random Delay}.<br />
+		 * Retry Random Delay}.<br>
 		 * Default value is: 5 seconds.
 		 *
 		 * @param duration
@@ -203,7 +203,7 @@ public class ShopifySdk {
 		OptionalsStep withMaximumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
 		/**
-		 * Maximum duration time to keep attempting requests <br />
+		 * Maximum duration time to keep attempting requests <br>
 		 * Default value is: 3 minutes.
 		 *
 		 * @param duration
@@ -213,7 +213,7 @@ public class ShopifySdk {
 		OptionalsStep withMaximumRequestRetryTimeout(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The duration to wait when connecting to Shopify's API. <br />
+		 * The duration to wait when connecting to Shopify's API. <br>
 		 * Default value is: 1 minute.
 		 *
 		 * @param duration
@@ -223,7 +223,7 @@ public class ShopifySdk {
 		OptionalsStep withConnectionTimeout(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The duration to attempt to read a response from Shopify's API. <br />
+		 * The duration to attempt to read a response from Shopify's API. <br>
 		 * Default value is: 15 seconds.
 		 *
 		 * @param duration
