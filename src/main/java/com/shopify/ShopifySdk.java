@@ -167,6 +167,7 @@ public class ShopifySdk {
 	private long minimumRequestRetryRandomDelayMilliseconds;
 	private long maximumRequestRetryRandomDelayMilliseconds;
 	private long maximumRequestRetryTimeoutMilliseconds;
+	private final ShopifySdkRetryListener shopifySdkRetryListener = new ShopifySdkRetryListener();
 
 	private static final Client CLIENT = buildClient();
 
@@ -930,15 +931,9 @@ public class ShopifySdk {
 	public class ShopifySdkRetryListener implements RetryListener {
 
 		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify: {} on attempt number {} and {} seconds since first attempt";
+		private static final String RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 
 		private String responseBody;
-
-		public String getResponseBody() {
-			return responseBody;
-		}
-
-		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify on attempt number {} and {} seconds since first attempt with exception {}";
-		private static final String RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 
 		@Override
 		public <V> void onRetry(final Attempt<V> attempt) {
@@ -967,9 +962,14 @@ public class ShopifySdk {
 			}
 		}
 
+		public String getResponseBody() {
+			return responseBody;
+		}
+
 		private long convertMillisecondsToSeconds(final long milliiseconds) {
 			return TimeUnit.SECONDS.convert(milliiseconds, TimeUnit.MILLISECONDS);
 		}
+
 	}
 
 }
