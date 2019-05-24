@@ -23,15 +23,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.github.rholder.retry.Attempt;
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.RetryListener;
@@ -41,6 +34,7 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.ImageAltTextCreationRequest;
@@ -166,7 +160,7 @@ public class ShopifySdk {
 	private Long minimumRequestRetryRandomDelayMilliseconds;
 	private Long maximumRequestRetryRandomDelayMilliseconds;
 	private Long maximumRequestRetryTimeoutMilliseconds;
-
+	private final ShopifySdkRetryListener shopifySdkRetryListener = new ShopifySdkRetryListener();
 	private static final Client CLIENT = buildClient();
 
 	public static interface OptionalsStep {
@@ -572,7 +566,8 @@ public class ShopifySdk {
 		return shopifyOrderRootResponse.getOrder();
 	}
 
-	public ShopifyOrder updateOrderShippingAddress(final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest) {
+	public ShopifyOrder updateOrderShippingAddress(
+			final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest) {
 		final ShopifyOrderUpdateRoot shopifyOrderRoot = new ShopifyOrderUpdateRoot();
 		shopifyOrderRoot.setOrder(shopifyOrderUpdateRequest);
 		final Response response = put(getWebTarget().path(ORDERS).path(shopifyOrderUpdateRequest.getId()),
@@ -762,13 +757,16 @@ public class ShopifySdk {
 	private <T> Response put(final WebTarget webTarget, final T object) {
 		final Callable<Response> responseCallable = () -> {
 			final Entity<T> entity = Entity.entity(object, MediaType.APPLICATION_JSON);
-			return webTarget.request(MediaType.APPLICATION_JSON).header(ACCESS_TOKEN_HEADER, accessToken).put(entity);
+			final Response response = webTarget.request(MediaType.APPLICATION_JSON)
+					.header(ACCESS_TOKEN_HEADER, accessToken).put(entity);
+			return response;
 		};
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, Status.OK);
 	}
 
 	private Response handleResponse(final Response response, final Status... expectedStatus) {
+
 		if ((response.getHeaders() != null) && response.getHeaders().containsKey(DEPRECATED_REASON_HEADER)) {
 			LOGGER.error(DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE, response.getLocation(), response.getStatus(),
 					response.getStringHeaders());
@@ -778,7 +776,8 @@ public class ShopifySdk {
 		if (expectedStatusCodes.contains(response.getStatus())) {
 			return response;
 		}
-		throw new ShopifyErrorResponseException(response);
+
+		throw new ShopifyErrorResponseException(response, shopifySdkRetryListener.getResponseBody());
 	}
 
 	private List<Integer> getExpectedStatusCodes(final Status... expectedStatus) {
@@ -800,7 +799,7 @@ public class ShopifySdk {
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
 						StopStrategies.stopAfterDelay(maximumRequestRetryTimeoutMilliseconds, TimeUnit.MILLISECONDS))
-				.withRetryListener(new ShopifySdkRetryListener()).build();
+				.withRetryListener(shopifySdkRetryListener).build();
 	}
 
 	private static boolean shouldRetryResponse(final Response response) {
@@ -817,9 +816,10 @@ public class ShopifySdk {
 	}
 
 	private static boolean hasNotBeenSaved(final Response response) {
+		response.bufferEntity();
 		if ((UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus()) && response.hasEntity()) {
-			response.bufferEntity();
 			final String shopifyErrorResponse = response.readEntity(String.class);
+			LOGGER.debug(shopifyErrorResponse);
 			return shopifyErrorResponse.contains(COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE);
 		}
 		return false;
@@ -867,42 +867,41 @@ public class ShopifySdk {
 	}
 
 	private static Client buildClient() {
-		final ObjectMapper mapper = buildMapper();
+		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
 		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(mapper);
 
 		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
 	}
 
-	static ObjectMapper buildMapper() {
-		final ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-		final AnnotationIntrospector pair = AnnotationIntrospector.pair(
-				new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()), new JacksonAnnotationIntrospector());
-		mapper.setAnnotationIntrospector(pair);
-
-		mapper.enable(MapperFeature.USE_ANNOTATIONS);
-		return mapper;
-	}
-
-	private static class ShopifySdkRetryListener implements RetryListener {
+	public class ShopifySdkRetryListener implements RetryListener {
 
 		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify: {} on attempt number {} and {} seconds since first attempt";
 
+		private String responseBody;
+
+		public String getResponseBody() {
+			return responseBody;
+		}
+
 		@Override
 		public <V> void onRetry(final Attempt<V> attempt) {
-			if (LOGGER.isWarnEnabled() && attempt.hasResult()) {
+			if (attempt.hasResult()) {
 				final Response response = (Response) attempt.getResult();
+
 				response.bufferEntity();
-				if (shouldRetryResponse(response) && !hasExceededRateLimit(response)) {
+				this.responseBody = response.readEntity(String.class);
+
+				if (LOGGER.isWarnEnabled() && !hasExceededRateLimit(response) && shouldRetryResponse(response)) {
+
 					final long delaySinceFirstAttemptInSeconds = convertMillisecondsToSeconds(
 							attempt.getDelaySinceFirstAttempt());
 					LOGGER.warn(RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds,
 							attempt.getAttemptNumber(), response.getLocation(), response.getStatus(),
-							response.getStringHeaders(), response.readEntity(String.class));
+							response.getStringHeaders(), this.responseBody);
+
 				}
+
 			} else if (LOGGER.isWarnEnabled() && attempt.hasException()) {
 				final long delaySinceFirstAttemptInSeconds = convertMillisecondsToSeconds(
 						attempt.getDelaySinceFirstAttempt());

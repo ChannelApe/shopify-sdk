@@ -39,6 +39,7 @@ import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
@@ -2809,7 +2810,7 @@ public class ShopifySdkTest {
 
 	private <T> String getJsonString(final Class<T> clazz, final T object) throws JsonProcessingException {
 
-		final ObjectMapper objectMapper = ShopifySdk.buildMapper();
+		final ObjectMapper objectMapper = ShopifySdkObjectMapper.buildMapper();
 
 		return objectMapper.writeValueAsString(object);
 	}

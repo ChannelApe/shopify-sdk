@@ -21,6 +21,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
@@ -505,7 +506,7 @@ public class ShopifySdkDriver {
 		final ShopifyGiftCardCreationRequest giftCard = ShopifyGiftCardCreationRequest.newBuilder()
 				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZZ4CAPE").withCurrency("USD").build();
 
-		final ObjectMapper mapper = ShopifySdk.buildMapper();
+		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
 		final String dtoAsString = mapper.writeValueAsString(giftCard);
 		System.out.println(dtoAsString);
 		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(giftCard);
@@ -570,14 +571,9 @@ public class ShopifySdkDriver {
 		shopifyAddress.setCountryCode("US");
 		shopifyAddress.setProvince("PEnnsylvania");
 		shopifyAddress.setProvinceCode("PA");
-		shopifyAddress.setZip("18503");
+		shopifyAddress.setZip("9999999999999999999999999999999");
 		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderShippingAddressUpdateRequest
 				.newBuilder().withId("1124214472765").withShippingAddress(shopifyAddress).build();
-
-		final ObjectMapper mapper = new ObjectMapper();
-		// mapper.setSerializationInclusion(Include.NON_NULL);
-		final String dtoAsString = mapper.writeValueAsString(shopifyOrderUpdateRequest);
-		System.out.println(dtoAsString);
 
 		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
 		assertEquals(someAddress1, updateOrder.getShippingAddress().getAddress1());
