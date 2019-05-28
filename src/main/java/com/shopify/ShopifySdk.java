@@ -92,6 +92,14 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	private static final String MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay must be larger than minimum request retry delay.";
+
+	private static final String INVALID_MAXIMUM_REQUEST_RETRY_TIMEOUT_MESSAGE = "Maximum request retry timeout cannot be set lower than 2 seconds.";
+
+	private static final String INVALID_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay cannot be set lower than 2 seconds.";
+
+	private static final String INVALID_MINIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Minimum request retry delay cannot be set lower than 1 second.";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifySdk.class);
 
 	private static final String HTTPS = "https://";
@@ -141,13 +149,17 @@ public class ShopifySdk {
 
 	private static final String SHOP_RETRIEVED_MESSAGE = "Starting to make calls for Shopify store with ID of {} and name of {}";
 	private static final String COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE = "could not successfully be saved";
-	private static final String RETRY_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 	private static final String RETRY_FAILED_MESSAGE = "Request retry has failed.";
 	private static final String DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE = "Shopify call is deprecated. Please take note of the X-Shopify-API-Deprecated-Reason and correct the call.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}";
 	static final String GENERAL_ACCESS_TOKEN_EXCEPTION_MESSAGE = "There was a problem generating access token using shop subdomain of %s and authorization code of %s.";
 
-	private static final int ONE_MINUTE_IN_MILLISECONDS = 60000;
-	private static final int FIVE_MINUTES_IN_MILLISECONDS = 300000;
+	private static final Long TWO_SECONDS_IN_MILLISECONDS = 2000L;
+	private static final Long ONE_SECOND_IN_MILLISECONDS = 1000L;
+	private static final Long DEFAULT_MAXIMUM_REQUEST_RETRY_TIMEOUT_IN_MILLISECONDS = 180000L;
+	private static final Long DEFAULT_MAXIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS = 5000L;
+	private static final Long DEFAULT_MINIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS = 1000L;
+	private static final long DEFAULT_READ_TIMEOUT_IN_MILLISECONDS = 15000L;
+	private static final long DEFAULT_CONNECTION_TIMEOUT_IN_MILLISECONDS = 60000L;
 
 	private String shopSubdomain;
 	private String apiUrl;
@@ -156,15 +168,76 @@ public class ShopifySdk {
 	private String authorizationToken;
 	private WebTarget webTarget;
 	private String accessToken;
+	private long minimumRequestRetryRandomDelayMilliseconds;
+	private long maximumRequestRetryRandomDelayMilliseconds;
+	private long maximumRequestRetryTimeoutMilliseconds;
 
 	private static final Client CLIENT = buildClient();
 
-	public static interface BuildStep {
+	public static interface OptionalsStep {
+
+		/**
+		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
+		 * time to wait before retrying a failed request. Value must also be less than
+		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
+		 * Retry Random Delay}.<br>
+		 * Default value is: 1 second.
+		 *
+		 * @param duration
+		 * @param timeUnit
+		 * @return {@link OptionalsStep}
+		 */
+		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
+
+		/**
+		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
+		 * time to wait before retrying a failed request. Value must also be more than
+		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
+		 * Retry Random Delay}.<br>
+		 * Default value is: 5 seconds.
+		 *
+		 * @param duration
+		 * @param timeUnit
+		 * @return {@link OptionalsStep}
+		 */
+		OptionalsStep withMaximumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
+
+		/**
+		 * Maximum duration time to keep attempting requests <br>
+		 * Default value is: 3 minutes.
+		 *
+		 * @param duration
+		 * @param timeUnit
+		 * @return {@link OptionalsStep}
+		 */
+		OptionalsStep withMaximumRequestRetryTimeout(int duration, TimeUnit timeUnit);
+
+		/**
+		 * The duration to wait when connecting to Shopify's API. <br>
+		 * Default value is: 1 minute.
+		 *
+		 * @param duration
+		 * @param timeUnit
+		 * @return {@link OptionalsStep}
+		 */
+		OptionalsStep withConnectionTimeout(int duration, TimeUnit timeUnit);
+
+		/**
+		 * The duration to attempt to read a response from Shopify's API. <br>
+		 * Default value is: 15 seconds.
+		 *
+		 * @param duration
+		 * @param timeUnit
+		 * @return {@link OptionalsStep}
+		 */
+		OptionalsStep withReadTimeout(int duration, TimeUnit timeUnit);
+
 		ShopifySdk build();
+
 	}
 
 	public static interface AuthorizationTokenStep {
-		BuildStep withAuthorizationToken(final String authorizationToken);
+		OptionalsStep withAuthorizationToken(final String authorizationToken);
 
 	}
 
@@ -174,7 +247,7 @@ public class ShopifySdk {
 	}
 
 	public static interface AccessTokenStep {
-		BuildStep withAccessToken(final String accessToken);
+		OptionalsStep withAccessToken(final String accessToken);
 
 		ClientSecretStep withClientId(final String clientId);
 	}
@@ -197,18 +270,48 @@ public class ShopifySdk {
 			this.clientSecret = steps.clientSecret;
 			this.authorizationToken = steps.authorizationToken;
 			this.apiUrl = steps.apiUrl;
+			this.minimumRequestRetryRandomDelayMilliseconds = steps.minimumRequestRetryRandomDelayMilliseconds;
+			this.maximumRequestRetryRandomDelayMilliseconds = steps.maximumRequestRetryRandomDelayMilliseconds;
+			this.maximumRequestRetryTimeoutMilliseconds = steps.maximumRequestRetryTimeoutMilliseconds;
+
+			CLIENT.property(ClientProperties.CONNECT_TIMEOUT, Math.toIntExact(steps.connectionTimeoutMilliseconds));
+			CLIENT.property(ClientProperties.READ_TIMEOUT, Math.toIntExact(steps.readTimeoutMilliseconds));
+			validateConstructionOfShopifySdk();
 		}
 
 	}
 
+	private void validateConstructionOfShopifySdk() {
+		if (this.minimumRequestRetryRandomDelayMilliseconds < ONE_SECOND_IN_MILLISECONDS) {
+			throw new IllegalArgumentException(INVALID_MINIMUM_REQUEST_RETRY_DELAY_MESSAGE);
+		}
+		if (this.maximumRequestRetryRandomDelayMilliseconds < TWO_SECONDS_IN_MILLISECONDS) {
+			throw new IllegalArgumentException(INVALID_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE);
+		}
+		if (this.maximumRequestRetryTimeoutMilliseconds < TWO_SECONDS_IN_MILLISECONDS) {
+			throw new IllegalArgumentException(INVALID_MAXIMUM_REQUEST_RETRY_TIMEOUT_MESSAGE);
+		}
+
+		if (minimumRequestRetryRandomDelayMilliseconds > maximumRequestRetryRandomDelayMilliseconds) {
+			throw new IllegalArgumentException(
+					MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE);
+		}
+	}
+
 	protected static class Steps
-			implements SubdomainStep, ClientSecretStep, AuthorizationTokenStep, AccessTokenStep, BuildStep {
+			implements SubdomainStep, ClientSecretStep, AuthorizationTokenStep, AccessTokenStep, OptionalsStep {
+
 		private String subdomain;
 		private String accessToken;
 		private String clientId;
 		private String clientSecret;
 		private String authorizationToken;
 		private String apiUrl;
+		private long minimumRequestRetryRandomDelayMilliseconds = DEFAULT_MINIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS;
+		private long maximumRequestRetryRandomDelayMilliseconds = DEFAULT_MAXIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS;
+		private long maximumRequestRetryTimeoutMilliseconds = DEFAULT_MAXIMUM_REQUEST_RETRY_TIMEOUT_IN_MILLISECONDS;
+		private long connectionTimeoutMilliseconds = DEFAULT_CONNECTION_TIMEOUT_IN_MILLISECONDS;
+		private long readTimeoutMilliseconds = DEFAULT_READ_TIMEOUT_IN_MILLISECONDS;
 
 		@Override
 		public ShopifySdk build() {
@@ -216,7 +319,7 @@ public class ShopifySdk {
 		}
 
 		@Override
-		public BuildStep withAccessToken(final String accessToken) {
+		public OptionalsStep withAccessToken(final String accessToken) {
 			this.accessToken = accessToken;
 			return this;
 		}
@@ -240,7 +343,7 @@ public class ShopifySdk {
 		}
 
 		@Override
-		public BuildStep withAuthorizationToken(final String authorizationToken) {
+		public OptionalsStep withAuthorizationToken(final String authorizationToken) {
 			this.authorizationToken = authorizationToken;
 			return this;
 		}
@@ -248,6 +351,36 @@ public class ShopifySdk {
 		@Override
 		public AuthorizationTokenStep withClientSecret(final String clientSecret) {
 			this.clientSecret = clientSecret;
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withMinimumRequestRetryRandomDelay(final int duration, final TimeUnit timeUnit) {
+			this.minimumRequestRetryRandomDelayMilliseconds = timeUnit.toMillis(duration);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withMaximumRequestRetryRandomDelay(final int duration, final TimeUnit timeUnit) {
+			this.maximumRequestRetryRandomDelayMilliseconds = timeUnit.toMillis(duration);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withMaximumRequestRetryTimeout(final int duration, final TimeUnit timeUnit) {
+			this.maximumRequestRetryTimeoutMilliseconds = timeUnit.toMillis(duration);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withConnectionTimeout(final int duration, final TimeUnit timeUnit) {
+			this.connectionTimeoutMilliseconds = timeUnit.toMillis(duration);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withReadTimeout(final int duration, final TimeUnit timeUnit) {
+			this.readTimeoutMilliseconds = timeUnit.toMillis(duration);
 			return this;
 		}
 
@@ -462,6 +595,7 @@ public class ShopifySdk {
 			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest) {
 		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
 		final ShopifyFulfillment shopifyFulfillment = shopifyFulfillmentCreationRequest.getRequest();
+
 		shopifyFulfillmentRoot.setFulfillment(shopifyFulfillment);
 		final Response response = post(
 				getWebTarget().path(ORDERS).path(shopifyFulfillment.getOrderId()).path(FULFILLMENTS),
@@ -703,10 +837,11 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-
-		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse)
-				.withWaitStrategy(WaitStrategies.randomWait(2, TimeUnit.SECONDS, 30, TimeUnit.SECONDS))
-				.withStopStrategy(StopStrategies.stopAfterDelay(15, TimeUnit.MINUTES))
+		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
+						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
+				.withStopStrategy(
+						StopStrategies.stopAfterDelay(maximumRequestRetryTimeoutMilliseconds, TimeUnit.MILLISECONDS))
 				.withRetryListener(new ShopifySdkRetryListener()).build();
 	}
 
@@ -777,9 +912,8 @@ public class ShopifySdk {
 		final ObjectMapper mapper = buildMapper();
 		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(mapper);
-		return ClientBuilder.newClient().property(ClientProperties.CONNECT_TIMEOUT, ONE_MINUTE_IN_MILLISECONDS)
-				.register(JacksonFeature.class).property(ClientProperties.READ_TIMEOUT, FIVE_MINUTES_IN_MILLISECONDS)
-				.register(provider);
+
+		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
 	}
 
 	static ObjectMapper buildMapper() {
@@ -797,20 +931,32 @@ public class ShopifySdk {
 
 	private static class ShopifySdkRetryListener implements RetryListener {
 
+		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify on attempt number {} and {} seconds since first attempt with exception {}";
+		private static final String RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
+
 		@Override
 		public <V> void onRetry(final Attempt<V> attempt) {
 			if (LOGGER.isWarnEnabled() && attempt.hasResult()) {
 				final Response response = (Response) attempt.getResult();
 				response.bufferEntity();
 				if (shouldRetryResponse(response) && !hasExceededRateLimit(response)) {
-					final long delaySinceFirstAttemptInMilliseconds = attempt.getDelaySinceFirstAttempt();
-					final long delaySinceFirstAttemptInSeconds = TimeUnit.SECONDS
-							.convert(delaySinceFirstAttemptInMilliseconds, TimeUnit.MILLISECONDS);
-					LOGGER.warn(RETRY_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds, attempt.getAttemptNumber(),
-							response.getLocation(), response.getStatus(), response.getStringHeaders(),
-							response.readEntity(String.class));
+					final long delaySinceFirstAttemptInSeconds = convertMillisecondsToSeconds(
+							attempt.getDelaySinceFirstAttempt());
+					LOGGER.warn(RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds,
+							attempt.getAttemptNumber(), response.getLocation(), response.getStatus(),
+							response.getStringHeaders(), response.readEntity(String.class));
 				}
+			} else if (LOGGER.isWarnEnabled() && attempt.hasException()) {
+
+				final long delaySinceFirstAttemptInSeconds = convertMillisecondsToSeconds(
+						attempt.getDelaySinceFirstAttempt());
+				LOGGER.warn(RETRY_EXCEPTION_ATTEMPT_MESSAGE, attempt.getAttemptNumber(),
+						delaySinceFirstAttemptInSeconds, attempt.getExceptionCause());
 			}
+		}
+
+		private long convertMillisecondsToSeconds(final long milliiseconds) {
+			return TimeUnit.SECONDS.convert(milliiseconds, TimeUnit.MILLISECONDS);
 		}
 	}
 
