@@ -50,7 +50,6 @@ import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
-import com.shopify.model.ShopifyAddressUpdateRequest;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
@@ -137,7 +136,7 @@ public class ShopifySdkTest {
 				.anyTimes();
 
 		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withAccessToken(accessToken)
-				.withMaximumRequestRetryTimeout(3, TimeUnit.SECONDS).withConnectionTimeout(3, TimeUnit.SECONDS).build();
+				.withMaximumRequestRetryTimeout(2, TimeUnit.SECONDS).withConnectionTimeout(1, TimeUnit.SECONDS).build();
 
 	}
 
@@ -174,7 +173,8 @@ public class ShopifySdkTest {
 		final String subdomainUrl = driver.getBaseUrl();
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.OAUTH)
-				.append(FORWARD_SLASH).append(ShopifySdk.ACCESS_TOKEN).toString();
+				// .append(FORWARD_SLASH)
+				.append("/test/").append(ShopifySdk.ACCESS_TOKEN).toString();
 
 		final ShopifyAccessTokenRoot shopifyAccessTokenRoot = new ShopifyAccessTokenRoot();
 		shopifyAccessTokenRoot.setAccessToken("897123871827381723");
@@ -188,7 +188,8 @@ public class ShopifySdkTest {
 						.withStatus(Status.OK.getStatusCode()));
 
 		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withClientId("some-client-id")
-				.withClientSecret("some-client-secret").withAuthorizationToken("3892742738482").build();
+				.withClientSecret("some-client-secret").withAuthorizationToken("3892742738482")
+				.withMaximumRequestRetryTimeout(2, TimeUnit.SECONDS).build();
 
 		final String expectedShopPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.SHOP).toString();
 
@@ -236,7 +237,8 @@ public class ShopifySdkTest {
 						.withStatus(Status.UNAUTHORIZED.getStatusCode()));
 
 		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withClientId("some-client-id")
-				.withClientSecret("some-client-secret").withAuthorizationToken("3892742738482").build();
+				.withClientSecret("some-client-secret").withAuthorizationToken("3892742738482")
+				.withMaximumRequestRetryTimeout(2, TimeUnit.SECONDS).build();
 
 		assertNull(shopifySdk.getAccessToken());
 		shopifySdk.getShop();
@@ -1925,17 +1927,12 @@ public class ShopifySdkTest {
 
 		shopifyOrderRoot.setOrder(shopifyOrder);
 
-		final ShopifyAddressUpdateRequest shopifyAddressUpdateRequest = new ShopifyAddressUpdateRequest();
-		shopifyAddressUpdateRequest.setAddress1("224 Wyoming Ave");
-		shopifyAddressUpdateRequest.setAddress2("Suite 100");
-		shopifyAddressUpdateRequest.setCompany("channelape");
-		shopifyAddressUpdateRequest.setFirstName("Ryan Kazokas");
-		shopifyAddressUpdateRequest.setLastname("Kazokas");
-		shopifyAddressUpdateRequest.setProvince("PEnnsylvania");
-		shopifyAddressUpdateRequest.setProvinceCode("PA");
-		shopifyAddressUpdateRequest.setZip("18503");
-		shopifyAddressUpdateRequest.setCountry("US");
-		shopifyAddressUpdateRequest.setCountryCode("USA");
+		final ShopifyOrderShippingAddressUpdateRequest shopifyAddressRequest = ShopifyOrderShippingAddressUpdateRequest
+				.newBuilder().withId(someShopifyOrderId).withAddress1("224 Wyoming Ave").withAddress2("Suite 100")
+				.withCity("Scranton").withProvince("PEnnsylvania").withProvinceCode("PA").withZip("18503")
+				.withCountry("USA").withCountryCode("US").withPhone("123").withFirstName("Ryan").withLastName("Kazokas")
+				.withName("Ryan Kazokas").withCompany("ChannelApe").withLatitude(new BigDecimal(410.44444))
+				.withLongitude(new BigDecimal(123.442)).build();
 
 		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
 
@@ -1947,9 +1944,7 @@ public class ShopifySdkTest {
 						.capturingBodyIn(actualRequestBody),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
-		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderRequest = ShopifyOrderShippingAddressUpdateRequest
-				.newBuilder().withId(someShopifyOrderId).withShippingAddress(shopifyAddressUpdateRequest).build();
-		final ShopifyOrder actualShopifyOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderRequest);
+		final ShopifyOrder actualShopifyOrder = shopifySdk.updateOrderShippingAddress(shopifyAddressRequest);
 
 		assertEquals("224 Wyoming Ave",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("address1").asText());
@@ -1958,18 +1953,22 @@ public class ShopifySdkTest {
 		assertEquals("PEnnsylvania",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("province").asText());
 		assertEquals("18503", actualRequestBody.getContent().get("order").get("shipping_address").get("zip").asText());
-		assertEquals("channelape",
-				actualRequestBody.getContent().get("order").get("shipping_address").get("company").asText());
-		assertEquals("Ryan Kazokas",
+
+		assertEquals("Ryan",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("first_name").asText());
 		assertEquals("Kazokas",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("last_name").asText());
-		assertEquals("US", actualRequestBody.getContent().get("order").get("shipping_address").get("country").asText());
+		assertEquals("Ryan Kazokas",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("name").asText());
 		assertEquals("USA",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("country").asText());
+		assertEquals("US",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("country_code").asText());
 		assertEquals("PA",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("province_code").asText());
-
+		assertEquals("123", actualRequestBody.getContent().get("order").get("shipping_address").get("phone").asText());
+		assertEquals("ChannelApe",
+				actualRequestBody.getContent().get("order").get("shipping_address").get("company").asText());
 		assertEquals(shopifyOrder.getId(), actualShopifyOrder.getId());
 		assertEquals(shopifyOrder.getName(), actualShopifyOrder.getName());
 		assertEquals(shopifyCustomer.getEmail(), actualShopifyOrder.getCustomer().getEmail());

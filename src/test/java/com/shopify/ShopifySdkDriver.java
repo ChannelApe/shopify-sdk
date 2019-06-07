@@ -27,7 +27,6 @@ import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
-import com.shopify.model.ShopifyAddressUpdateRequest;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
@@ -558,25 +557,16 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
-		final ShopifyAddressUpdateRequest shopifyAddress = new ShopifyAddressUpdateRequest();
-		final String someAddress1 = "Testing From SDK Driver";
-		shopifyAddress.setAddress1(someAddress1);
-		shopifyAddress.setAddress2(null);
-		shopifyAddress.setName("Ryan Kazokas224444444444444444444444");
-		shopifyAddress.setFirstName("Ryan");
-		shopifyAddress.setLastname("Kazokas");
-		shopifyAddress.setCountry("United States");
-		shopifyAddress.setCity("Scranton");
 
-		shopifyAddress.setCountryCode("US");
-		shopifyAddress.setProvince("PEnnsylvania");
-		shopifyAddress.setProvinceCode("PA");
-		shopifyAddress.setZip("9999999999999999999999999999999");
 		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderShippingAddressUpdateRequest
-				.newBuilder().withId("1124214472765").withShippingAddress(shopifyAddress).build();
+				.newBuilder().withId("1124214472765").withAddress1("Testing From SDK Driver2").withAddress2("Suite 100")
+				.withCity("Scranton").withProvince("Pennsylvania").withProvinceCode("PA").withZip("18503")
+				.withCountry("United States").withCountryCode("US").withPhone("9829374293874").withFirstName("Ryan")
+				.withLastName("Kazokas").withName("Ryan Kazokas").withCompany("ChannelApe").withLatitude(null)
+				.withLongitude(null).build();
 
 		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
-		assertEquals(someAddress1, updateOrder.getShippingAddress().getAddress1());
+		assertEquals("Testing From SDK Driver2", updateOrder.getShippingAddress().getAddress1());
 	}
 
 	@After

@@ -811,9 +811,7 @@ public class ShopifySdk {
 	private <T> Response put(final WebTarget webTarget, final T object) {
 		final Callable<Response> responseCallable = () -> {
 			final Entity<T> entity = Entity.entity(object, MediaType.APPLICATION_JSON);
-			final Response response = webTarget.request(MediaType.APPLICATION_JSON)
-					.header(ACCESS_TOKEN_HEADER, accessToken).put(entity);
-			return response;
+			return webTarget.request(MediaType.APPLICATION_JSON).header(ACCESS_TOKEN_HEADER, accessToken).put(entity);
 		};
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, Status.OK);
