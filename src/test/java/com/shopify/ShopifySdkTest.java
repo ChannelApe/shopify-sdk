@@ -173,8 +173,7 @@ public class ShopifySdkTest {
 		final String subdomainUrl = driver.getBaseUrl();
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.OAUTH)
-				// .append(FORWARD_SLASH)
-				.append("/test/").append(ShopifySdk.ACCESS_TOKEN).toString();
+				.append(FORWARD_SLASH).append(ShopifySdk.ACCESS_TOKEN).toString();
 
 		final ShopifyAccessTokenRoot shopifyAccessTokenRoot = new ShopifyAccessTokenRoot();
 		shopifyAccessTokenRoot.setAccessToken("897123871827381723");
