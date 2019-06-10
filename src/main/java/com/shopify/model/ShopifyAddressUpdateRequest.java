@@ -7,9 +7,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyAddress {
+@JsonInclude(Include.ALWAYS)
+public class ShopifyAddressUpdateRequest {
 
 	@XmlElement(name = "first_name")
 	private String firstName;
