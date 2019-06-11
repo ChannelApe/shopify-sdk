@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.channelape</groupId>
 	<artifactId>shopify-sdk</artifactId>
-	<version>1.4.0</version>
+	<version>1.5.0-SNAPSHOT</version>
 
 	<name>Shopify SDK</name>
 	<description>Java SDK for Shopify REST API.</description>
@@ -159,7 +159,8 @@
 							<goal>mutationCoverage</goal>
 						</goals>
 						<configuration>
-							<mutationThreshold>82</mutationThreshold>
+							<mutationThreshold>87</mutationThreshold>
+							<threads>10</threads>
 							<targetClasses>
 								<param>com.shopify.*</param>
 							</targetClasses>
