@@ -1932,7 +1932,7 @@ public class ShopifySdkTest {
 				.newBuilder().withId(someShopifyOrderId).withAddress1("224 Wyoming Ave").withAddress2("Suite 100")
 				.withCity("Scranton").withProvince("PEnnsylvania").withProvinceCode("PA").withZip("18503")
 				.withCountry("USA").withCountryCode("US").withPhone("123").withFirstName("Ryan").withLastName("Kazokas")
-				.withName("Ryan Kazokas").withCompany("ChannelApe").withLatitude(new BigDecimal(410.44444))
+				.withCompany("ChannelApe").withLatitude(new BigDecimal(410.44444))
 				.withLongitude(new BigDecimal(123.442)).build();
 
 		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
@@ -1959,8 +1959,7 @@ public class ShopifySdkTest {
 				actualRequestBody.getContent().get("order").get("shipping_address").get("first_name").asText());
 		assertEquals("Kazokas",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("last_name").asText());
-		assertEquals("Ryan Kazokas",
-				actualRequestBody.getContent().get("order").get("shipping_address").get("name").asText());
+
 		assertEquals("USA",
 				actualRequestBody.getContent().get("order").get("shipping_address").get("country").asText());
 		assertEquals("US",

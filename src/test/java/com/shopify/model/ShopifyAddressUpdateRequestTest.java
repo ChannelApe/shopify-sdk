@@ -13,7 +13,6 @@ public class ShopifyAddressUpdateRequestTest {
 	private static final String SOME_PHONE = "3874928734234";
 	private static final BigDecimal SOME_LONGITUDE = new BigDecimal(485.8323);
 	private static final BigDecimal SOME_LATITUDE = new BigDecimal(41.489);
-	private static final String SOME_NAME = "Ryan Kazokas";
 	private static final String SOME_LAST_NAME = "Kazokas";
 	private static final String SOME_FIRST_NAME = "Ryan";
 	private static final String SOME_COUNTRY_CODE = "US";
@@ -35,7 +34,6 @@ public class ShopifyAddressUpdateRequestTest {
 		shopifyAddressUpdateRequest.setCountryCode(SOME_COUNTRY_CODE);
 		shopifyAddressUpdateRequest.setFirstName(SOME_FIRST_NAME);
 		shopifyAddressUpdateRequest.setLastname(SOME_LAST_NAME);
-		shopifyAddressUpdateRequest.setName(SOME_NAME);
 		shopifyAddressUpdateRequest.setLatitude(SOME_LATITUDE);
 		shopifyAddressUpdateRequest.setLongitude(SOME_LONGITUDE);
 		shopifyAddressUpdateRequest.setPhone(SOME_PHONE);
