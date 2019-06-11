@@ -44,6 +44,10 @@ import com.shopify.model.MetafieldsRoot;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyCancelOrderRequest;
+import com.shopify.model.ShopifyCustomer;
+import com.shopify.model.ShopifyCustomerRoot;
+import com.shopify.model.ShopifyCustomerUpdateRequest;
+import com.shopify.model.ShopifyCustomerUpdateRoot;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
@@ -170,6 +174,8 @@ public class ShopifySdk {
 	private final ShopifySdkRetryListener shopifySdkRetryListener = new ShopifySdkRetryListener();
 
 	private static final Client CLIENT = buildClient();
+
+	private static final String CUSTOMERS = "customers";
 
 	public static interface OptionalsStep {
 
@@ -628,6 +634,15 @@ public class ShopifySdk {
 				shopifyOrderRoot);
 		final ShopifyOrderRoot shopifyOrderRootResponse = response.readEntity(ShopifyOrderRoot.class);
 		return shopifyOrderRootResponse.getOrder();
+	}
+
+	public ShopifyCustomer updateCustomer(final ShopifyCustomerUpdateRequest shopifyCustomerUpdateRequest) {
+		final ShopifyCustomerUpdateRoot shopifyCustomerUpdateRequestRoot = new ShopifyCustomerUpdateRoot();
+		shopifyCustomerUpdateRequestRoot.setCustomer(shopifyCustomerUpdateRequest);
+		final Response response = put(getWebTarget().path(CUSTOMERS).path(shopifyCustomerUpdateRequest.getId()),
+				shopifyCustomerUpdateRequestRoot);
+		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
+		return shopifyCustomerRootResponse.getCustomer();
 	}
 
 	public ShopifyFulfillment cancelFulfillment(final String orderId, final String fulfillmentId) {
