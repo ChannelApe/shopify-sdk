@@ -51,6 +51,8 @@ import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyCustomer;
+import com.shopify.model.ShopifyCustomerRoot;
+import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
@@ -2015,6 +2017,53 @@ public class ShopifySdkTest {
 		assertEquals(shippingLine1.getSource(), actualShopifyOrder.getShippingLines().get(0).getSource());
 		assertEquals(shippingLine1.getTitle(), actualShopifyOrder.getShippingLines().get(0).getTitle());
 
+	}
+
+	@Test
+	public void givenSomeUpdateCustomerRequestWhenUpdatingCustomerThenUpdateAndReturnCustomer()
+			throws JsonProcessingException {
+		final String someCustomerId = "some-id";
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers").append(FORWARD_SLASH)
+				.append(someCustomerId).toString();
+		final ShopifyCustomerUpdateRequest shopifyCustomerUpdateRequest = ShopifyCustomerUpdateRequest.newBuilder()
+				.withId(someCustomerId).withFirstName("Ryan").withLastName("Kazokas")
+				.withEmail("rkazokas@channelape.com").withPhone("57087482349").build();
+		final ShopifyCustomerRoot shopifyCustomerRoot = new ShopifyCustomerRoot();
+		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
+		shopifyCustomer.setFirstName("Ryan");
+		shopifyCustomer.setLastname("Kazokas");
+		shopifyCustomer.setEmail("rkazokas@channelape.com");
+		shopifyCustomer.setNote("Some NOtes");
+		shopifyCustomer.setOrdersCount(3);
+		shopifyCustomer.setState("some-state");
+		shopifyCustomer.setPhone("57087482349");
+		shopifyCustomer.setTotalSpent(new BigDecimal(32.12));
+		shopifyCustomerRoot.setCustomer(shopifyCustomer);
+		final String expectedResponseBodyString = getJsonString(ShopifyCustomerRoot.class, shopifyCustomerRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.PUT)
+						.capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyCustomerUpdateRequest);
+
+		assertEquals("rkazokas@channelape.com", updatedCustomer.getEmail());
+		assertEquals("Ryan", updatedCustomer.getFirstName());
+		assertEquals("Kazokas", updatedCustomer.getLastname());
+		assertEquals("Some NOtes", updatedCustomer.getNote());
+		assertEquals(3, updatedCustomer.getOrdersCount());
+		assertEquals("57087482349", updatedCustomer.getPhone());
+		assertEquals("some-state", updatedCustomer.getState());
+		assertEquals(new BigDecimal(32.12), updatedCustomer.getTotalSpent());
+
+		assertEquals("rkazokas@channelape.com", actualRequestBody.getContent().get("customer").get("email").asText());
+		assertEquals("Ryan", actualRequestBody.getContent().get("customer").get("first_name").asText());
+		assertEquals("Kazokas", actualRequestBody.getContent().get("customer").get("last_name").asText());
+		assertEquals("57087482349", actualRequestBody.getContent().get("customer").get("phone").asText());
 	}
 
 	@Test

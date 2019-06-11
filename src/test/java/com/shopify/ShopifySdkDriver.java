@@ -28,6 +28,7 @@ import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyCustomer;
+import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
@@ -567,6 +568,18 @@ public class ShopifySdkDriver {
 
 		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
 		assertEquals("Testing From SDK Driver2", updateOrder.getShippingAddress().getAddress1());
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingACustomerThenExpectValuesToBeUpdatedOnCustomer()
+			throws JsonProcessingException {
+
+		final ShopifyCustomerUpdateRequest shopifyOrderUpdateRequest = ShopifyCustomerUpdateRequest.newBuilder()
+				.withId("6780238412").withFirstName("RyanTest").withLastName("Kazokas123")
+				.withEmail("rkazokas@channelape.com").withPhone("5702392904").build();
+
+		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
+		assertEquals("RyanTest", updatedCustomer.getFirstName());
 	}
 
 	@After
