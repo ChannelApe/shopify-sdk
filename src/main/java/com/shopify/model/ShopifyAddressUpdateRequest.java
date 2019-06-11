@@ -19,7 +19,6 @@ public class ShopifyAddressUpdateRequest {
 	private String firstName;
 	@XmlElement(name = "last_name")
 	private String lastname;
-	private String name;
 	private String company;
 	private String address1;
 	private String address2;
@@ -49,14 +48,6 @@ public class ShopifyAddressUpdateRequest {
 
 	public void setLastname(final String lastname) {
 		this.lastname = lastname;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
 	}
 
 	public String getCompany() {

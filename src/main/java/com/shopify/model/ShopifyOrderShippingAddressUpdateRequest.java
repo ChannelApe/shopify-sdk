@@ -31,12 +31,8 @@ public class ShopifyOrderShippingAddressUpdateRequest {
 		LatitudeStep withCompany(final String company);
 	}
 
-	public static interface NameStep {
-		CompanyStep withName(final String name);
-	}
-
 	public static interface LastNameStep {
-		NameStep withLastName(final String lastName);
+		CompanyStep withLastName(final String lastName);
 	}
 
 	public static interface FirstNameStep {
@@ -93,7 +89,7 @@ public class ShopifyOrderShippingAddressUpdateRequest {
 	}
 
 	private static class Steps implements IdStep, Address1Step, Address2Step, CityStep, ProvinceStep, ProvinceCodeStep,
-			ZipCodeStep, CountryStep, CountryCodeStep, PhoneStep, LatitudeStep, CompanyStep, LongitudeStep, NameStep,
+			ZipCodeStep, CountryStep, CountryCodeStep, PhoneStep, LatitudeStep, CompanyStep, LongitudeStep,
 			LastNameStep, FirstNameStep, BuildStep {
 		private String id;
 		private final ShopifyAddressUpdateRequest shippingAddress = new ShopifyAddressUpdateRequest();
@@ -110,7 +106,7 @@ public class ShopifyOrderShippingAddressUpdateRequest {
 		}
 
 		@Override
-		public NameStep withLastName(final String lastName) {
+		public CompanyStep withLastName(final String lastName) {
 			this.shippingAddress.setLastname(lastName);
 			return this;
 		}
@@ -178,12 +174,6 @@ public class ShopifyOrderShippingAddressUpdateRequest {
 		@Override
 		public Address1Step withId(final String id) {
 			this.id = id;
-			return this;
-		}
-
-		@Override
-		public CompanyStep withName(final String name) {
-			this.shippingAddress.setName(name);
 			return this;
 		}
 

@@ -562,8 +562,7 @@ public class ShopifySdkDriver {
 				.newBuilder().withId("1124214472765").withAddress1("Testing From SDK Driver2").withAddress2("Suite 100")
 				.withCity("Scranton").withProvince("Pennsylvania").withProvinceCode("PA").withZip("18503")
 				.withCountry("United States").withCountryCode("US").withPhone("9829374293874").withFirstName("Ryan")
-				.withLastName("Kazokas").withName("Ryan Kazokas").withCompany("ChannelApe").withLatitude(null)
-				.withLongitude(null).build();
+				.withLastName("Kazokas").withCompany("ChannelApe").withLatitude(null).withLongitude(null).build();
 
 		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
 		assertEquals("Testing From SDK Driver2", updateOrder.getShippingAddress().getAddress1());
