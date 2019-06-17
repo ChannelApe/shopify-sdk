@@ -7,15 +7,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyAddress {
+@JsonInclude(Include.ALWAYS)
+public class ShopifyAddressUpdateRequest {
 
 	@XmlElement(name = "first_name")
 	private String firstName;
 	@XmlElement(name = "last_name")
 	private String lastname;
-	private String name;
 	private String company;
 	private String address1;
 	private String address2;
@@ -45,14 +48,6 @@ public class ShopifyAddress {
 
 	public void setLastname(final String lastname) {
 		this.lastname = lastname;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
 	}
 
 	public String getCompany() {

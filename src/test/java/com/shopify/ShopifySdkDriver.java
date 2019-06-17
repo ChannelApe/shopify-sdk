@@ -21,12 +21,14 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyCustomer;
+import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
@@ -38,6 +40,7 @@ import com.shopify.model.ShopifyLocation;
 import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
+import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyProducts;
@@ -503,7 +506,7 @@ public class ShopifySdkDriver {
 		final ShopifyGiftCardCreationRequest giftCard = ShopifyGiftCardCreationRequest.newBuilder()
 				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZZ4CAPE").withCurrency("USD").build();
 
-		final ObjectMapper mapper = ShopifySdk.buildMapper();
+		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
 		final String dtoAsString = mapper.writeValueAsString(giftCard);
 		System.out.println(dtoAsString);
 		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(giftCard);
@@ -522,7 +525,7 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomeOrderWhenCreatingOrderThenCreateOrder() throws JsonProcessingException {
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setVariantId("16069122490427");
+		shopifyLineItem1.setVariantId("12262219972712");
 		shopifyLineItem1.setQuantity(44);
 
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
@@ -551,6 +554,31 @@ public class ShopifySdkDriver {
 		System.out.println(dtoAsString);
 		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderCreationRequest);
 		assertNotNull(actualShopifyOrder);
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
+
+		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderShippingAddressUpdateRequest
+				.newBuilder().withId("1124214472765").withAddress1("Testing From SDK Driver2").withAddress2("Suite 100")
+				.withCity("Scranton").withProvince("Pennsylvania").withProvinceCode("PA").withZip("18503")
+				.withCountry("United States").withCountryCode("US").withPhone("9829374293874").withFirstName("Ryan")
+				.withLastName("Kazokas").withCompany("ChannelApe").withLatitude(null).withLongitude(null).build();
+
+		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
+		assertEquals("Testing From SDK Driver2", updateOrder.getShippingAddress().getAddress1());
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingACustomerThenExpectValuesToBeUpdatedOnCustomer()
+			throws JsonProcessingException {
+
+		final ShopifyCustomerUpdateRequest shopifyOrderUpdateRequest = ShopifyCustomerUpdateRequest.newBuilder()
+				.withId("6780238412").withFirstName("RyanTest").withLastName("Kazokas123")
+				.withEmail("rkazokas@channelape.com").withPhone("5702392904").build();
+
+		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
+		assertEquals("RyanTest", updatedCustomer.getFirstName());
 	}
 
 	@After
