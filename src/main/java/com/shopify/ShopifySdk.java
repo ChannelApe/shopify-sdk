@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -35,60 +36,7 @@ import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Count;
-import com.shopify.model.Image;
-import com.shopify.model.ImageAltTextCreationRequest;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldsRoot;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAccessTokenRoot;
-import com.shopify.model.ShopifyCancelOrderRequest;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerRoot;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyCustomerUpdateRoot;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentRoot;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyImageRoot;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyLocationsRoot;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderRisksRoot;
-import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyOrderUpdateRoot;
-import com.shopify.model.ShopifyOrdersRoot;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductCreationRequest;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-import com.shopify.model.ShopifyProductRequest;
-import com.shopify.model.ShopifyProductRoot;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyProductsRoot;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyShop;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyTransactionsRoot;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRoot;
-import com.shopify.model.ShopifyVariantUpdateRequest;
+
 
 public class ShopifySdk {
 
@@ -132,6 +80,9 @@ public class ShopifySdk {
 	static final String CREATED_AT_MIN_QUERY_PARAMETER = "created_at_min";
 	static final String CREATED_AT_MAX_QUERY_PARAMETER = "created_at_max";
 	static final String ATTRIBUTION_APP_ID_QUERY_PARAMETER = "attribution_app_id";
+	static final String IDS_QUERY_PARAMETER = "ids";
+	static final String SINCE_ID_QUERY_PARAMETER = "since_id";
+	static final String QUERY_QUERY_PARAMETER = "query";
 	static final String CALCULATE = "calculate";
 	static final String REFUNDS = "refunds";
 	static final String TRANSACTIONS = "transactions";
@@ -176,6 +127,7 @@ public class ShopifySdk {
 	private static final Client CLIENT = buildClient();
 
 	private static final String CUSTOMERS = "customers";
+	private static final String SEARCH = "search";
 
 	public static interface OptionalsStep {
 
@@ -643,6 +595,75 @@ public class ShopifySdk {
 				shopifyCustomerUpdateRequestRoot);
 		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
 		return shopifyCustomerRootResponse.getCustomer();
+	}
+
+	public ShopifyCustomer getCustomerById(final String id) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(id));
+		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
+		return shopifyCustomerRootResponse.getCustomer();
+	}
+
+	public List<ShopifyCustomer> getCustomers(Response response) {
+		ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);
+		return shopifyCustomersRootResponse.getCustomers();
+	}
+
+	public List<ShopifyCustomer> getCustomers(final int page) {
+		return getCustomers(page, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyCustomer> getCustomers(final int page, final int pageSize) {
+		final Response response = get(getWebTarget().path(CUSTOMERS)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		return getCustomers(response);
+	}
+
+	public List<ShopifyCustomer> getCustomers(List<String> ids) {
+		final Response response = get(getWebTarget().path(CUSTOMERS)
+				.queryParam(IDS_QUERY_PARAMETER, StringUtils.join(ids, ",")));
+		return getCustomers(response);
+	}
+
+	public List<ShopifyCustomer> getCustomers(String sinceId) {
+		final Response response = get(getWebTarget().path(CUSTOMERS)
+				.queryParam(SINCE_ID_QUERY_PARAMETER, sinceId));
+		return getCustomers(response);
+	}
+
+	public List<ShopifyCustomer> getCustomers(final DateTime mininumCreationDate, final int page, final int pageSize) {
+		final Response response = get(getWebTarget().path(CUSTOMERS)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		return getCustomers(response);
+	}
+
+	public List<ShopifyCustomer> getCustomers(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
+										final int page) {
+		return getCustomers(mininumCreationDate, maximumCreationDate, page, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyCustomer> getCustomers(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
+										final int page, final int pageSize) {
+		final Response response = get(getWebTarget().path(CUSTOMERS)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, mininumCreationDate.toString())
+				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		return getCustomers(response);
+	}
+
+	public List<ShopifyCustomer> customerSearch(Response response) {
+		ShopifyCustomersRoot shopifyCustomersRoot = response.readEntity(ShopifyCustomersRoot.class);
+		return shopifyCustomersRoot.getCustomers();
+	}
+
+	public List<ShopifyCustomer> customerSearch(String query) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(SEARCH)
+				.queryParam(QUERY_QUERY_PARAMETER, query)
+				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
+		return customerSearch(response);
 	}
 
 	public ShopifyFulfillment cancelFulfillment(final String orderId, final String fulfillmentId) {
