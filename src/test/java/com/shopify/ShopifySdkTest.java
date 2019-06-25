@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
-import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -42,6 +41,66 @@ import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
+import com.shopify.model.Count;
+import com.shopify.model.Image;
+import com.shopify.model.Metafield;
+import com.shopify.model.MetafieldRoot;
+import com.shopify.model.MetafieldValueType;
+import com.shopify.model.MetafieldsRoot;
+import com.shopify.model.OrderRiskRecommendation;
+import com.shopify.model.Shop;
+import com.shopify.model.ShopifyAccessTokenRoot;
+import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyCustomer;
+import com.shopify.model.ShopifyCustomerRoot;
+import com.shopify.model.ShopifyCustomerUpdateRequest;
+import com.shopify.model.ShopifyCustomersRoot;
+import com.shopify.model.ShopifyFulfillment;
+import com.shopify.model.ShopifyFulfillmentCreationRequest;
+import com.shopify.model.ShopifyFulfillmentRoot;
+import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGetCustomersRequest;
+import com.shopify.model.ShopifyGiftCard;
+import com.shopify.model.ShopifyGiftCardCreationRequest;
+import com.shopify.model.ShopifyGiftCardRoot;
+import com.shopify.model.ShopifyInventoryLevel;
+import com.shopify.model.ShopifyInventoryLevelRoot;
+import com.shopify.model.ShopifyLineItem;
+import com.shopify.model.ShopifyLocation;
+import com.shopify.model.ShopifyLocationsRoot;
+import com.shopify.model.ShopifyOrder;
+import com.shopify.model.ShopifyOrderCreationRequest;
+import com.shopify.model.ShopifyOrderRisk;
+import com.shopify.model.ShopifyOrderRisksRoot;
+import com.shopify.model.ShopifyOrderRoot;
+import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
+import com.shopify.model.ShopifyOrdersRoot;
+import com.shopify.model.ShopifyProduct;
+import com.shopify.model.ShopifyProductCreationRequest;
+import com.shopify.model.ShopifyProductMetafieldCreationRequest;
+import com.shopify.model.ShopifyProductRoot;
+import com.shopify.model.ShopifyProductUpdateRequest;
+import com.shopify.model.ShopifyProducts;
+import com.shopify.model.ShopifyProductsRoot;
+import com.shopify.model.ShopifyRecurringApplicationCharge;
+import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
+import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
+import com.shopify.model.ShopifyRefund;
+import com.shopify.model.ShopifyRefundCreationRequest;
+import com.shopify.model.ShopifyRefundLineItem;
+import com.shopify.model.ShopifyRefundRoot;
+import com.shopify.model.ShopifyRefundShippingDetails;
+import com.shopify.model.ShopifyShippingLine;
+import com.shopify.model.ShopifyShop;
+import com.shopify.model.ShopifyTransaction;
+import com.shopify.model.ShopifyTransactionReceipt;
+import com.shopify.model.ShopifyTransactionsRoot;
+import com.shopify.model.ShopifyVariant;
+import com.shopify.model.ShopifyVariantCreationRequest;
+import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
+import com.shopify.model.ShopifyVariantRoot;
+import com.shopify.model.ShopifyVariantUpdateRequest;
+import java.lang.reflect.InvocationTargetException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -2047,11 +2106,11 @@ public class ShopifySdkTest {
 		assertEquals("New York", retrievedCustomer.getState());
 		assertEquals(new BigDecimal(32.12), retrievedCustomer.getTotalSpent());
 	}
-
-	@Test
-	public void givenAPageWhenRetrievingCustomersThenRetrieveDefaultPaginatedCustomerList()
-		throws JsonProcessingException {
-		final String someCustomerId = "some-id";
+        
+        @Test
+        public void givenAValidRequestWhenRetrievingAListOfCustomersWithPaginationParamsThenRetrieveThoseCustomers()
+                throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
+                final String someCustomerId = "some-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
 		final ShopifyCustomerRoot shopifyCustomerRoot = new ShopifyCustomerRoot();
@@ -2079,21 +2138,26 @@ public class ShopifySdkTest {
 				.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
 				.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, 1),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+                final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
+                        .newBuilder()
+                        .withPage(1)
+                        .withLimit(50)
+                        .build();
 
-		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(1);
-		assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
-		assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
-		assertEquals(retrievedCustomers.get(0).getEmail(), "me@austincbrown.com");
-		assertEquals(shopifyCustomer.getNote(), "A cool dude");
-		assertEquals(shopifyCustomer.getOrdersCount(), 3);
-		assertEquals(shopifyCustomer.getState(), "New York");
-		assertEquals(shopifyCustomer.getPhone(), "7188675309");
-		assertEquals(shopifyCustomer.getTotalSpent(), new BigDecimal(32.12));
-	}
+                List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
+                assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
+                assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
+                assertEquals(retrievedCustomers.get(0).getEmail(), "me@austincbrown.com");
+                assertEquals(shopifyCustomer.getNote(), "A cool dude");
+                assertEquals(shopifyCustomer.getOrdersCount(), 3);
+                assertEquals(shopifyCustomer.getState(), "New York");
+                assertEquals(shopifyCustomer.getPhone(), "7188675309");
+                assertEquals(shopifyCustomer.getTotalSpent(), new BigDecimal(32.12));
+            }
 
 	@Test
 	public void givenAListOfIdsWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-		throws JsonProcessingException {
+		throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
 		final String someCustomerId = "some-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
@@ -2124,8 +2188,13 @@ public class ShopifySdkTest {
 				.withParam(ShopifySdk.IDS_QUERY_PARAMETER, StringUtils.join(ids, ",")),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
 		);
+                
+                final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
+                        .newBuilder()
+                        .withIds(ids)
+                        .build();
 
-		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(ids);
+		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
 		assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
 		assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
@@ -2139,7 +2208,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenASinceIdWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-		throws JsonProcessingException {
+		throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
 		final String someCustomerId = "some-id";
 		final String sinceId = "since-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
@@ -2169,8 +2238,13 @@ public class ShopifySdkTest {
 						.withParam(ShopifySdk.SINCE_ID_QUERY_PARAMETER, sinceId),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
 		);
-
-		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(sinceId);
+                
+                final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
+                        .newBuilder()
+                        .withSinceId(sinceId)
+                        .build();
+                      
+		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
 		assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
 		assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
@@ -2184,7 +2258,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenMinimumCreationDateAndPaginationParamsWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-		throws JsonProcessingException {
+		throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
 		final String someCustomerId = "some-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
@@ -2217,8 +2291,15 @@ public class ShopifySdkTest {
                         .withParam(ShopifySdk.PAGE_QUERY_PARAMETER, 1),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
 		);
+                
+                final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
+                        .newBuilder()
+                        .withCreatedAtMin(minimumCreationTime)
+                        .withPage(1)
+                        .withLimit(50)
+                        .build();
 
-		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(minimumCreationTime, 1, 50);
+		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
 		assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
 		assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
@@ -2228,11 +2309,11 @@ public class ShopifySdkTest {
 		assertEquals(shopifyCustomer.getState(), "New York");
 		assertEquals(shopifyCustomer.getPhone(), "7188675309");
 		assertEquals(shopifyCustomer.getTotalSpent(), new BigDecimal(32.12));
-	}
+    }
 
     @Test
     public void givenAMinimumAndMaximumCreationDateAndPageParamWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-            throws JsonProcessingException {
+            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
         final String someCustomerId = "some-id";
         final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
                 .toString();
@@ -2267,8 +2348,16 @@ public class ShopifySdkTest {
                         .withParam(ShopifySdk.PAGE_QUERY_PARAMETER, 1),
                 giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
         );
+        
+        final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
+                .newBuilder()
+                .withPage(1)
+                .withLimit(50)
+                .withCreatedAtMin(minimumCreationTime)
+                .withCreatedAtMax(maximumCreationTime)
+                .build();
 
-        final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(minimumCreationTime, maximumCreationTime, 1);
+        final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
         assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
         assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
@@ -2316,7 +2405,7 @@ public class ShopifySdkTest {
                 giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
         );
 
-        final List<ShopifyCustomer> retrievedCustomers = shopifySdk.customerSearch(query);
+        final List<ShopifyCustomer> retrievedCustomers = shopifySdk.searchCustomer(query);
 
         assertEquals(retrievedCustomers.get(0).getFirstName(), "Austin");
         assertEquals(retrievedCustomers.get(0).getLastname(), "Brown");
