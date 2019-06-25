@@ -89,6 +89,7 @@ import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
+import com.shopify.model.ShopifyCustomerObjectUpdateRequestRoot;
 
 public class ShopifySdk {
 
@@ -644,6 +645,15 @@ public class ShopifySdk {
 		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
 		return shopifyCustomerRootResponse.getCustomer();
 	}
+        
+        public ShopifyCustomer updateCustomer(final ShopifyCustomer shopifyCustomer) {
+            final ShopifyCustomerObjectUpdateRequestRoot shopifyCustomerObjectUpdateRequestRoot = new ShopifyCustomerObjectUpdateRequestRoot();
+            shopifyCustomerObjectUpdateRequestRoot.setCustomer(shopifyCustomer);
+            final Response response = put(getWebTarget().path(CUSTOMERS).path(shopifyCustomer.getId()),
+                    shopifyCustomerObjectUpdateRequestRoot);
+            final ShopifyCustomerRoot shopifyCustomerRoot = response.readEntity(ShopifyCustomerRoot.class);
+            return shopifyCustomerRoot.getCustomer();
+        }
 
 	public ShopifyFulfillment cancelFulfillment(final String orderId, final String fulfillmentId) {
 		final Response response = post(
