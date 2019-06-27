@@ -91,11 +91,6 @@ import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.apache.commons.beanutils.BeanUtils;
 
 
 public class ShopifySdk {
@@ -670,6 +665,8 @@ public class ShopifySdk {
 		}
 		if (shopifyGetCustomersRequest.getLimit() != 0) {
 			target = target.queryParam(LIMIT_QUERY_PARAMETER, shopifyGetCustomersRequest.getLimit());
+		} else {
+			target = target.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT);
 		}
 		if (shopifyGetCustomersRequest.getIds() != null) {
 			target = target.queryParam(IDS_QUERY_PARAMETER, String.join( ",", shopifyGetCustomersRequest.getIds()));
@@ -807,16 +804,6 @@ public class ShopifySdk {
 	public String getAccessToken() {
 		return accessToken;
 	}
-        
-        private String convertToCamelCase(String input) {
-            Matcher m = Pattern.compile("(?<=[a-z])[A-Z]").matcher(input);
-            StringBuffer sb = new StringBuffer();
-            while (m.find()) {
-                m.appendReplacement(sb, "_" + m.group().toLowerCase());
-            }
-            m.appendTail(sb);
-            return sb.toString();
-        }
                
 	private List<ShopifyCustomer> getCustomers(Response response) {
 		ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);

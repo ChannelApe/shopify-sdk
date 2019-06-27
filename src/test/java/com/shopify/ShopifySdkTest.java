@@ -100,7 +100,6 @@ import com.shopify.model.ShopifyVariantCreationRequest;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
-import java.lang.reflect.InvocationTargetException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -2141,7 +2140,6 @@ public class ShopifySdkTest {
                 final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
                         .newBuilder()
                         .withPage(1)
-                        .withLimit(50)
                         .build();
 
                 List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
@@ -2159,6 +2157,7 @@ public class ShopifySdkTest {
 	public void givenAListOfIdsWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
 		throws JsonProcessingException {
 		final String someCustomerId = "some-id";
+		final String someOtherCustomerId = "some-other-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
 		final ShopifyCustomerRoot shopifyCustomerRoot = new ShopifyCustomerRoot();
@@ -2175,6 +2174,7 @@ public class ShopifySdkTest {
 		List<ShopifyCustomer> shopifyCustomers = new LinkedList<>();
 		List<String> ids = new ArrayList<>();
 		ids.add(someCustomerId);
+		ids.add(someOtherCustomerId);
 		shopifyCustomers.add(shopifyCustomer);
 		ShopifyCustomersRoot shopifyCustomersRoot = new ShopifyCustomersRoot();
 		shopifyCustomersRoot.setCustomers(shopifyCustomers);
@@ -2185,7 +2185,8 @@ public class ShopifySdkTest {
 
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.GET)
-				.withParam(ShopifySdk.IDS_QUERY_PARAMETER, StringUtils.join(ids, ",")),
+				.withParam(ShopifySdk.IDS_QUERY_PARAMETER, StringUtils.join(ids, ","))
+				.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
 		);
                 
@@ -2235,7 +2236,8 @@ public class ShopifySdkTest {
 
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.GET)
-						.withParam(ShopifySdk.SINCE_ID_QUERY_PARAMETER, sinceId),
+						.withParam(ShopifySdk.SINCE_ID_QUERY_PARAMETER, sinceId)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
 		);
                 
@@ -2258,7 +2260,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenMinimumCreationDateAndPaginationParamsWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-		throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
+		throws JsonProcessingException {
 		final String someCustomerId = "some-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
@@ -2296,7 +2298,6 @@ public class ShopifySdkTest {
                         .newBuilder()
                         .withCreatedAtMin(minimumCreationTime)
                         .withPage(1)
-                        .withLimit(50)
                         .build();
 
 		final List<ShopifyCustomer> retrievedCustomers = shopifySdk.getCustomers(shopifyGetCustomersRequest);
@@ -2313,7 +2314,7 @@ public class ShopifySdkTest {
 
     @Test
     public void givenAMinimumAndMaximumCreationDateAndPageParamWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
+            throws JsonProcessingException {
         final String someCustomerId = "some-id";
         final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
                 .toString();
@@ -2352,7 +2353,6 @@ public class ShopifySdkTest {
         final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest
                 .newBuilder()
                 .withPage(1)
-                .withLimit(50)
                 .withCreatedAtMin(minimumCreationTime)
                 .withCreatedAtMax(maximumCreationTime)
                 .build();
