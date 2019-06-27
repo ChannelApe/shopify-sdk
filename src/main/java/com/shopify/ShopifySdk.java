@@ -662,20 +662,30 @@ public class ShopifySdk {
 		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
 		return shopifyCustomerRootResponse.getCustomer();
 	}
-        
-        public List<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest)
-                throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-            WebTarget target = getWebTarget().path(CUSTOMERS);
-            Map<String, String> props = BeanUtils.describe(shopifyGetCustomersRequest);
-            props.remove("class");
-            for (String key : props.keySet()) {
-                if (props.get(key) != null && !props.get(key).equals("0")) {
-                    target = target.queryParam(convertToCamelCase(key), props.get(key));
-                }
-            }
-            Response response = get(target);
-            return getCustomers(response);
-        }
+
+	public List<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest) {
+		WebTarget target = getWebTarget().path(CUSTOMERS);
+		if (shopifyGetCustomersRequest.getPage() != 0) {
+			target = target.queryParam(PAGE_QUERY_PARAMETER, shopifyGetCustomersRequest.getPage());
+		}
+		if (shopifyGetCustomersRequest.getLimit() != 0) {
+			target = target.queryParam(LIMIT_QUERY_PARAMETER, shopifyGetCustomersRequest.getLimit());
+		}
+		if (shopifyGetCustomersRequest.getIds() != null) {
+			target = target.queryParam(IDS_QUERY_PARAMETER, String.join( ",", shopifyGetCustomersRequest.getIds()));
+		}
+		if (shopifyGetCustomersRequest.getSinceId() != null) {
+			target = target.queryParam(SINCE_ID_QUERY_PARAMETER, shopifyGetCustomersRequest.getSinceId());
+		}
+		if (shopifyGetCustomersRequest.getCreatedAtMin() != null) {
+			target = target.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, shopifyGetCustomersRequest.getCreatedAtMin());
+		}
+		if (shopifyGetCustomersRequest.getCreatedAtMax() != null) {
+			target = target.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, shopifyGetCustomersRequest.getCreatedAtMax());
+		}
+		Response response = get(target);
+		return getCustomers(response);
+	}
 
 	public List<ShopifyCustomer> searchCustomer(String query) {
 		final Response response = get(getWebTarget().path(CUSTOMERS).path(SEARCH)

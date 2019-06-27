@@ -2109,7 +2109,7 @@ public class ShopifySdkTest {
         
         @Test
         public void givenAValidRequestWhenRetrievingAListOfCustomersWithPaginationParamsThenRetrieveThoseCustomers()
-                throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
+                throws JsonProcessingException {
                 final String someCustomerId = "some-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
@@ -2157,7 +2157,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenAListOfIdsWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-		throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
+		throws JsonProcessingException {
 		final String someCustomerId = "some-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
 				.toString();
@@ -2208,7 +2208,7 @@ public class ShopifySdkTest {
 
 	@Test
 	public void givenASinceIdWhenRetrievingCustomersThenRetrieveJustThoseCustomers()
-		throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, JsonProcessingException {
+		throws JsonProcessingException {
 		final String someCustomerId = "some-id";
 		final String sinceId = "since-id";
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append("customers")
