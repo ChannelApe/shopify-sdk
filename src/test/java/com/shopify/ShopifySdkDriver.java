@@ -528,7 +528,7 @@ public class ShopifySdkDriver {
 			throws JsonProcessingException {
 
 		final List<ShopifyOrder> actualShopifyOrders = shopifySdk
-				.getUpdatedOrders(DateTime.now(DateTimeZone.UTC).minusHours(3), 1, 250);
+				.getUpdatedOrders(DateTime.now(DateTimeZone.UTC).minusHours(3), DateTime.now(DateTimeZone.UTC), 1, 250);
 		assertNotNull(actualShopifyOrders);
 		assertTrue(actualShopifyOrders.size() > 0);
 	}

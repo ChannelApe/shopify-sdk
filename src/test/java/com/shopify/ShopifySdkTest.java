@@ -440,7 +440,7 @@ public class ShopifySdkTest {
 			throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
 		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
-
+		final DateTime maximumUpdatedAtDate = DateTime.now(DateTimeZone.UTC);
 		final ShopifyOrder shopifyOrder1 = new ShopifyOrder();
 		shopifyOrder1.setId("someId");
 		shopifyOrder1.setEmail("ryan.kazokas@gmail.com");
@@ -495,10 +495,12 @@ public class ShopifySdkTest {
 						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
 						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 250)
 						.withParam(ShopifySdk.UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDateTime.toString())
+						.withParam(ShopifySdk.UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
 						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
-		final List<ShopifyOrder> shopifyOrders = shopifySdk.getUpdatedOrders(minimumUpdatedAtDateTime, 1, 250);
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getUpdatedOrders(minimumUpdatedAtDateTime,
+				maximumUpdatedAtDate, 1, 250);
 
 		assertEquals(shopifyOrder1.getId(), shopifyOrders.get(0).getId());
 		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.get(0).getEmail());
