@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -520,6 +521,16 @@ public class ShopifySdkDriver {
 				666);
 
 		assertNotNull(actualInventoryLevel);
+	}
+
+	@Test
+	public void givenSomeUpdatedAtMinWhenRetrievingUpdatedOrdersThenExpectUpdatedOrders()
+			throws JsonProcessingException {
+
+		final List<ShopifyOrder> actualShopifyOrders = shopifySdk
+				.getUpdatedOrders(DateTime.now(DateTimeZone.UTC).minusHours(3), 1, 250);
+		assertNotNull(actualShopifyOrders);
+		assertTrue(actualShopifyOrders.size() > 0);
 	}
 
 	@Test
