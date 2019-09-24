@@ -489,18 +489,19 @@ public class ShopifySdkTest {
 		final Status expectedStatus = Status.OK;
 		final int expectedStatusCode = expectedStatus.getStatusCode();
 		final DateTime minimumUpdatedAtDateTime = SOME_DATE_TIME;
-
+		final DateTime maximumCreatedAtDateTime = SOME_DATE_TIME;
 		driver.addExpectation(
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
 						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
 						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 250)
 						.withParam(ShopifySdk.UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDateTime.toString())
 						.withParam(ShopifySdk.UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreatedAtDateTime.toString())
 						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
-		final List<ShopifyOrder> shopifyOrders = shopifySdk.getUpdatedOrders(minimumUpdatedAtDateTime,
-				maximumUpdatedAtDate, 1, 250);
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(minimumUpdatedAtDateTime,
+				maximumUpdatedAtDate, maximumCreatedAtDateTime, 1, 250);
 
 		assertEquals(shopifyOrder1.getId(), shopifyOrders.get(0).getId());
 		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.get(0).getEmail());

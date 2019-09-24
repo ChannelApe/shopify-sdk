@@ -526,9 +526,9 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomeUpdatedAtMinWhenRetrievingUpdatedOrdersThenExpectUpdatedOrders()
 			throws JsonProcessingException {
-
-		final List<ShopifyOrder> actualShopifyOrders = shopifySdk
-				.getUpdatedOrders(DateTime.now(DateTimeZone.UTC).minusHours(3), DateTime.now(DateTimeZone.UTC), 1, 250);
+		final List<ShopifyOrder> actualShopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(
+				DateTime.now(DateTimeZone.UTC).minusHours(24), DateTime.now(DateTimeZone.UTC),
+				DateTime.now(DateTimeZone.UTC), 1, 250);
 		assertNotNull(actualShopifyOrders);
 		assertTrue(actualShopifyOrders.size() > 0);
 	}

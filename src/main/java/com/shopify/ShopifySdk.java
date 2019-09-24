@@ -571,12 +571,14 @@ public class ShopifySdk {
 		return getOrders(mininumCreationDate, maximumCreationDate, page, DEFAULT_REQUEST_LIMIT);
 	}
 
-	public List<ShopifyOrder> getUpdatedOrders(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate,
-			final int page, final int pageSize) {
+	public List<ShopifyOrder> getUpdatedOrdersCreatedBefore(final DateTime minimumUpdatedAtDate,
+			final DateTime maximumUpdatedAtDate, final DateTime maximumCreatedAtDate, final int page,
+			final int pageSize) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
 				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
 				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreatedAtDate.toString())
 				.queryParam(PAGE_QUERY_PARAMETER, page));
 		return getOrders(response);
 	}
