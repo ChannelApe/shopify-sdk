@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
@@ -70,7 +72,9 @@ public class ShopifySdkDriver {
 
 	@Before
 	public void setUp() {
-		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN).build();
+		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN)
+				.withMaximumRequestRetryTimeout(5, TimeUnit.SECONDS)
+				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).build();
 	}
 
 	@Test
@@ -590,6 +594,30 @@ public class ShopifySdkDriver {
 
 		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
 		assertEquals("RyanTest", updatedCustomer.getFirstName());
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingVariantThenUpdateVariant() {
+		try {
+			final ShopifyVariant shopifyVariant = shopifySdk.getVariant("12262219972712");
+
+			for (int i = 0; i < 259; i++) {
+				final ShopifyVariantUpdateRequest shopifyVariantUpdateRequest = ShopifyVariantUpdateRequest.newBuilder()
+						.withCurrentShopifyVariant(shopifyVariant).withSamePrice().withSameCompareAtPrice()
+						.withSameSku().withSameBarcode().withSameWeight().withAvailable(3).withSameFirstOption()
+						.withSameSecondOption().withSameThirdOption()
+						.withImageSource(
+								"https://dks.scene7.com/is/image/dkscdn/17ADIWCLDFMPRXXXXLFS_Grey_White_Gunmetal_is?wid=1080&fmt=jpg")
+						.withSameInventoryManagement().withSameInventoryPolicy().withSameFulfillmentService()
+						.withSameRequiresShipping().withSameTaxable().withSameInventoryItemId().build();
+				shopifySdk.updateVariant(shopifyVariantUpdateRequest);
+			}
+
+		} catch (final ShopifyClientException e) {
+			e.printStackTrace();
+			System.out.println(e.getCause().getMessage());
+
+		}
 	}
 
 	@After

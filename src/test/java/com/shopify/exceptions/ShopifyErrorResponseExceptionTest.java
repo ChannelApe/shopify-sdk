@@ -63,9 +63,9 @@ public class ShopifyErrorResponseExceptionTest {
 		when(response.getStringHeaders()).thenReturn(responseHeaders);
 
 		final String expectedResponseBodyString = "Some unaprseable error";
-
+		when(response.readEntity(String.class)).thenReturn(expectedResponseBodyString);
 		final ShopifyErrorResponseException actualShopifyErrorResponseException = new ShopifyErrorResponseException(
-				response, expectedResponseBodyString);
+				response);
 
 		final String expectedResponseHeaders = "{Transfer-Encoding=[chunked], X-Request-Id=[ce729803-84ce-4063-a672-816f03c2c9a2], X-Shopify-API-Deprecated-Reason=[https://help.shopify.com/api/guides/inventory-migration-guide], Content-Type=[application/json, charset=utf-8]}";
 
@@ -96,8 +96,9 @@ public class ShopifyErrorResponseExceptionTest {
 				+ "            \"address1 can't be blank, zip is not valid for united states, and city can't be blank\"\n"
 				+ "        ]\n" + "    }\n" + "}";
 
+		when(response.readEntity(String.class)).thenReturn(expectedResponseBodyString);
 		final ShopifyErrorResponseException actualShopifyErrorResponseException = new ShopifyErrorResponseException(
-				response, expectedResponseBodyString);
+				response);
 
 		final String expectedResponseHeaders = "{Transfer-Encoding=[chunked], X-Request-Id=[ce729803-84ce-4063-a672-816f03c2c9a2], X-Shopify-API-Deprecated-Reason=[https://help.shopify.com/api/guides/inventory-migration-guide], Content-Type=[application/json, charset=utf-8]}";
 
