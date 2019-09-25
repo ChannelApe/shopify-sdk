@@ -92,7 +92,6 @@ import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
 
-
 public class ShopifySdk {
 
 	private static final String MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay must be larger than minimum request retry delay.";
@@ -187,10 +186,11 @@ public class ShopifySdk {
 	public static interface OptionalsStep {
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
-		 * time to wait before retrying a failed request. Value must also be less than
-		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Minimum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be less than
+		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 1 second.
 		 *
 		 * @param duration
@@ -200,10 +200,11 @@ public class ShopifySdk {
 		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
-		 * time to wait before retrying a failed request. Value must also be more than
-		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Maximum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be more than
+		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 5 seconds.
 		 *
 		 * @param duration
@@ -652,8 +653,8 @@ public class ShopifySdk {
 		return shopifyCustomerRootResponse.getCustomer();
 	}
 
-	public ShopifyCustomer getCustomerById(final String id) {
-		final Response response = get(getWebTarget().path(CUSTOMERS).path(id));
+	public ShopifyCustomer getCustomer(final String customerId) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(customerId));
 		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
 		return shopifyCustomerRootResponse.getCustomer();
 	}
@@ -669,7 +670,7 @@ public class ShopifySdk {
 			target = target.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT);
 		}
 		if (shopifyGetCustomersRequest.getIds() != null) {
-			target = target.queryParam(IDS_QUERY_PARAMETER, String.join( ",", shopifyGetCustomersRequest.getIds()));
+			target = target.queryParam(IDS_QUERY_PARAMETER, String.join(",", shopifyGetCustomersRequest.getIds()));
 		}
 		if (shopifyGetCustomersRequest.getSinceId() != null) {
 			target = target.queryParam(SINCE_ID_QUERY_PARAMETER, shopifyGetCustomersRequest.getSinceId());
@@ -680,15 +681,14 @@ public class ShopifySdk {
 		if (shopifyGetCustomersRequest.getCreatedAtMax() != null) {
 			target = target.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, shopifyGetCustomersRequest.getCreatedAtMax());
 		}
-		Response response = get(target);
+		final Response response = get(target);
 		return getCustomers(response);
 	}
 
-	public List<ShopifyCustomer> searchCustomer(String query) {
+	public List<ShopifyCustomer> searchCustomers(final String query) {
 		final Response response = get(getWebTarget().path(CUSTOMERS).path(SEARCH)
-				.queryParam(QUERY_QUERY_PARAMETER, query)
-				.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
-		return searchCustomer(response);
+				.queryParam(QUERY_QUERY_PARAMETER, query).queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
+		return getCustomers(response);
 	}
 
 	public ShopifyFulfillment cancelFulfillment(final String orderId, final String fulfillmentId) {
@@ -804,15 +804,10 @@ public class ShopifySdk {
 	public String getAccessToken() {
 		return accessToken;
 	}
-               
-	private List<ShopifyCustomer> getCustomers(Response response) {
-		ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);
-		return shopifyCustomersRootResponse.getCustomers();
-	}
 
-	private List<ShopifyCustomer> searchCustomer(Response response) {
-		ShopifyCustomersRoot shopifyCustomersRoot = response.readEntity(ShopifyCustomersRoot.class);
-		return shopifyCustomersRoot.getCustomers();
+	private List<ShopifyCustomer> getCustomers(final Response response) {
+		final ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);
+		return shopifyCustomersRootResponse.getCustomers();
 	}
 
 	private ShopifyRefund calculateRefund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
@@ -917,7 +912,7 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
 				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
