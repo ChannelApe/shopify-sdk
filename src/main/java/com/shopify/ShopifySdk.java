@@ -133,6 +133,8 @@ public class ShopifySdk {
 	static final String ANY_STATUSES = "any";
 	static final String CREATED_AT_MIN_QUERY_PARAMETER = "created_at_min";
 	static final String CREATED_AT_MAX_QUERY_PARAMETER = "created_at_max";
+	static final String UPDATED_AT_MIN_QUERY_PARAMETER = "updated_at_min";
+	static final String UPDATED_AT_MAX_QUERY_PARAMETER = "updated_at_max";
 	static final String ATTRIBUTION_APP_ID_QUERY_PARAMETER = "attribution_app_id";
 	static final String IDS_QUERY_PARAMETER = "ids";
 	static final String SINCE_ID_QUERY_PARAMETER = "since_id";
@@ -575,6 +577,18 @@ public class ShopifySdk {
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
 			final int page) {
 		return getOrders(mininumCreationDate, maximumCreationDate, page, DEFAULT_REQUEST_LIMIT);
+	}
+
+	public List<ShopifyOrder> getUpdatedOrdersCreatedBefore(final DateTime minimumUpdatedAtDate,
+			final DateTime maximumUpdatedAtDate, final DateTime maximumCreatedAtDate, final int page,
+			final int pageSize) {
+		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreatedAtDate.toString())
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		return getOrders(response);
 	}
 
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,

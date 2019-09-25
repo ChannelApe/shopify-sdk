@@ -439,6 +439,121 @@ public class ShopifySdkTest {
 	}
 
 	@Test
+	public void givenSomePageAndUpdatedAtMinOrdersWhenRetrievingUpdatedOrdersThenRetrieveUpdatedOrdersWithCorrectValues()
+			throws JsonProcessingException {
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
+		final ShopifyOrdersRoot shopifyOrdersRoot = new ShopifyOrdersRoot();
+		final DateTime maximumUpdatedAtDate = DateTime.now(DateTimeZone.UTC);
+		final ShopifyOrder shopifyOrder1 = new ShopifyOrder();
+		shopifyOrder1.setId("someId");
+		shopifyOrder1.setEmail("ryan.kazokas@gmail.com");
+		shopifyOrder1.setCustomer(SOME_CUSTOMER);
+
+		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
+		shopifyLineItem1.setId("1234565");
+		shopifyLineItem1.setSku("847289374");
+		shopifyLineItem1.setName("Really Cool Product");
+		shopifyOrder1.setLineItems(Arrays.asList(shopifyLineItem1));
+
+		final ShopifyFulfillment shopifyFulfillment = new ShopifyFulfillment();
+		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
+		shopifyFulfillment.setId("somelineitemid1");
+		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
+		shopifyFulfillment.setTrackingUrl(null);
+		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
+		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
+
+		final ShopifyRefund shopifyRefund1 = new ShopifyRefund();
+		shopifyRefund1.setCreatedAt(SOME_DATE_TIME);
+		shopifyRefund1.setProcessedAt(SOME_DATE_TIME);
+		shopifyRefund1.setId("87128371823");
+		shopifyRefund1.setNote("Customer didn't want");
+		shopifyRefund1.setOrderId("someId");
+		shopifyRefund1.setUserId(null);
+
+		final ShopifyRefundLineItem shopifyRefundedLineItem = new ShopifyRefundLineItem();
+		shopifyRefundedLineItem.setId("213881723");
+		shopifyRefundedLineItem.setQuantity(3L);
+		shopifyRefundedLineItem.setLineItemId("87482734");
+		shopifyRefundedLineItem.setRestockType("restock");
+		shopifyRefundedLineItem.setSubtotal(new BigDecimal(4772.112));
+		shopifyRefundedLineItem.setTotalTax(new BigDecimal(832.11));
+		shopifyRefundedLineItem.setLocationId("783487234");
+
+		shopifyRefundedLineItem.setLineItem(shopifyLineItem1);
+
+		shopifyRefund1.setRefundLineItems(Arrays.asList(shopifyRefundedLineItem));
+
+		shopifyOrder1.setRefunds(Arrays.asList(shopifyRefund1));
+		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
+
+		final String expectedResponseBodyString = getJsonString(ShopifyOrdersRoot.class, shopifyOrdersRoot);
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final DateTime minimumUpdatedAtDateTime = SOME_DATE_TIME;
+		final DateTime maximumCreatedAtDateTime = SOME_DATE_TIME;
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
+						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 250)
+						.withParam(ShopifySdk.UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDateTime.toString())
+						.withParam(ShopifySdk.UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreatedAtDateTime.toString())
+						.withParam(ShopifySdk.PAGE_QUERY_PARAMETER, "1").withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final List<ShopifyOrder> shopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(minimumUpdatedAtDateTime,
+				maximumUpdatedAtDate, maximumCreatedAtDateTime, 1, 250);
+
+		assertEquals(shopifyOrder1.getId(), shopifyOrders.get(0).getId());
+		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.get(0).getEmail());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
+				shopifyOrders.get(0).getFulfillments().get(0).getId());
+		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
+				.compareTo(shopifyOrders.get(0).getFulfillments().get(0).getCreatedAt()) == 0);
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
+				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrl());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
+				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrls());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getId());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getId());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getSku(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getSku());
+		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getName());
+
+		assertEquals(shopifyOrder1.getRefunds().size(), shopifyOrders.get(0).getRefunds().size());
+		assertTrue(shopifyOrder1.getRefunds().get(0).getCreatedAt()
+				.compareTo(shopifyOrders.get(0).getRefunds().get(0).getCreatedAt()) == 0);
+		assertEquals(shopifyOrder1.getRefunds().get(0).getId(), shopifyOrders.get(0).getRefunds().get(0).getId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getNote(), shopifyOrders.get(0).getRefunds().get(0).getNote());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getOrderId(),
+				shopifyOrders.get(0).getRefunds().get(0).getOrderId());
+		assertTrue(shopifyOrder1.getRefunds().get(0).getProcessedAt()
+				.compareTo(shopifyOrders.get(0).getRefunds().get(0).getProcessedAt()) == 0);
+
+		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getLineItemId(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItemId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getLocationId(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getQuantity(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getQuantity());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getRestockType(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getRestockType());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getSubtotal(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getSubtotal());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getTotalTax(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getTotalTax());
+
+		assertEquals(shopifyLineItem1.getSku(),
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
+
+	}
+
+	@Test
 	public void givenSomePageAndCreatedAtMinAndCreatedAtMaxOrdersAndAppIdWhenRetrievingOrdersThenRetrieveOrdersWithCorrectValues()
 			throws JsonProcessingException {
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).toString();
