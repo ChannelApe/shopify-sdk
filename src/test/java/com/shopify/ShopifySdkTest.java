@@ -288,6 +288,40 @@ public class ShopifySdkTest {
 
 	}
 
+	@Test(expected = ShopifyClientException.class)
+	public void givenSomeClientCredentialsAndRateLimitedWhenCallinglToTheShopifyApiThenExpectShopifyClientException()
+			throws JsonProcessingException {
+
+		final ShopifyLineItem lineItem = new ShopifyLineItem();
+		lineItem.setId("some_line_item_id");
+		lineItem.setSku("some_sku");
+		lineItem.setQuantity(5L);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.ORDERS).append("/1234/")
+				.append(ShopifySdk.FULFILLMENTS).toString();
+		final ShopifyFulfillment currentFulfillment = buildShopifyFulfillment(lineItem);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		shopifyFulfillmentRoot.setFulfillment(currentFulfillment);
+
+		final String expectedResponseBodyString = "{ \"errors\": \"You have been rate limited!\" }";
+
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(429)
+						.withHeader(ShopifySdk.RETRY_AFTER_HEADER, "2.0"))
+				.anyTimes();
+
+		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
+				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
+
+		shopifySdk.createFulfillment(request);
+
+	}
+
 	@Test
 	public void givenSomeShopifyFulfillmenmtUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillment()
 			throws JsonProcessingException {

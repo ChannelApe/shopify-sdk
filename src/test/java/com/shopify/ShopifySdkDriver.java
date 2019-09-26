@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
@@ -70,7 +71,9 @@ public class ShopifySdkDriver {
 
 	@Before
 	public void setUp() {
-		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN).build();
+		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN)
+				.withMaximumRequestRetryTimeout(5, TimeUnit.SECONDS)
+				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).build();
 	}
 
 	@Test

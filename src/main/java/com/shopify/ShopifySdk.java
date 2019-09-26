@@ -94,6 +94,10 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	private static final String EMPTY_STRING = "";
+
+	static final String RETRY_AFTER_HEADER = "Retry-After";
+
 	private static final String MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay must be larger than minimum request retry delay.";
 
 	private static final String INVALID_MAXIMUM_REQUEST_RETRY_TIMEOUT_MESSAGE = "Maximum request retry timeout cannot be set lower than 2 seconds.";
@@ -178,7 +182,6 @@ public class ShopifySdk {
 	private long minimumRequestRetryRandomDelayMilliseconds;
 	private long maximumRequestRetryRandomDelayMilliseconds;
 	private long maximumRequestRetryTimeoutMilliseconds;
-	private final ShopifySdkRetryListener shopifySdkRetryListener = new ShopifySdkRetryListener();
 
 	private static final Client CLIENT = buildClient();
 
@@ -909,7 +912,7 @@ public class ShopifySdk {
 			return response;
 		}
 
-		throw new ShopifyErrorResponseException(response, shopifySdkRetryListener.getResponseBody());
+		throw new ShopifyErrorResponseException(response);
 	}
 
 	private List<Integer> getExpectedStatusCodes(final Status... expectedStatus) {
@@ -931,7 +934,7 @@ public class ShopifySdk {
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
 						StopStrategies.stopAfterDelay(maximumRequestRetryTimeoutMilliseconds, TimeUnit.MILLISECONDS))
-				.withRetryListener(shopifySdkRetryListener).build();
+				.withRetryListener(new ShopifySdkRetryListener()).build();
 	}
 
 	private static boolean shouldRetryResponse(final Response response) {
@@ -939,7 +942,8 @@ public class ShopifySdk {
 	}
 
 	private static boolean hasExceededRateLimit(final Response response) {
-		return TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus();
+		return TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus()
+				&& response.getHeaders().containsKey(RETRY_AFTER_HEADER);
 	}
 
 	private static boolean isServerError(final Response response) {
@@ -960,7 +964,7 @@ public class ShopifySdk {
 	private String generateToken() {
 		try {
 
-			final Entity<String> entity = Entity.entity("", MediaType.APPLICATION_JSON);
+			final Entity<String> entity = Entity.entity(EMPTY_STRING, MediaType.APPLICATION_JSON);
 			final Response response = this.webTarget.path(OAUTH).path(ACCESS_TOKEN).queryParam(CLIENT_ID, this.clientId)
 					.queryParam(CLIENT_SECRET, this.clientSecret)
 					.queryParam(AUTHORIZATION_CODE, this.authorizationToken).request(MediaType.APPLICATION_JSON)
@@ -1011,15 +1015,13 @@ public class ShopifySdk {
 		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify: {} on attempt number {} and {} seconds since first attempt";
 		private static final String RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 
-		private String responseBody;
-
 		@Override
 		public <V> void onRetry(final Attempt<V> attempt) {
 			if (attempt.hasResult()) {
 				final Response response = (Response) attempt.getResult();
 
 				response.bufferEntity();
-				this.responseBody = response.readEntity(String.class);
+				final String responseBody = response.readEntity(String.class);
 
 				if (LOGGER.isWarnEnabled() && !hasExceededRateLimit(response) && shouldRetryResponse(response)) {
 
@@ -1027,7 +1029,7 @@ public class ShopifySdk {
 							attempt.getDelaySinceFirstAttempt());
 					LOGGER.warn(RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds,
 							attempt.getAttemptNumber(), response.getLocation(), response.getStatus(),
-							response.getStringHeaders(), this.responseBody);
+							response.getStringHeaders(), responseBody);
 
 				}
 
@@ -1038,10 +1040,6 @@ public class ShopifySdk {
 				LOGGER.warn(RETRY_EXCEPTION_ATTEMPT_MESSAGE, attempt.getAttemptNumber(),
 						delaySinceFirstAttemptInSeconds, attempt.getExceptionCause());
 			}
-		}
-
-		public String getResponseBody() {
-			return responseBody;
 		}
 
 		private long convertMillisecondsToSeconds(final long milliiseconds) {
