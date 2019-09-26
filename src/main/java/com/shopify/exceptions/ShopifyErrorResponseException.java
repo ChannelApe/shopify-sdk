@@ -21,7 +21,7 @@ public class ShopifyErrorResponseException extends RuntimeException {
 	}
 
 	private static String buildMessage(final Response response) {
-
+		response.bufferEntity();
 		final String readEntity = response.readEntity(String.class);
 		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(), readEntity);
 	}

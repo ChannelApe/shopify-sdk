@@ -94,7 +94,7 @@ public class ShopifySdk {
 
 	private static final String EMPTY_STRING = "";
 
-	private static final String RETRY_AFTER_HEADER_KEY = "Retry-After";
+	static final String RETRY_AFTER_HEADER = "Retry-After";
 
 	private static final String MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay must be larger than minimum request retry delay.";
 
@@ -892,7 +892,7 @@ public class ShopifySdk {
 
 	private static boolean hasExceededRateLimit(final Response response) {
 		return TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus()
-				&& response.getHeaders().containsKey(RETRY_AFTER_HEADER_KEY);
+				&& response.getHeaders().containsKey(RETRY_AFTER_HEADER);
 	}
 
 	private static boolean isServerError(final Response response) {
