@@ -48,10 +48,12 @@ import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerRoot;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyCustomerUpdateRoot;
+import com.shopify.model.ShopifyCustomersRoot;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentRoot;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGetCustomersRequest;
 import com.shopify.model.ShopifyGiftCard;
 import com.shopify.model.ShopifyGiftCardCreationRequest;
 import com.shopify.model.ShopifyGiftCardRoot;
@@ -92,6 +94,10 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	private static final String EMPTY_STRING = "";
+
+	static final String RETRY_AFTER_HEADER = "Retry-After";
+
 	private static final String MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay must be larger than minimum request retry delay.";
 
 	private static final String INVALID_MAXIMUM_REQUEST_RETRY_TIMEOUT_MESSAGE = "Maximum request retry timeout cannot be set lower than 2 seconds.";
@@ -131,7 +137,12 @@ public class ShopifySdk {
 	static final String ANY_STATUSES = "any";
 	static final String CREATED_AT_MIN_QUERY_PARAMETER = "created_at_min";
 	static final String CREATED_AT_MAX_QUERY_PARAMETER = "created_at_max";
+	static final String UPDATED_AT_MIN_QUERY_PARAMETER = "updated_at_min";
+	static final String UPDATED_AT_MAX_QUERY_PARAMETER = "updated_at_max";
 	static final String ATTRIBUTION_APP_ID_QUERY_PARAMETER = "attribution_app_id";
+	static final String IDS_QUERY_PARAMETER = "ids";
+	static final String SINCE_ID_QUERY_PARAMETER = "since_id";
+	static final String QUERY_QUERY_PARAMETER = "query";
 	static final String CALCULATE = "calculate";
 	static final String REFUNDS = "refunds";
 	static final String TRANSACTIONS = "transactions";
@@ -171,19 +182,20 @@ public class ShopifySdk {
 	private long minimumRequestRetryRandomDelayMilliseconds;
 	private long maximumRequestRetryRandomDelayMilliseconds;
 	private long maximumRequestRetryTimeoutMilliseconds;
-	private final ShopifySdkRetryListener shopifySdkRetryListener = new ShopifySdkRetryListener();
 
 	private static final Client CLIENT = buildClient();
 
 	private static final String CUSTOMERS = "customers";
+	private static final String SEARCH = "search";
 
 	public static interface OptionalsStep {
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
-		 * time to wait before retrying a failed request. Value must also be less than
-		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Minimum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be less than
+		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 1 second.
 		 *
 		 * @param duration
@@ -193,10 +205,11 @@ public class ShopifySdk {
 		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
-		 * time to wait before retrying a failed request. Value must also be more than
-		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Maximum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be more than
+		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 5 seconds.
 		 *
 		 * @param duration
@@ -569,6 +582,18 @@ public class ShopifySdk {
 		return getOrders(mininumCreationDate, maximumCreationDate, page, DEFAULT_REQUEST_LIMIT);
 	}
 
+	public List<ShopifyOrder> getUpdatedOrdersCreatedBefore(final DateTime minimumUpdatedAtDate,
+			final DateTime maximumUpdatedAtDate, final DateTime maximumCreatedAtDate, final int page,
+			final int pageSize) {
+		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, maximumCreatedAtDate.toString())
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		return getOrders(response);
+	}
+
 	public List<ShopifyOrder> getOrders(final DateTime mininumCreationDate, final DateTime maximumCreationDate,
 			final int page, final int pageSize) {
 		final Response response = get(getWebTarget().path(ORDERS).queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES)
@@ -643,6 +668,44 @@ public class ShopifySdk {
 				shopifyCustomerUpdateRequestRoot);
 		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
 		return shopifyCustomerRootResponse.getCustomer();
+	}
+
+	public ShopifyCustomer getCustomer(final String customerId) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(customerId));
+		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
+		return shopifyCustomerRootResponse.getCustomer();
+	}
+
+	public List<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest) {
+		WebTarget target = getWebTarget().path(CUSTOMERS);
+		if (shopifyGetCustomersRequest.getPage() != 0) {
+			target = target.queryParam(PAGE_QUERY_PARAMETER, shopifyGetCustomersRequest.getPage());
+		}
+		if (shopifyGetCustomersRequest.getLimit() != 0) {
+			target = target.queryParam(LIMIT_QUERY_PARAMETER, shopifyGetCustomersRequest.getLimit());
+		} else {
+			target = target.queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT);
+		}
+		if (shopifyGetCustomersRequest.getIds() != null) {
+			target = target.queryParam(IDS_QUERY_PARAMETER, String.join(",", shopifyGetCustomersRequest.getIds()));
+		}
+		if (shopifyGetCustomersRequest.getSinceId() != null) {
+			target = target.queryParam(SINCE_ID_QUERY_PARAMETER, shopifyGetCustomersRequest.getSinceId());
+		}
+		if (shopifyGetCustomersRequest.getCreatedAtMin() != null) {
+			target = target.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, shopifyGetCustomersRequest.getCreatedAtMin());
+		}
+		if (shopifyGetCustomersRequest.getCreatedAtMax() != null) {
+			target = target.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, shopifyGetCustomersRequest.getCreatedAtMax());
+		}
+		final Response response = get(target);
+		return getCustomers(response);
+	}
+
+	public List<ShopifyCustomer> searchCustomers(final String query) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(SEARCH)
+				.queryParam(QUERY_QUERY_PARAMETER, query).queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
+		return getCustomers(response);
 	}
 
 	public ShopifyFulfillment cancelFulfillment(final String orderId, final String fulfillmentId) {
@@ -759,6 +822,11 @@ public class ShopifySdk {
 		return accessToken;
 	}
 
+	private List<ShopifyCustomer> getCustomers(final Response response) {
+		final ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);
+		return shopifyCustomersRootResponse.getCustomers();
+	}
+
 	private ShopifyRefund calculateRefund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
 		final ShopifyRefundRoot shopifyRefundRoot = new ShopifyRefundRoot();
 
@@ -844,7 +912,7 @@ public class ShopifySdk {
 			return response;
 		}
 
-		throw new ShopifyErrorResponseException(response, shopifySdkRetryListener.getResponseBody());
+		throw new ShopifyErrorResponseException(response);
 	}
 
 	private List<Integer> getExpectedStatusCodes(final Status... expectedStatus) {
@@ -861,12 +929,12 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
 				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
 						StopStrategies.stopAfterDelay(maximumRequestRetryTimeoutMilliseconds, TimeUnit.MILLISECONDS))
-				.withRetryListener(shopifySdkRetryListener).build();
+				.withRetryListener(new ShopifySdkRetryListener()).build();
 	}
 
 	private static boolean shouldRetryResponse(final Response response) {
@@ -874,7 +942,8 @@ public class ShopifySdk {
 	}
 
 	private static boolean hasExceededRateLimit(final Response response) {
-		return TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus();
+		return TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus()
+				&& response.getHeaders().containsKey(RETRY_AFTER_HEADER);
 	}
 
 	private static boolean isServerError(final Response response) {
@@ -895,7 +964,7 @@ public class ShopifySdk {
 	private String generateToken() {
 		try {
 
-			final Entity<String> entity = Entity.entity("", MediaType.APPLICATION_JSON);
+			final Entity<String> entity = Entity.entity(EMPTY_STRING, MediaType.APPLICATION_JSON);
 			final Response response = this.webTarget.path(OAUTH).path(ACCESS_TOKEN).queryParam(CLIENT_ID, this.clientId)
 					.queryParam(CLIENT_SECRET, this.clientSecret)
 					.queryParam(AUTHORIZATION_CODE, this.authorizationToken).request(MediaType.APPLICATION_JSON)
@@ -946,15 +1015,13 @@ public class ShopifySdk {
 		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify: {} on attempt number {} and {} seconds since first attempt";
 		private static final String RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 
-		private String responseBody;
-
 		@Override
 		public <V> void onRetry(final Attempt<V> attempt) {
 			if (attempt.hasResult()) {
 				final Response response = (Response) attempt.getResult();
 
 				response.bufferEntity();
-				this.responseBody = response.readEntity(String.class);
+				final String responseBody = response.readEntity(String.class);
 
 				if (LOGGER.isWarnEnabled() && !hasExceededRateLimit(response) && shouldRetryResponse(response)) {
 
@@ -962,7 +1029,7 @@ public class ShopifySdk {
 							attempt.getDelaySinceFirstAttempt());
 					LOGGER.warn(RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE, delaySinceFirstAttemptInSeconds,
 							attempt.getAttemptNumber(), response.getLocation(), response.getStatus(),
-							response.getStringHeaders(), this.responseBody);
+							response.getStringHeaders(), responseBody);
 
 				}
 
@@ -973,10 +1040,6 @@ public class ShopifySdk {
 				LOGGER.warn(RETRY_EXCEPTION_ATTEMPT_MESSAGE, attempt.getAttemptNumber(),
 						delaySinceFirstAttemptInSeconds, attempt.getExceptionCause());
 			}
-		}
-
-		public String getResponseBody() {
-			return responseBody;
 		}
 
 		private long convertMillisecondsToSeconds(final long milliiseconds) {

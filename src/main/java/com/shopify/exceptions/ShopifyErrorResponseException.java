@@ -20,24 +20,10 @@ public class ShopifyErrorResponseException extends RuntimeException {
 		this.statusCode = response.getStatus();
 	}
 
-	public ShopifyErrorResponseException(final Response response, final String responseBody) {
-		super(buildMessage(response, responseBody));
-		response.bufferEntity();
-
-		this.responseBody = responseBody;
-		this.shopifyErrorCodes = ShopifyErrorCodeFactory.create(responseBody);
-		this.statusCode = response.getStatus();
-	}
-
-	private static String buildMessage(final Response response, final String responseBody) {
-		response.bufferEntity();
-		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(), responseBody);
-	}
-
 	private static String buildMessage(final Response response) {
 		response.bufferEntity();
-		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(),
-				response.readEntity(String.class));
+		final String readEntity = response.readEntity(String.class);
+		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(), readEntity);
 	}
 
 	public int getStatusCode() {
