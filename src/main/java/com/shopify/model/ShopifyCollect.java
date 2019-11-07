@@ -30,35 +30,15 @@ public class ShopifyCollect {
 		return productId;
 	}
 
-	public static class Builder {
-
-		private String collectionId;
-		private Boolean featured;
-		private String productId;
-
-		public ShopifyCollect.Builder withCollectionId(String collectionId) {
-			this.collectionId = collectionId;
-			return this;
-		}
-
-		public ShopifyCollect.Builder withFeatured(Boolean featured) {
-			this.featured = featured;
-			return this;
-		}
-
-		public ShopifyCollect.Builder withProductId(String productId) {
-			this.productId = productId;
-			return this;
-		}
-
-		public ShopifyCollect build() {
-			ShopifyCollect shopifyCollect = new ShopifyCollect();
-			shopifyCollect.collectionId = collectionId;
-			shopifyCollect.featured = featured;
-			shopifyCollect.productId = productId;
-			return shopifyCollect;
-		}
-
+	public void setCollectionId(String collectionId) {
+		this.collectionId = collectionId;
 	}
 
+	public void setFeatured(Boolean featured) {
+		this.featured = featured;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 }
