@@ -1,28 +1,5 @@
 package com.shopify;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.github.rholder.retry.Attempt;
@@ -44,6 +21,10 @@ import com.shopify.model.MetafieldsRoot;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyCancelOrderRequest;
+import com.shopify.model.ShopifyCustomCollection;
+import com.shopify.model.ShopifyCustomCollectionCreationRequest;
+import com.shopify.model.ShopifyCustomCollectionRoot;
+import com.shopify.model.ShopifyCustomCollectionsRoot;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerRoot;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
@@ -91,6 +72,27 @@ import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ShopifySdk {
 
@@ -117,6 +119,8 @@ public class ShopifySdk {
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
+	static final String CUSTOM_COLLECTIONS = "custom_collections";
+	static final String COLLECTS = "collects";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
@@ -450,6 +454,38 @@ public class ShopifySdk {
 		final Count count = response.readEntity(Count.class);
 		return count.getCount();
 	}
+
+	public List<ShopifyCustomCollection> getCustomCollections(final int page, final int pageSize) {
+		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_QUERY_PARAMETER, page));
+		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response.readEntity(ShopifyCustomCollectionsRoot.class);
+		return shopifyCustomCollectionsRoot.getCustomCollections();
+	}
+
+	public List<ShopifyCustomCollection> getCustomCollections() {
+		final List<ShopifyCustomCollection> shopifyCustomCollections = new LinkedList<>();
+
+		List<ShopifyCustomCollection> shopifyCollectionsPage;
+		int page = 1;
+		do {
+			shopifyCollectionsPage = getCustomCollections(page, DEFAULT_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} custom collections from page {}", shopifyCollectionsPage.size(), page);
+			page++;
+			shopifyCustomCollections.addAll(shopifyCollectionsPage);
+		} while (!shopifyCollectionsPage.isEmpty());
+
+		return shopifyCustomCollections;
+	}
+
+	public ShopifyCustomCollection createCustomCollection(final ShopifyCustomCollectionCreationRequest shopifyCustomCollectionCreationRequest) {
+		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootRequest = new ShopifyCustomCollectionRoot();
+		final ShopifyCustomCollection shopifyCustomCollection = shopifyCustomCollectionCreationRequest.getRequest();
+		shopifyCustomCollectionRootRequest.setCustomCollection(shopifyCustomCollection);
+		final Response response = post(getWebTarget().path(CUSTOM_COLLECTIONS), shopifyCustomCollectionRootRequest);
+		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootResponse = response.readEntity(ShopifyCustomCollectionRoot.class);
+		return shopifyCustomCollectionRootResponse.getCustomCollection();
+	}
+
 
 	public ShopifyShop getShop() {
 		final Response response = get(getWebTarget().path(SHOP));
