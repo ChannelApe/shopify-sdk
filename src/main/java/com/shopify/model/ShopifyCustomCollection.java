@@ -16,6 +16,7 @@ public class ShopifyCustomCollection {
 	private String id;
 	private String title;
 	private String handle;
+	private boolean published;
 
 	@XmlElement(name = "body_html")
 	private String bodyHtml;
@@ -92,6 +93,14 @@ public class ShopifyCustomCollection {
 
 	public void setHandle(String handle) {
 		this.handle = handle;
+	}
+
+	public boolean isPublished() {
+		return published;
+	}
+
+	public void setPublished(boolean published) {
+		this.published = published;
 	}
 
 	public void setBodyHtml(String bodyHtml) {

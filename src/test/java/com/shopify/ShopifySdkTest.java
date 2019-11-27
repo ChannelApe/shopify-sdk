@@ -51,6 +51,9 @@ import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyCustomCollection;
+import com.shopify.model.ShopifyCustomCollectionCreationRequest;
+import com.shopify.model.ShopifyCustomCollectionRoot;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerRoot;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
@@ -3180,6 +3183,64 @@ public class ShopifySdkTest {
 		for (final ShopifyProduct actualShopifyProduct : actualShopifyProducts.values()) {
 			assertNotNull(actualShopifyProduct.getId());
 		}
+	}
+
+	@Test
+	public void givenSomeCustomColelctionsCreationRequestCreateAndReturnCustomCollection()	throws JsonProcessingException {
+		final String expectedCreationPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.CUSTOM_COLLECTIONS)
+				.toString();
+		final ShopifyCustomCollectionRoot shopifyCustomCollectionRoot = new ShopifyCustomCollectionRoot();
+		final ShopifyCustomCollection shopifyCustomCollection = new ShopifyCustomCollection();
+
+		shopifyCustomCollection.setId("123");
+		shopifyCustomCollection.setTitle("Some Title");
+		shopifyCustomCollection.setHandle("handle");
+		shopifyCustomCollection.setPublished(true);
+		shopifyCustomCollection.setBodyHtml("Some Description");
+
+		shopifyCustomCollection.setTemplateSuffix("some-title");
+		shopifyCustomCollection.setPublishedScope("global");
+		shopifyCustomCollection.setSortOrder("alpha-asc");
+
+		shopifyCustomCollectionRoot.setCustomCollection(shopifyCustomCollection);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyCustomCollectionRoot.class, shopifyCustomCollectionRoot);
+
+		final Status expectedCreationStatus = Status.CREATED;
+		final int expectedCreationStatusCode = expectedCreationStatus.getStatusCode();
+
+		final JsonBodyCapture actualCreateRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedCreationPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualCreateRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON)
+						.withStatus(expectedCreationStatusCode));
+
+		final ShopifyCustomCollectionCreationRequest shopifyCustomCollectionCreationRequest = ShopifyCustomCollectionCreationRequest.newBuilder()
+				.withTitle("Some Title")
+				.withBodyHtml("Some Description")
+				.withHandle("handle")
+				.withTemplateSuffix("some-title")
+				.withPublishedScope("global")
+				.withSortOrder("alpha-asc")
+				.isPublished(true)
+				.build();
+
+		final ShopifyCustomCollection actualShopifyCustomCollection = shopifySdk.createCustomCollection(shopifyCustomCollectionCreationRequest);
+
+		assertEquals(shopifyCustomCollectionCreationRequest.getRequest().getTitle(),
+				actualCreateRequestBody.getContent().get("custom_collection").get("title").asText());
+		assertEquals(shopifyCustomCollectionCreationRequest.getRequest().getBodyHtml(),
+				actualCreateRequestBody.getContent().get("custom_collection").get("body_html").asText());
+		assertEquals(shopifyCustomCollectionCreationRequest.getRequest().getHandle(),
+				actualCreateRequestBody.getContent().get("custom_collection").get("handle").asText());
+		assertEquals(shopifyCustomCollectionCreationRequest.getRequest().getPublishedScope(),
+				actualCreateRequestBody.getContent().get("custom_collection").get("published_scope").asText());
+		assertEquals(shopifyCustomCollectionCreationRequest.getRequest().getSortOrder(),
+				actualCreateRequestBody.getContent().get("custom_collection").get("sort_order").asText());
+		assertEquals(shopifyCustomCollectionCreationRequest.getRequest().isPublished(),
+				actualCreateRequestBody.getContent().get("custom_collection").get("published").asBoolean());
+		assertNotNull(actualShopifyCustomCollection);
 	}
 
 	private void addProductsPageDriverExpectation(final int page, final int pageLimit, final int pageSize)

@@ -2,23 +2,30 @@ package com.shopify.model;
 
 public class ShopifyCustomCollectionCreationRequest {
 
+
+
 	private final ShopifyCustomCollection request;
 
+	public static interface OptionalsStep {
+		OptionalsStep withBodyHtml(final String bodyHtml);
+		OptionalsStep withHandle(final String handle);
+		OptionalsStep isPublished(final boolean published);
+		OptionalsStep withSortOrder(final String sortOrder);
+		OptionalsStep withTemplateSuffix(final String templateSuffix);
+		OptionalsStep withPublishedScope(final String publishedScope);
 
-	public static interface InitialValueStep {
-		HandleStep withTitle(final String title);
-	}
-
-	public static interface HandleStep {
-		BuildStep withHandle(final String handle);
-	}
-
-	public static interface BuildStep {
 		ShopifyCustomCollectionCreationRequest build();
 	}
 
 
-	public static InitialValueStep newBuilder() {
+	public static interface MandatoryStep {
+		OptionalsStep withTitle(final String title);
+	}
+
+
+
+
+	public static MandatoryStep newBuilder() {
 		return new Steps();
 	}
 
@@ -30,7 +37,7 @@ public class ShopifyCustomCollectionCreationRequest {
 		this.request = request;
 	}
 
-	private static class Steps implements InitialValueStep, HandleStep, BuildStep {
+	private static class Steps implements MandatoryStep, OptionalsStep {
 
 		private final ShopifyCustomCollection request = new ShopifyCustomCollection();
 
@@ -40,14 +47,44 @@ public class ShopifyCustomCollectionCreationRequest {
 		}
 
 		@Override
-		public HandleStep withTitle(final String title) {
+		public OptionalsStep withTitle(final String title) {
 			this.request.setTitle(title);
 			return this;
 		}
 
 		@Override
-		public BuildStep withHandle(final String handle) {
-			this.request.setHandle(handle);
+		public OptionalsStep withBodyHtml(String bodyHtml) {
+			request.setBodyHtml(bodyHtml);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withHandle(String handle) {
+			request.setHandle(handle);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep isPublished(boolean published) {
+			request.setPublished(published);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withSortOrder(String sortOrder) {
+			request.setSortOrder(sortOrder);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withTemplateSuffix(String templateSuffix) {
+			request.setTemplateSuffix(templateSuffix);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withPublishedScope(String publishedScope) {
+			request.setPublishedScope(publishedScope);
 			return this;
 		}
 	}
