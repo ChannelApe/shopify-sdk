@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyAttribute;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
@@ -53,6 +55,7 @@ import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundLineItem;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyRefundShippingDetails;
+import com.shopify.model.ShopifyShippingLine;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
@@ -557,11 +560,32 @@ public class ShopifySdkDriver {
 		shopifyAddress.setProvinceCode("PA");
 		shopifyAddress.setZip("92387423");
 
+		final ShopifyShippingLine shopifyShippingLine1 = new ShopifyShippingLine();
+		shopifyShippingLine1.setId("123");
+		shopifyShippingLine1.setPrice(new BigDecimal(42.11));
+		shopifyShippingLine1.setSource("some-source");
+		shopifyShippingLine1.setTitle("some-title");
+		shopifyShippingLine1.setCode("sc");
+		final List<ShopifyShippingLine> shopifyShippingLines = Arrays.asList(shopifyShippingLine1);
+
+		final ShopifyAttribute shopifyAttribute1 = new ShopifyAttribute();
+		shopifyAttribute1.setName("some-name1");
+		shopifyAttribute1.setValue("some-value1");
+		final ShopifyAttribute shopifyAttribute2 = new ShopifyAttribute();
+		shopifyAttribute2.setName("some-name2");
+		shopifyAttribute2.setValue("some-value2");
+		final ShopifyAttribute shopifyAttribute3 = new ShopifyAttribute();
+		shopifyAttribute3.setName("some-name3");
+		shopifyAttribute3.setValue("some-value3");
+		final List<ShopifyAttribute> someNoteAttributes = Arrays.asList(shopifyAttribute1, shopifyAttribute2,
+				shopifyAttribute3);
+
 		final ShopifyOrderCreationRequest shopifyOrderCreationRequest = ShopifyOrderCreationRequest.newBuilder()
-				.withProcessedAt(new DateTime()).withName("some-cool-po-number").withCustomer(shopifyCustomer)
+				.withProcessedAt(new DateTime()).withName(UUID.randomUUID().toString()).withCustomer(shopifyCustomer)
 				.withLineItems(Arrays.asList(shopifyLineItem1)).withShippingAddress(shopifyAddress)
 				.withBillingAddress(shopifyAddress).withMetafields(Collections.emptyList())
-				.withShippingLines(Collections.emptyList()).build();
+				.withShippingLines(shopifyShippingLines).withFinancialStatus("pending").withNote("some-note123")
+				.withNoteAttributes(someNoteAttributes).build();
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		final String dtoAsString = mapper.writeValueAsString(shopifyOrderCreationRequest);
