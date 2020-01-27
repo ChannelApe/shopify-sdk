@@ -40,10 +40,16 @@ public class ShopifyOrderCreationRequest {
 	}
 
 	public static interface ShippingLinesStep {
-		BuildStep withShippingLines(List<ShopifyShippingLine> shippingLines);
+		OptionalsStep withShippingLines(List<ShopifyShippingLine> shippingLines);
 	}
 
-	public static interface BuildStep {
+	public static interface OptionalsStep {
+		OptionalsStep withNoteAttributes(final List<ShopifyAttribute> noteAttributes);
+
+		OptionalsStep withNote(final String note);
+
+		OptionalsStep withFinancialStatus(final String financialStatus);
+
 		ShopifyOrderCreationRequest build();
 	}
 
@@ -60,7 +66,7 @@ public class ShopifyOrderCreationRequest {
 	}
 
 	private static class Steps implements ProcessedAtStep, NameStep, CustomerStep, MetafieldsStep, LineItemsStep,
-			ShippingAddressStep, BillingAddressStep, ShippingLinesStep, BuildStep {
+			ShippingAddressStep, BillingAddressStep, ShippingLinesStep, OptionalsStep {
 
 		private final ShopifyOrder request = new ShopifyOrder();
 
@@ -118,8 +124,26 @@ public class ShopifyOrderCreationRequest {
 		}
 
 		@Override
-		public BuildStep withShippingLines(final List<ShopifyShippingLine> shippingLines) {
+		public OptionalsStep withShippingLines(final List<ShopifyShippingLine> shippingLines) {
 			request.setShippingLines(shippingLines);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withNoteAttributes(final List<ShopifyAttribute> noteAttributes) {
+			request.setNoteAttributes(noteAttributes);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withNote(final String note) {
+			request.setNote(note);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withFinancialStatus(final String financialStatus) {
+			request.setFinancialStatus(financialStatus);
 			return this;
 		}
 
