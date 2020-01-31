@@ -1,5 +1,9 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -7,43 +11,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.shopify.model.adapters.EscapedStringAdapter;
-import com.shopify.model.adapters.TagsAdapter;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyProduct {
 
 	private String id;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String title;
-	@XmlElement(name = "product_type")
+	@JsonProperty("product_type")
 	private String productType;
-	@XmlElement(name = "body_html")
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
+	@JsonProperty("body_html")
 	private String bodyHtml;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String vendor;
-	@XmlJavaTypeAdapter(TagsAdapter.class)
-	@XmlElement(name = "tags")
+	@JsonProperty("tags")
 	private Set<String> tags = new HashSet<>();
 	private List<Option> options = new LinkedList<>();
-	@XmlElement(name = "metafields_global_title_tag")
+	@JsonProperty("metafields_global_title_tag")
 	private String metafieldsGlobalTitleTag;
-	@XmlElement(name = "metafields_global_description_tag")
+	@JsonProperty("metafields_global_description_tag")
 	private String metafieldsGlobalDescriptionTag;
 	private List<Image> images = new LinkedList<>();
 	private Image image;
 	private List<ShopifyVariant> variants = new LinkedList<>();
-	@XmlElement(name = "published_at")
+	@JsonProperty("published_at")
 	private String publishedAt;
 	private Boolean published;
 

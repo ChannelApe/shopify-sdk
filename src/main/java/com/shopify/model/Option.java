@@ -1,28 +1,19 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.EscapedStringAdapter;
-import com.shopify.model.adapters.EscapedStringsAdapter;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Option {
 
 	private String id;
-	@XmlElement(name = "product_id")
+	@JsonProperty("product_id")
 	private String productId;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String name;
 	private int position;
-	@XmlJavaTypeAdapter(EscapedStringsAdapter.class)
 	private List<String> values = new LinkedList<>();
 
 	public String getId() {

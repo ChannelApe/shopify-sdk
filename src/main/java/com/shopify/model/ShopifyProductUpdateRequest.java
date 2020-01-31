@@ -1,5 +1,11 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,11 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 
 	private final ShopifyProduct request;
@@ -119,7 +121,7 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 	}
 
 	private ShopifyProductUpdateRequest(final ShopifyProduct shopifyProduct,
-			final Map<Integer, Integer> variantPositionToImagePosition, final boolean changed) {
+                                        final Map<Integer, Integer> variantPositionToImagePosition, final boolean changed) {
 		this.request = shopifyProduct;
 		this.variantPositionToImagePosition = variantPositionToImagePosition;
 		this.changed = changed;

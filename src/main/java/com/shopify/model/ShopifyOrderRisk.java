@@ -1,30 +1,26 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.OrderRiskRecommendationAdapter;
-
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyOrderRisk {
 
 	private String id;
-	@XmlElement(name = "order_id")
+	@JsonProperty("order_id")
 	private String orderId;
-	@XmlElement(name = "checkout_id")
+	@JsonProperty("checkout_id")
 	private String checkoutId;
 	private String source;
 	private BigDecimal score;
-	@XmlJavaTypeAdapter(OrderRiskRecommendationAdapter.class)
 	private OrderRiskRecommendation recommendation;
 	private boolean display;
-	@XmlElement(name = "cause_cancel")
+	@JsonProperty("cause_cancel")
 	private boolean causeCancel;
 	private String message;
-	@XmlElement(name = "merchant_message")
+	@JsonProperty("merchant_message")
 	private String merchantMessage;
 
 	public String getId() {

@@ -1,23 +1,16 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-@JsonInclude(Include.ALWAYS)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyAddressUpdateRequest {
 
-	@XmlElement(name = "first_name")
+	@JsonProperty("first_name")
 	private String firstName;
-	@XmlElement(name = "last_name")
+	@JsonProperty("last_name")
 	private String lastname;
 	private String company;
 	private String address1;
@@ -26,9 +19,9 @@ public class ShopifyAddressUpdateRequest {
 	private String zip;
 	private String province;
 	private String country;
-	@XmlElement(name = "province_code")
+	@JsonProperty("province_code")
 	private String provinceCode;
-	@XmlElement(name = "country_code")
+	@JsonProperty("country_code")
 	private String countryCode;
 	private String phone;
 	private BigDecimal latitude;

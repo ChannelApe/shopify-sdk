@@ -1,12 +1,9 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyLocation {
 
 	private String id;
@@ -19,13 +16,13 @@ public class ShopifyLocation {
 	private String phone;
 	private String province;
 
-	@XmlElement(name = "country_code")
+	@JsonProperty("country_code")
 	private String countryCode;
 
-	@XmlElement(name = "country_name")
+	@JsonProperty("country_name")
 	private String countryName;
 
-	@XmlElement(name = "province_code")
+	@JsonProperty("province_code")
 	private String provinceCode;
 
 	public String getId() {

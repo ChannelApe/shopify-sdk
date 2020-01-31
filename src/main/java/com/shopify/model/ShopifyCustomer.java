@@ -1,40 +1,31 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
-import com.shopify.model.adapters.DateTimeAdapter;
+import java.math.BigDecimal;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyCustomer {
 
 	private String id;
 	private String email;
-	@XmlElement(name = "accepts_marketing")
+	@JsonProperty("accepts_marketing")
 	private boolean acceptsMarketing;
-	@XmlElement(name = "created_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("created_at")
 	private DateTime createdAt;
-	@XmlElement(name = "updated_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("updated_at")
 	private DateTime updatedAt;
-	@XmlElement(name = "first_name")
+	@JsonProperty("first_name")
 	private String firstName;
-	@XmlElement(name = "last_name")
+	@JsonProperty("last_name")
 	private String lastname;
 	private String phone;
-	@XmlElement(name = "orders_count")
+	@JsonProperty("orders_count")
 	private long ordersCount;
 	private String state;
-	@XmlElement(name = "total_spent")
+	@JsonProperty("total_spent")
 	private BigDecimal totalSpent;
 	private String note;
 

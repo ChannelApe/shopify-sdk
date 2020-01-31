@@ -1,5 +1,8 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MetafieldRoot {
 
 	private Metafield metafield;

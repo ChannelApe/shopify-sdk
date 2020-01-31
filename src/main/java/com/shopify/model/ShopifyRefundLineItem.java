@@ -1,28 +1,25 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyRefundLineItem {
 
 	private String id;
 	private long quantity;
-	@XmlElement(name = "line_item_id")
+	@JsonProperty("line_item_id")
 	private String lineItemId;
-	@XmlElement(name = "location_id")
+	@JsonProperty("location_id")
 	private String locationId;
-	@XmlElement(name = "restock_type")
+	@JsonProperty("restock_type")
 	private String restockType;
 	private BigDecimal subtotal;
-	@XmlElement(name = "total_tax")
+	@JsonProperty("total_tax")
 	private BigDecimal totalTax;
-	@XmlElement(name = "line_item")
+	@JsonProperty("line_item")
 	private ShopifyLineItem lineItem;
 
 	public String getId() {

@@ -1,11 +1,15 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Count {
 
 	private int count;
+
+	public Count(int count) {
+		this.count = count;
+	}
 
 	public int getCount() {
 		return count;

@@ -1,8 +1,8 @@
 package com.shopify.model;
 
-import java.util.Comparator;
-
 import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.Comparator;
 
 public class ShopifyVariantRequestOption1Comparator implements Comparator<ShopifyVariantRequest> {
 	@Override

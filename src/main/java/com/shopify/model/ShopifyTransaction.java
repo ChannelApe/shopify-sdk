@@ -1,30 +1,23 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.CurrencyAdapter;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyTransaction {
 
-	@XmlElement(name = "order_id")
+	@JsonProperty("order_id")
 	private String orderId;
 	private String kind;
 	private String gateway;
-	@XmlElement(name = "parent_id")
+	@JsonProperty("parent_id")
 	private String parentId;
 	private BigDecimal amount;
-	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;
-	@XmlElement(name = "maximum_refundable")
+	@JsonProperty("maximum_refundable")
 	private BigDecimal maximumRefundable;
 	private ShopifyTransactionReceipt receipt;
 

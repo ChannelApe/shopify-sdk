@@ -1,44 +1,41 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyLineItem {
 
 	private String id;
-	@XmlElement(name = "variant_id")
+	@JsonProperty("variant_id")
 	private String variantId;
 	private String title;
 	private long quantity;
 	private BigDecimal price;
 	private long grams;
 	private String sku;
-	@XmlElement(name = "variant_title")
+	@JsonProperty("variant_title")
 	private String variantTitle;
 	private String vendor;
-	@XmlElement(name = "product_id")
+	@JsonProperty("product_id")
 	private String productId;
-	@XmlElement(name = "requires_shipping")
+	@JsonProperty("requires_shipping")
 	private boolean requiresShipping;
 	private boolean taxable;
-	@XmlElement(name = "gift_card")
+	@JsonProperty("gift_card")
 	private boolean giftCard;
 	private String name;
-	@XmlElement(name = "variant_inventory_management")
+	@JsonProperty("variant_inventory_management")
 	private String variantInventoryManagement;
-	@XmlElement(name = "fulfillable_quantity")
+	@JsonProperty("fulfillable_quantity")
 	private long fulfillableQuantity;
-	@XmlElement(name = "total_discount")
+	@JsonProperty("total_discount")
 	private BigDecimal totalDiscount;
-	@XmlElement(name = "fulfillment_status")
+	@JsonProperty("fulfillment_status")
 	private String fulfillmentStatus;
-	@XmlElement(name = "fulfillment_service")
+	@JsonProperty("fulfillment_service")
 	private String fulfillmentService;
 
 	public String getId() {

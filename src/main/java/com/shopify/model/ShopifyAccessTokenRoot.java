@@ -1,17 +1,17 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyAccessTokenRoot {
 
-	private String accessToken;
-
-	@XmlAttribute(name = "access_token")
+	@JsonProperty("access_token")
 	public String getAccessToken() {
 		return accessToken;
 	}
+
+	private String accessToken;
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;

@@ -1,5 +1,8 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public enum InventoryPolicy {
 
 	DENY("deny"), CONTINUE("continue");

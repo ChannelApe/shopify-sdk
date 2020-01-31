@@ -1,5 +1,9 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyProductCreationRequest implements ShopifyProductRequest {
 
 	private final ShopifyProduct request;
@@ -54,7 +56,7 @@ public class ShopifyProductCreationRequest implements ShopifyProductRequest {
 
 	public static interface VariantCreationRequestsStep {
 		public PublishedStep withVariantCreationRequests(
-				final List<ShopifyVariantCreationRequest> variantCreationRequests);
+                final List<ShopifyVariantCreationRequest> variantCreationRequests);
 	}
 
 	public static interface PublishedStep {

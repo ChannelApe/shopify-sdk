@@ -1,8 +1,11 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 
 	private final ShopifyVariant request;

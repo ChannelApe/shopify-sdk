@@ -1,51 +1,40 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
-import com.shopify.model.adapters.DateTimeAdapter;
+import java.math.BigDecimal;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyGiftCard {
 
 	private String id;
 	private String note;
-	@XmlElement(name = "api_client_id")
+	@JsonProperty("api_client_id")
 	private String apiClientId;
 	private BigDecimal balance;
-	@XmlElement(name = "created_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("created_at")
 	private DateTime createdAt;
-	@XmlElement(name = "initial_value")
+	@JsonProperty("initial_value")
 	private BigDecimal initialValue;
 	private String currency;
-	@XmlElement(name = "customer_id")
+	@JsonProperty("customer_id")
 	private String customerId;
 	private String code;
-	@XmlElement(name = "disabled_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("disabled_at")
 	private DateTime disabledAt;
-	@XmlElement(name = "expires_on")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("expires_on")
 	private DateTime expiresOn;
-	@XmlElement(name = "updated_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("updated_at")
 	private DateTime updatedAt;
-	@XmlElement(name = "last_characters")
+	@JsonProperty("last_characters")
 	private String lastCharacters;
-	@XmlElement(name = "line_item_id")
+	@JsonProperty("line_item_id")
 	private String lineItemId;
-	@XmlElement(name = "user_id")
+	@JsonProperty("user_id")
 	private String userId;
-	@XmlElement(name = "template_suffix")
+	@JsonProperty("template_suffix")
 	private String templateSuffix;
 
 	public String getId() {

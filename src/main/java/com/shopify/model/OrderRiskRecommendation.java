@@ -1,5 +1,8 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public enum OrderRiskRecommendation {
 
 	ACCEPT("accept"), INVESTIGATE("investigate"), CANCEL("cancel");

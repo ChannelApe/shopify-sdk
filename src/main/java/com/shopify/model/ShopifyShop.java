@@ -1,8 +1,8 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyShop {
 
 	private Shop shop;

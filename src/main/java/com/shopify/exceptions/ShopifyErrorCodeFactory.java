@@ -1,15 +1,12 @@
 package com.shopify.exceptions;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.shopify.model.ShopifyErrorsRoot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.ShopifyErrorsRoot;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShopifyErrorCodeFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifyErrorCodeFactory.class);
@@ -19,12 +16,10 @@ public class ShopifyErrorCodeFactory {
 	private ShopifyErrorCodeFactory() {
 	}
 
-	public static final List<ShopifyErrorCode> create(final String responseBody) {
+	public static final List<ShopifyErrorCode> create(Object responseBody) {
 		final List<ShopifyErrorCode> shopifyErrorCodes = new LinkedList<>();
 		try {
-			final ObjectMapper objectMapper = ShopifySdkObjectMapper.buildMapper();
-
-			final ShopifyErrorsRoot shopifyErrorsRoot = objectMapper.readValue(responseBody, ShopifyErrorsRoot.class);
+			final ShopifyErrorsRoot shopifyErrorsRoot = (ShopifyErrorsRoot) responseBody;
 			final List<ShopifyErrorCode> shippingAddressErrorCodes = shopifyErrorsRoot.getErrors()
 					.getShippingAddressErrors().stream()
 					.map(shippingAddress -> new ShopifyErrorCode(ShopifyErrorCode.Type.SHIPPING_ADDRESS,
@@ -36,7 +31,7 @@ public class ShopifyErrorCodeFactory {
 				throw new IllegalArgumentException(String.format(NO_VALID_ERROR_CODES_FOUND_MESSAGE, responseBody));
 			}
 		} catch (final Exception e) {
-			final ShopifyErrorCode shopifyErrorCode = new ShopifyErrorCode(ShopifyErrorCode.Type.UNKNOWN, responseBody);
+			final ShopifyErrorCode shopifyErrorCode = new ShopifyErrorCode(ShopifyErrorCode.Type.UNKNOWN, responseBody.toString());
 			shopifyErrorCodes.add(shopifyErrorCode);
 			LOGGER.warn(COULD_NOT_PARSE_ERROR_RESPONSE_MESSAGE, responseBody, e);
 		}

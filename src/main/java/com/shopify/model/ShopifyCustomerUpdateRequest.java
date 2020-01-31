@@ -1,23 +1,16 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-@JsonInclude(Include.ALWAYS)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyCustomerUpdateRequest {
 
 	private String id;
 	private String email;
-	@XmlElement(name = "first_name")
+	@JsonProperty("first_name")
 	private String firstName;
-	@XmlElement(name = "last_name")
+	@JsonProperty("last_name")
 	private String lastname;
 	private String phone;
 

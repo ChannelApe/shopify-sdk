@@ -1,36 +1,25 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
-import com.shopify.model.adapters.DateTimeAdapter;
-import com.shopify.model.adapters.MetafieldValueTypeAdapter;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Metafield {
 
 	private String id;
 	private String key;
 	private String value;
-	@XmlElement(name = "value_type")
-	@XmlJavaTypeAdapter(MetafieldValueTypeAdapter.class)
+	@JsonProperty("value_type")
 	private MetafieldValueType valueType;
 	private String namespace;
-	@XmlElement(name = "owner_id")
+	@JsonProperty("owner_id")
 	private String ownerId;
-	@XmlElement(name = "owner_resource")
+	@JsonProperty("owner_resource")
 	private String ownerResource;
-	@XmlElement(name = "created_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("created_at")
 	private DateTime createdAt;
-	@XmlElement(name = "updated_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("updated_at")
 	private DateTime updatedAt;
 
 	public String getId() {

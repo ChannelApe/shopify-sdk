@@ -1,10 +1,10 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyTaxLine {
 
 	private String title;

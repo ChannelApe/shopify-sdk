@@ -1,11 +1,13 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyVariantUpdateRequest implements ShopifyVariantRequest {
 
 	private final ShopifyVariant request;
@@ -147,7 +149,7 @@ public class ShopifyVariantUpdateRequest implements ShopifyVariantRequest {
 	}
 
 	private ShopifyVariantUpdateRequest(final ShopifyVariant shopifyVariant, final String imageSource,
-			final boolean changed) {
+                                        final boolean changed) {
 		this.request = shopifyVariant;
 		this.imageSource = imageSource;
 		this.changed = changed;

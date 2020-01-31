@@ -1,105 +1,91 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTime;
+
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.joda.time.DateTime;
-
-import com.shopify.model.adapters.CurrencyAdapter;
-import com.shopify.model.adapters.DateTimeAdapter;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyOrder {
 
 	private String id;
 	private String email;
-	@XmlElement(name = "closed_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("closed_at")
 	private DateTime closedAt;
-	@XmlElement(name = "created_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("created_at")
 	private DateTime createdAt;
-	@XmlElement(name = "updated_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("updated_at")
 	private DateTime updatedAt;
 	private int number;
 	private String note;
 	private String token;
-	@XmlElement(name = "total_price")
+	@JsonProperty("total_price")
 	private BigDecimal totalPrice;
-	@XmlElement(name = "subtotal_price")
+	@JsonProperty("subtotal_price")
 	private BigDecimal subtotalPrice;
-	@XmlElement(name = "total_weight")
+	@JsonProperty("total_weight")
 	private long totalWeight;
-	@XmlElement(name = "total_tax")
+	@JsonProperty("total_tax")
 	private BigDecimal totalTax;
-	@XmlElement(name = "taxes_included")
+	@JsonProperty("taxes_included")
 	private boolean taxesIncluded;
-	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;
-	@XmlElement(name = "financial_status")
+	@JsonProperty("financial_status")
 	private String financialStatus;
-	@XmlElement(name = "total_discounts")
+	@JsonProperty("total_discounts")
 	private BigDecimal totalDiscounts;
-	@XmlElement(name = "total_line_items_price")
+	@JsonProperty("total_line_items_price")
 	private BigDecimal totaLineItemsPrice;
-	@XmlElement(name = "cart_token")
+	@JsonProperty("cart_token")
 	private String cartToken;
-	@XmlElement(name = "buyer_accepts_marketing")
+	@JsonProperty("buyer_accepts_marketing")
 	private boolean buyerAcceptsMarketing;
 	private String name;
-	@XmlElement(name = "referring_site")
+	@JsonProperty("referring_site")
 	private String referringSite;
-	@XmlElement(name = "landing_site")
+	@JsonProperty("landing_site")
 	private String landingSite;
-	@XmlElement(name = "cancelled_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("cancelled_at")
 	private DateTime cancelledAt;
-	@XmlElement(name = "cancel_reason")
+	@JsonProperty("cancel_reason")
 	private String cancelReason;
-	@XmlElement(name = "user_id")
+	@JsonProperty("user_id")
 	private String userId;
-	@XmlElement(name = "location_id")
+	@JsonProperty("location_id")
 	private String locationId;
-	@XmlElement(name = "processed_at")
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("processed_at")
 	private DateTime processedAt;
-	@XmlElement(name = "browser_ip")
+	@JsonProperty("browser_ip")
 	private String browserIp;
-	@XmlElement(name = "order_number")
+	@JsonProperty("order_number")
 	private String orderNumber;
-	@XmlElement(name = "processing_method")
+	@JsonProperty("processing_method")
 	private String processingMethod;
-	@XmlElement(name = "source_name")
+	@JsonProperty("source_name")
 	private String sourceName;
-	@XmlElement(name = "fulfillment_status")
+	@JsonProperty("fulfillment_status")
 	private String fulfillmentStatus;
-	@XmlElement(name = "tags")
+	@JsonProperty("tags")
 	private String tags;
-	@XmlElement(name = "order_status_url")
+	@JsonProperty("order_status_url")
 	private String orderStatusUrl;
-	@XmlElement(name = "line_items")
+	@JsonProperty("line_items")
 	private List<ShopifyLineItem> lineItems = new LinkedList<>();
 	private List<ShopifyFulfillment> fulfillments = new LinkedList<>();
-	@XmlElement(name = "billing_address")
+	@JsonProperty("billing_address")
 	private ShopifyAddress billingAddress = new ShopifyAddress();
-	@XmlElement(name = "shipping_address")
+	@JsonProperty("shipping_address")
 	private ShopifyAddress shippingAddress = new ShopifyAddress();
 	private ShopifyCustomer customer = new ShopifyCustomer();
-	@XmlElement(name = "shipping_lines")
+	@JsonProperty("shipping_lines")
 	private List<ShopifyShippingLine> shippingLines = new LinkedList<>();
-	@XmlElement(name = "tax_lines")
+	@JsonProperty("tax_lines")
 	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
-	@XmlElement(name = "note_attributes")
+	@JsonProperty("note_attributes")
 	private List<ShopifyAttribute> noteAttributes = new LinkedList<>();
 	private List<ShopifyRefund> refunds = new LinkedList<>();
 	private List<Metafield> metafields = new LinkedList<>();

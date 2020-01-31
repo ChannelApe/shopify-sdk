@@ -1,21 +1,18 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyRefundShippingDetails {
 
 	private BigDecimal amount;
 	private BigDecimal tax;
-	@XmlElement(name = "maximum_refundable")
+	@JsonProperty("maximum_refundable")
 	private BigDecimal maximumRefundable;
-	@XmlElement(name = "full_refund")
+	@JsonProperty("full_refund")
 	private boolean fullRefund;
 
 	public BigDecimal getAmount() {

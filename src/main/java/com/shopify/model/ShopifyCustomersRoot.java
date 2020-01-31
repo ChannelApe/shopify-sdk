@@ -1,10 +1,11 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.LinkedList;
 import java.util.List;
 
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyCustomersRoot {
     public List<ShopifyCustomer> getCustomers() {
         return customers;

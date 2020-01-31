@@ -1,58 +1,43 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.EscapedStringAdapter;
-import com.shopify.model.adapters.InventoryPolicyAdapter;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyVariant {
 
 	private String id;
-	@XmlElement(name = "product_id")
+	@JsonProperty("product_id")
 	private String productId;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String title;
 	private BigDecimal price;
-	@XmlElement(name = "compare_at_price")
+	@JsonProperty("compare_at_price")
 	private BigDecimal compareAtPrice;
 	private String sku;
 	private String barcode;
 	private int position;
 	private long grams;
-	@XmlTransient
 	private Long inventoryQuantity;
-	@XmlElement(name = "image_id")
+	@JsonProperty("image_id")
 	private String imageId;
-	@XmlJavaTypeAdapter(InventoryPolicyAdapter.class)
-	@XmlElement(name = "inventory_policy")
+	@JsonProperty("inventory_policy")
 	private InventoryPolicy inventoryPolicy;
-	@XmlElement(name = "inventory_management")
+	@JsonProperty("inventory_management")
 	private String inventoryManagement;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String option1;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String option2;
-	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String option3;
-	@XmlElement(name = "fulfillment_service")
+	@JsonProperty("fulfillment_service")
 	private String fulfillmentService;
-	@XmlElement(name = "requires_shipping")
+	@JsonProperty("requires_shipping")
 	private boolean requiresShipping;
 	private boolean taxable;
 
-	@XmlElement(name = "inventory_item_id")
+	@JsonProperty("inventory_item_id")
 	private String inventoryItemId;
 
-	@XmlTransient
 	private long available;
 
 	public String getId() {
@@ -131,7 +116,7 @@ public class ShopifyVariant {
 		return inventoryQuantity;
 	}
 
-	@XmlElement(name = "inventory_quantity")
+	@JsonProperty("inventory_quantity")
 	public void setInventoryQuantity(final Long inventoryQuantity) {
 		this.inventoryQuantity = inventoryQuantity;
 	}

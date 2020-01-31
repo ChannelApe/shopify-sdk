@@ -1,12 +1,12 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyRecurringApplicationChargeRoot {
 
-	@XmlElement(name = "recurring_application_charge")
+	@JsonProperty("recurring_application_charge")
 	private ShopifyRecurringApplicationCharge recurringApplicationCharge;
 
 	public ShopifyRecurringApplicationCharge getRecurringApplicationCharge() {

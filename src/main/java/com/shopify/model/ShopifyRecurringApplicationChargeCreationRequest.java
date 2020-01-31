@@ -1,7 +1,10 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyRecurringApplicationChargeCreationRequest {
 
 	private final ShopifyRecurringApplicationCharge request;
