@@ -26,18 +26,18 @@ deploy:
   on:
     tags: true
     repo: ChannelApe/shopify-sdk
-    jdk: oraclejdk8
+    jdk: oraclejdk11
 - provider: script
   script: ".travis/deploy.sh"
   skip_cleanup: true
   on:
     branch: master
     repo: ChannelApe/shopify-sdk
-    jdk: oraclejdk8
+    jdk: oraclejdk11
 - provider: script
   script: ".travis/deploy.sh"
   skip_cleanup: true
   on:
     branch: develop
     repo: ChannelApe/shopify-sdk
-    jdk: oraclejdk8
+    jdk: oraclejdk11
