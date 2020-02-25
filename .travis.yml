@@ -10,7 +10,6 @@ addons:
 jdk:
 - oraclejdk8
 - oraclejdk9
-- oraclejdk10
 - oraclejdk11
 script:
 - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then mvn clean install; fi
