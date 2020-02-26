@@ -51,6 +51,7 @@ import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyAttribute;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerRoot;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
@@ -1871,7 +1872,22 @@ public class ShopifySdkTest {
 		shippingLine1.setTitle("Testing Title");
 		shippingLine1.setPrice(new BigDecimal(4.33));
 		shopifyOrder.setShippingLines(Arrays.asList(shippingLine1));
+		shopifyOrder.setFinancialStatus("pending");
+		shopifyOrder.setNote("Some note");
 
+		final ShopifyAttribute shopifyAttribute1 = new ShopifyAttribute();
+		shopifyAttribute1.setName("some-name1");
+		shopifyAttribute1.setValue("some-value1");
+		final ShopifyAttribute shopifyAttribute2 = new ShopifyAttribute();
+		shopifyAttribute2.setName("some-name2");
+		shopifyAttribute2.setValue("some-value2");
+		final ShopifyAttribute shopifyAttribute3 = new ShopifyAttribute();
+		shopifyAttribute3.setName("some-name3");
+		shopifyAttribute3.setValue("some-value3");
+		final List<ShopifyAttribute> someNoteAttributes = Arrays.asList(shopifyAttribute1, shopifyAttribute2,
+				shopifyAttribute3);
+
+		shopifyOrder.setNoteAttributes(someNoteAttributes);
 		shopifyOrderRoot.setOrder(shopifyOrder);
 
 		final String expectedResponseBodyString = getJsonString(ShopifyOrderRoot.class, shopifyOrderRoot);
@@ -1887,7 +1903,8 @@ public class ShopifySdkTest {
 		final ShopifyOrderCreationRequest shopifyOrderRequest = ShopifyOrderCreationRequest.newBuilder()
 				.withProcessedAt(processedAt).withName("123456").withCustomer(shopifyCustomer)
 				.withLineItems(shopifyLineItems).withShippingAddress(address).withBillingAddress(address)
-				.withMetafields(Collections.emptyList()).withShippingLines(Arrays.asList(shippingLine1)).build();
+				.withMetafields(Collections.emptyList()).withShippingLines(Arrays.asList(shippingLine1))
+				.withFinancialStatus("pending").withNote("Some note").withNoteAttributes(someNoteAttributes).build();
 		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderRequest);
 
 		assertEquals("123456", actualRequestBody.getContent().get("order").get("name").asText());
@@ -1919,6 +1936,22 @@ public class ShopifySdkTest {
 				actualRequestBody.getContent().get("order").get("line_items").path(1).get("gift_card").asBoolean());
 		assertEquals(0, actualRequestBody.getContent().get("order").get("line_items").path(1)
 				.get("fulfillable_quantity").asInt());
+
+		assertEquals("pending", actualRequestBody.getContent().get("order").get("financial_status").asText());
+		assertEquals("Some note", actualRequestBody.getContent().get("order").get("note").asText());
+		assertEquals(3, actualRequestBody.getContent().get("order").get("note_attributes").size());
+		assertEquals(someNoteAttributes.get(0).getName(),
+				actualRequestBody.getContent().get("order").get("note_attributes").path(0).get("name").asText());
+		assertEquals(someNoteAttributes.get(0).getValue(),
+				actualRequestBody.getContent().get("order").get("note_attributes").path(0).get("value").asText());
+		assertEquals(someNoteAttributes.get(1).getName(),
+				actualRequestBody.getContent().get("order").get("note_attributes").path(1).get("name").asText());
+		assertEquals(someNoteAttributes.get(1).getValue(),
+				actualRequestBody.getContent().get("order").get("note_attributes").path(1).get("value").asText());
+		assertEquals(someNoteAttributes.get(2).getName(),
+				actualRequestBody.getContent().get("order").get("note_attributes").path(2).get("name").asText());
+		assertEquals(someNoteAttributes.get(2).getValue(),
+				actualRequestBody.getContent().get("order").get("note_attributes").path(2).get("value").asText());
 
 		assertEquals("Customer-Id", actualRequestBody.getContent().get("order").get("customer").get("id").asText());
 		assertEquals("Ryan", actualRequestBody.getContent().get("order").get("customer").get("first_name").asText());
