@@ -1,135 +1,142 @@
 package com.shopify.model;
 
-import org.joda.time.DateTime;
-
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 public class ShopifyGetCustomersRequest {
-    private int page;
-    private int limit;
-    private List<String> ids;
-    private String sinceId;
-    private DateTime createdAtMin;
-    private DateTime createdAtMax;
-    public static interface OptionalsStep {
-        OptionalsStep withPage(int page);
+	private int limit;
+	private List<String> ids;
+	private String sinceId;
+	private String pageInfo;
+	private DateTime createdAtMin;
+	private DateTime createdAtMax;
 
-        OptionalsStep withLimit(int limit);
+	public static interface OptionalsStep {
 
-        OptionalsStep withIds(List<String> ids);
+		OptionalsStep withPageInfo(final String pageInfo);
 
-        OptionalsStep withSinceId(String sinceId);
+		OptionalsStep withLimit(int limit);
 
-        OptionalsStep withCreatedAtMin(DateTime createdAtMin);
+		OptionalsStep withIds(List<String> ids);
 
-        OptionalsStep withCreatedAtMax(DateTime createdAtMax);
+		OptionalsStep withSinceId(String sinceId);
 
-        ShopifyGetCustomersRequest build();
-    }
+		OptionalsStep withCreatedAtMin(DateTime createdAtMin);
 
-    public static OptionalsStep newBuilder() {
-        return new Steps();
-    }
+		OptionalsStep withCreatedAtMax(DateTime createdAtMax);
 
-    protected ShopifyGetCustomersRequest(final Steps steps) {
-        if (steps != null) {
-            this.page = steps.page;
-            this.limit = steps.limit;
-            this.ids = steps.ids;
-            this.sinceId = steps.sinceId;
-            this.createdAtMin = steps.createdAtMin;
-            this.createdAtMax = steps.createdAtMax;
-        }
-    }
+		ShopifyGetCustomersRequest build();
+	}
 
-    protected static class Steps implements OptionalsStep {
-        private int page;
-        private int limit;
-        private List<String> ids;
-        private String sinceId;
-        private DateTime createdAtMin;
-        private DateTime createdAtMax;
+	public static OptionalsStep newBuilder() {
+		return new Steps();
+	}
 
-        @Override
-        public ShopifyGetCustomersRequest build() {
-            return new ShopifyGetCustomersRequest(this);
-        }
-        @Override
-        public OptionalsStep withPage(int page) {
-            this.page = page;
-            return this;
-        }
-        @Override
-        public OptionalsStep withLimit(int limit) {
-            this.limit = limit;
-            return this;
-        }
-        @Override
-        public OptionalsStep withIds(List<String> ids) {
-            this.ids = ids;
-            return this;
-        }
-        @Override
-        public OptionalsStep withSinceId(String sinceId) {
-            this.sinceId = sinceId;
-            return this;
-        }
-        @Override
-        public OptionalsStep withCreatedAtMin(DateTime createdAtMin) {
-            this.createdAtMin = createdAtMin;
-            return this;
-        }
-        @Override
-        public OptionalsStep withCreatedAtMax(DateTime createdAtMax) {
-            this.createdAtMax = createdAtMax;
-            return this;
-        }
-    }
-    public int getPage() {
-        return page;
-    }
+	protected ShopifyGetCustomersRequest(final Steps steps) {
+		this.limit = steps.limit;
+		this.ids = steps.ids;
+		this.sinceId = steps.sinceId;
+		this.createdAtMin = steps.createdAtMin;
+		this.createdAtMax = steps.createdAtMax;
+		this.pageInfo = steps.pageInfo;
+	}
 
-    public void setPage(int page) {
-        this.page = page;
-    }
+	protected static class Steps implements OptionalsStep {
+		private int limit;
+		private String pageInfo;
+		private List<String> ids;
+		private String sinceId;
+		private DateTime createdAtMin;
+		private DateTime createdAtMax;
 
-    public int getLimit() {
-        return limit;
-    }
+		@Override
+		public ShopifyGetCustomersRequest build() {
+			return new ShopifyGetCustomersRequest(this);
+		}
 
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
+		@Override
+		public OptionalsStep withLimit(final int limit) {
+			this.limit = limit;
+			return this;
+		}
 
-    public List<String> getIds() {
-        return ids;
-    }
+		@Override
+		public OptionalsStep withIds(final List<String> ids) {
+			this.ids = ids;
+			return this;
+		}
 
-    public void setIds(List<String> ids) {
-        this.ids = ids;
-    }
+		@Override
+		public OptionalsStep withSinceId(final String sinceId) {
+			this.sinceId = sinceId;
+			return this;
+		}
 
-    public String getSinceId() {
-        return sinceId;
-    }
+		@Override
+		public OptionalsStep withCreatedAtMin(final DateTime createdAtMin) {
+			this.createdAtMin = createdAtMin;
+			return this;
+		}
 
-    public void setSinceId(String sinceId) {
-        this.sinceId = sinceId;
-    }
+		@Override
+		public OptionalsStep withCreatedAtMax(final DateTime createdAtMax) {
+			this.createdAtMax = createdAtMax;
+			return this;
+		}
 
-    public DateTime getCreatedAtMin() {
-        return createdAtMin;
-    }
+		@Override
+		public OptionalsStep withPageInfo(final String pageInfo) {
+			this.pageInfo = pageInfo;
+			return this;
+		}
+	}
 
-    public void setCreatedAtMin(DateTime createdAtMin) {
-        this.createdAtMin = createdAtMin;
-    }
+	public int getLimit() {
+		return limit;
+	}
 
-    public DateTime getCreatedAtMax() {
-        return createdAtMax;
-    }
+	public void setLimit(final int limit) {
+		this.limit = limit;
+	}
 
-    public void setCreatedAtMax(DateTime createdAtMax) {
-        this.createdAtMax = createdAtMax;
-    }
+	public List<String> getIds() {
+		return ids;
+	}
+
+	public void setIds(final List<String> ids) {
+		this.ids = ids;
+	}
+
+	public String getSinceId() {
+		return sinceId;
+	}
+
+	public void setSinceId(final String sinceId) {
+		this.sinceId = sinceId;
+	}
+
+	public DateTime getCreatedAtMin() {
+		return createdAtMin;
+	}
+
+	public void setCreatedAtMin(final DateTime createdAtMin) {
+		this.createdAtMin = createdAtMin;
+	}
+
+	public DateTime getCreatedAtMax() {
+		return createdAtMax;
+	}
+
+	public void setCreatedAtMax(final DateTime createdAtMax) {
+		this.createdAtMax = createdAtMax;
+	}
+
+	public String getPageInfo() {
+		return pageInfo;
+	}
+
+	public void setPageInfo(final String pageInfo) {
+		this.pageInfo = pageInfo;
+	}
 }
