@@ -117,7 +117,7 @@ public class ShopifySdkTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "OFF");
 	}
 
 	@Before
