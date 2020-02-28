@@ -191,6 +191,7 @@
 								<outputFormat>HTML</outputFormat>
 								<outputFormat>XML</outputFormat>
 							</outputFormats>
+							<timeoutConstant>2000</timeoutConstant>
 							<historyInputFile>src/test/resources/pitestHistory</historyInputFile>
 							<historyOutputFile>src/test/resources/pitestHistory</historyOutputFile>
 						</configuration>
