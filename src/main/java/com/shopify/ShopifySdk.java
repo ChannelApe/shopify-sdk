@@ -99,27 +99,6 @@ import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
-import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class ShopifySdk {
 
@@ -483,37 +462,50 @@ public class ShopifySdk {
 		return count.getCount();
 	}
 
-	public List<ShopifyCustomCollection> getCustomCollections(final int page, final int pageSize) {
-		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
-				.queryParam(PAGE_QUERY_PARAMETER, page));
-		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response.readEntity(ShopifyCustomCollectionsRoot.class);
-		return shopifyCustomCollectionsRoot.getCustomCollections();
+	public ShopifyPage<ShopifyCustomCollection> getCustomCollections(final int pageSize) {
+		final Response response = get(
+				getWebTarget().path(CUSTOM_COLLECTIONS).queryParam(LIMIT_QUERY_PARAMETER, pageSize));
+		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response
+				.readEntity(ShopifyCustomCollectionsRoot.class);
+		return mapPagedResponse(shopifyCustomCollectionsRoot.getCustomCollections(), response);
+	}
+
+	public ShopifyPage<ShopifyCustomCollection> getCustomCollections(final String cursor, final int pageSize) {
+		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, cursor));
+		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response
+				.readEntity(ShopifyCustomCollectionsRoot.class);
+		return mapPagedResponse(shopifyCustomCollectionsRoot.getCustomCollections(), response);
 	}
 
 	public List<ShopifyCustomCollection> getCustomCollections() {
 		final List<ShopifyCustomCollection> shopifyCustomCollections = new LinkedList<>();
 
-		List<ShopifyCustomCollection> shopifyCollectionsPage;
-		int page = 1;
-		do {
-			shopifyCollectionsPage = getCustomCollections(page, DEFAULT_REQUEST_LIMIT);
-			LOGGER.info("Retrieved {} custom collections from page {}", shopifyCollectionsPage.size(), page);
-			page++;
-			shopifyCustomCollections.addAll(shopifyCollectionsPage);
-		} while (!shopifyCollectionsPage.isEmpty());
+		ShopifyPage<ShopifyCustomCollection> customCollectionsPage = getCustomCollections(DEFAULT_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} custom collections from first page", customCollectionsPage.getItems().size());
+		shopifyCustomCollections.addAll(customCollectionsPage.getItems());
+
+		while (customCollectionsPage.getNextPageInfo() != null) {
+			customCollectionsPage = getCustomCollections(customCollectionsPage.getNextPageInfo(),
+					DEFAULT_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} custom collections from cursor {}", customCollectionsPage.getItems().size(),
+					customCollectionsPage.getNextPageInfo());
+			shopifyCustomCollections.addAll(customCollectionsPage.getItems());
+		}
 
 		return shopifyCustomCollections;
 	}
 
-	public ShopifyCustomCollection createCustomCollection(final ShopifyCustomCollectionCreationRequest shopifyCustomCollectionCreationRequest) {
+	public ShopifyCustomCollection createCustomCollection(
+			final ShopifyCustomCollectionCreationRequest shopifyCustomCollectionCreationRequest) {
 		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootRequest = new ShopifyCustomCollectionRoot();
 		final ShopifyCustomCollection shopifyCustomCollection = shopifyCustomCollectionCreationRequest.getRequest();
 		shopifyCustomCollectionRootRequest.setCustomCollection(shopifyCustomCollection);
 		final Response response = post(getWebTarget().path(CUSTOM_COLLECTIONS), shopifyCustomCollectionRootRequest);
-		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootResponse = response.readEntity(ShopifyCustomCollectionRoot.class);
+		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootResponse = response
+				.readEntity(ShopifyCustomCollectionRoot.class);
 		return shopifyCustomCollectionRootResponse.getCustomCollection();
 	}
-
 
 	public ShopifyShop getShop() {
 		final Response response = get(getWebTarget().path(SHOP));
