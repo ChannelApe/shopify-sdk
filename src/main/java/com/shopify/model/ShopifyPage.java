@@ -1,20 +1,13 @@
 package com.shopify.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class ShopifyPage<T> {
+public class ShopifyPage<T> extends ArrayList<T> {
 
-	private List<T> items;
+	private static final long serialVersionUID = 7202410951814178409L;
+
 	private String nextPageInfo;
 	private String previousPageInfo;
-
-	public List<T> getItems() {
-		return items;
-	}
-
-	public void setItems(final List<T> items) {
-		this.items = items;
-	}
 
 	public String getNextPageInfo() {
 		return nextPageInfo;
@@ -30,6 +23,20 @@ public class ShopifyPage<T> {
 
 	public void setPreviousPageInfo(final String previousPageInfo) {
 		this.previousPageInfo = previousPageInfo;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((nextPageInfo == null) ? 0 : nextPageInfo.hashCode());
+		result = prime * result + ((previousPageInfo == null) ? 0 : previousPageInfo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return super.equals(obj);
 	}
 
 }

@@ -438,52 +438,50 @@ public class ShopifySdkTest {
 		final ShopifyPage<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime,
 				maximumCreationDate);
 
-		assertEquals(shopifyOrder1.getId(), shopifyOrders.getItems().get(0).getId());
-		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.getItems().get(0).getEmail());
+		assertEquals(shopifyOrder1.getId(), shopifyOrders.get(0).getId());
+		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.get(0).getEmail());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getId());
+				shopifyOrders.get(0).getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
-				.compareTo(shopifyOrders.getItems().get(0).getFulfillments().get(0).getCreatedAt()) == 0);
+				.compareTo(shopifyOrders.get(0).getFulfillments().get(0).getCreatedAt()) == 0);
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getTrackingUrl());
+				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getTrackingUrls());
+				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getLineItems().get(0).getId());
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getId());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getLineItems().get(0).getId());
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getId());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getSku(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getLineItems().get(0).getSku());
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getSku());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
-				shopifyOrders.getItems().get(0).getFulfillments().get(0).getLineItems().get(0).getName());
+				shopifyOrders.get(0).getFulfillments().get(0).getLineItems().get(0).getName());
 
-		assertEquals(shopifyOrder1.getRefunds().size(), shopifyOrders.getItems().get(0).getRefunds().size());
+		assertEquals(shopifyOrder1.getRefunds().size(), shopifyOrders.get(0).getRefunds().size());
 		assertTrue(shopifyOrder1.getRefunds().get(0).getCreatedAt()
-				.compareTo(shopifyOrders.getItems().get(0).getRefunds().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getRefunds().get(0).getId(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getId());
-		assertEquals(shopifyOrder1.getRefunds().get(0).getNote(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getNote());
+				.compareTo(shopifyOrders.get(0).getRefunds().get(0).getCreatedAt()) == 0);
+		assertEquals(shopifyOrder1.getRefunds().get(0).getId(), shopifyOrders.get(0).getRefunds().get(0).getId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getNote(), shopifyOrders.get(0).getRefunds().get(0).getNote());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getOrderId(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getOrderId());
+				shopifyOrders.get(0).getRefunds().get(0).getOrderId());
 		assertTrue(shopifyOrder1.getRefunds().get(0).getProcessedAt()
-				.compareTo(shopifyOrders.getItems().get(0).getRefunds().get(0).getProcessedAt()) == 0);
+				.compareTo(shopifyOrders.get(0).getRefunds().get(0).getProcessedAt()) == 0);
 
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getLineItemId(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItemId());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItemId());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getLocationId(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getQuantity(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getQuantity());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getQuantity());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getRestockType(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getRestockType());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getRestockType());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getSubtotal(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getSubtotal());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getSubtotal());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getTotalTax(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getTotalTax());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getTotalTax());
 
 		assertEquals(shopifyLineItem1.getSku(),
-				shopifyOrders.getItems().get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
+				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
 
 	}
 
@@ -556,7 +554,7 @@ public class ShopifySdkTest {
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getUpdatedOrdersCreatedBefore(
 				minimumUpdatedAtDateTime, maximumUpdatedAtDate, maximumCreatedAtDateTime, 250);
 
-		final ShopifyOrder shopifyOrder = shopifyOrdersPage.getItems().get(0);
+		final ShopifyOrder shopifyOrder = shopifyOrdersPage.get(0);
 		assertEquals(shopifyOrder1.getId(), shopifyOrder.getId());
 		assertEquals(shopifyOrder1.getEmail(), shopifyOrder.getEmail());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
@@ -647,7 +645,7 @@ public class ShopifySdkTest {
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime,
 				maximumCreationDate, "current");
 
-		final ShopifyOrder shopifyOrder = shopifyOrdersPage.getItems().get(0);
+		final ShopifyOrder shopifyOrder = shopifyOrdersPage.get(0);
 		assertEquals(shopifyOrder1.getId(), shopifyOrder.getId());
 		assertEquals(shopifyOrder1.getEmail(), shopifyOrder.getEmail());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
@@ -771,7 +769,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime);
 
-		final ShopifyOrder actualShopifyOrder1 = shopifyOrdersPage.getItems().get(0);
+		final ShopifyOrder actualShopifyOrder1 = shopifyOrdersPage.get(0);
 		assertEquals(shopifyOrder1.getId(), actualShopifyOrder1.getId());
 		assertEquals(shopifyOrder1.getEmail(), actualShopifyOrder1.getEmail());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
@@ -1471,7 +1469,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getOrders();
 
-		final ShopifyOrder shopifyOrder = shopifyOrdersPage.getItems().get(0);
+		final ShopifyOrder shopifyOrder = shopifyOrdersPage.get(0);
 		assertEquals(shopifyOrder1.getId(), shopifyOrder.getId());
 		assertEquals(shopifyOrder1.getEmail(), shopifyOrder.getEmail());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
@@ -1512,7 +1510,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyOrder> actualShopifyOrdersPage = shopifySdk.getOrders(pageSize);
 
-		assertEquals(0, actualShopifyOrdersPage.getItems().size());
+		assertEquals(0, actualShopifyOrdersPage.size());
 	}
 
 	@Test
@@ -1540,7 +1538,7 @@ public class ShopifySdkTest {
 		final ShopifyPage<ShopifyOrder> actualShopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime,
 				pageSize);
 
-		assertEquals(0, actualShopifyOrdersPage.getItems().size());
+		assertEquals(0, actualShopifyOrdersPage.size());
 	}
 
 	@Test
@@ -1570,7 +1568,7 @@ public class ShopifySdkTest {
 		final ShopifyPage<ShopifyOrder> actualShopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime,
 				maximumCreationDateTime, pageSize);
 
-		assertEquals(0, actualShopifyOrdersPage.getItems().size());
+		assertEquals(0, actualShopifyOrdersPage.size());
 	}
 
 	@Test
@@ -1601,7 +1599,7 @@ public class ShopifySdkTest {
 		final ShopifyPage<ShopifyOrder> actualShopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime,
 				maximumCreationDateTime, appId, pageSize);
 
-		assertEquals(0, actualShopifyOrdersPage.getItems().size());
+		assertEquals(0, actualShopifyOrdersPage.size());
 	}
 
 	@Test
@@ -2324,7 +2322,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
-		assertCustomers(actualCustomersPage.getItems());
+		assertCustomers(actualCustomersPage);
 	}
 
 	@Test
@@ -2356,7 +2354,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
-		assertCustomers(actualCustomersPage.getItems());
+		assertCustomers(actualCustomersPage);
 	}
 
 	@Test
@@ -2385,7 +2383,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
-		assertCustomers(actualCustomersPage.getItems());
+		assertCustomers(actualCustomersPage);
 	}
 
 	@Test
@@ -2416,7 +2414,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
-		assertCustomers(actualCustomersPage.getItems());
+		assertCustomers(actualCustomersPage);
 	}
 
 	@Test
@@ -2449,7 +2447,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
 
-		assertCustomers(actualCustomersPage.getItems());
+		assertCustomers(actualCustomersPage);
 	}
 
 	@Test
@@ -2477,7 +2475,7 @@ public class ShopifySdkTest {
 
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.searchCustomers(query);
 
-		assertCustomers(actualCustomersPage.getItems());
+		assertCustomers(actualCustomersPage);
 	}
 
 	@Test
@@ -3229,7 +3227,7 @@ public class ShopifySdkTest {
 
 		assertNull(actualShopifyProducts.getNextPageInfo());
 		assertNull(actualShopifyProducts.getPreviousPageInfo());
-		assertEquals(0, actualShopifyProducts.getItems().size());
+		assertEquals(0, actualShopifyProducts.size());
 	}
 
 	@Test

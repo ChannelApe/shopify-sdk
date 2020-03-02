@@ -445,13 +445,13 @@ public class ShopifySdk {
 		final List<ShopifyProduct> shopifyProducts = new LinkedList<>();
 
 		ShopifyPage<ShopifyProduct> shopifyProductsPage = getProducts(DEFAULT_REQUEST_LIMIT);
-		LOGGER.info("Retrieved {} products from first page", shopifyProductsPage.getItems().size());
-		shopifyProducts.addAll(shopifyProductsPage.getItems());
+		LOGGER.info("Retrieved {} products from first page", shopifyProductsPage.size());
+		shopifyProducts.addAll(shopifyProductsPage);
 		while (shopifyProductsPage.getNextPageInfo() != null) {
 			shopifyProductsPage = getProducts(shopifyProductsPage.getNextPageInfo(), DEFAULT_REQUEST_LIMIT);
-			LOGGER.info("Retrieved {} products from page {}", shopifyProductsPage.getItems().size(),
+			LOGGER.info("Retrieved {} products from page {}", shopifyProductsPage.size(),
 					shopifyProductsPage.getNextPageInfo());
-			shopifyProducts.addAll(shopifyProductsPage.getItems());
+			shopifyProducts.addAll(shopifyProductsPage);
 		}
 		return new ShopifyProducts(shopifyProducts);
 	}
@@ -482,15 +482,15 @@ public class ShopifySdk {
 		final List<ShopifyCustomCollection> shopifyCustomCollections = new LinkedList<>();
 
 		ShopifyPage<ShopifyCustomCollection> customCollectionsPage = getCustomCollections(DEFAULT_REQUEST_LIMIT);
-		LOGGER.info("Retrieved {} custom collections from first page", customCollectionsPage.getItems().size());
-		shopifyCustomCollections.addAll(customCollectionsPage.getItems());
+		LOGGER.info("Retrieved {} custom collections from first page", customCollectionsPage.size());
+		shopifyCustomCollections.addAll(customCollectionsPage);
 
 		while (customCollectionsPage.getNextPageInfo() != null) {
 			customCollectionsPage = getCustomCollections(customCollectionsPage.getNextPageInfo(),
 					DEFAULT_REQUEST_LIMIT);
-			LOGGER.info("Retrieved {} custom collections from cursor {}", customCollectionsPage.getItems().size(),
+			LOGGER.info("Retrieved {} custom collections from cursor {}", customCollectionsPage.size(),
 					customCollectionsPage.getNextPageInfo());
-			shopifyCustomCollections.addAll(customCollectionsPage.getItems());
+			shopifyCustomCollections.addAll(customCollectionsPage);
 		}
 
 		return shopifyCustomCollections;
@@ -1105,7 +1105,7 @@ public class ShopifySdk {
 	private <T> ShopifyPage<T> mapPagedResponse(final List<T> items, final Response response) {
 
 		final ShopifyPage<T> shopifyPage = new ShopifyPage<>();
-		shopifyPage.setItems(items);
+		shopifyPage.addAll(items);
 
 		final Set<Link> links = response.getLinks();
 		final String nextLink = links.stream().filter(link -> link.getRel().equals(REL_NEXT_HEADER_KEY))

@@ -255,7 +255,7 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomePageWhenQueryingOrdersThenReturnShopifyOrders() {
 		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(250);
-		assertEquals(250, actualOrdersFirstPage.getItems().size());
+		assertEquals(250, actualOrdersFirstPage.size());
 		assertNotNull(actualOrdersFirstPage.getNextPageInfo());
 		assertNull(actualOrdersFirstPage.getPreviousPageInfo());
 
@@ -274,7 +274,7 @@ public class ShopifySdkDriver {
 		final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest.newBuilder()
 				.withCreatedAtMin(DateTime.now(DateTimeZone.UTC).minusYears(4)).withLimit(10).build();
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
-		assertEquals(10, actualCustomersPage.getItems().size());
+		assertEquals(10, actualCustomersPage.size());
 		assertNotNull(actualCustomersPage.getNextPageInfo());
 		assertNull(actualCustomersPage.getPreviousPageInfo());
 
@@ -293,7 +293,7 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomePageAndMinimumDateWhenQueryingOrdersThenReturnShopifyOrders() {
 		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(new DateTime().minusYears(4), 250);
-		assertEquals(250, actualOrdersFirstPage.getItems().size());
+		assertEquals(250, actualOrdersFirstPage.size());
 
 		String nextPageInfo = actualOrdersFirstPage.getNextPageInfo();
 		while (nextPageInfo != null) {
@@ -575,7 +575,7 @@ public class ShopifySdkDriver {
 				DateTime.now(DateTimeZone.UTC).minusHours(24), DateTime.now(DateTimeZone.UTC),
 				DateTime.now(DateTimeZone.UTC), 250);
 		assertNotNull(actualShopifyOrders);
-		assertTrue(actualShopifyOrders.getItems().size() > 0);
+		assertTrue(actualShopifyOrders.size() > 0);
 	}
 
 	@Test
