@@ -124,7 +124,7 @@ public class ShopifySdkTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "OFF");
 	}
 
 	@Before
@@ -149,7 +149,9 @@ public class ShopifySdkTest {
 				.anyTimes();
 
 		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withAccessToken(accessToken)
-				.withMaximumRequestRetryTimeout(2, TimeUnit.SECONDS).withConnectionTimeout(1, TimeUnit.SECONDS).build();
+				.withMinimumRequestRetryRandomDelay(200, TimeUnit.MILLISECONDS)
+				.withMaximumRequestRetryTimeout(225, TimeUnit.MILLISECONDS)
+				.withConnectionTimeout(500, TimeUnit.MILLISECONDS).build();
 
 	}
 
@@ -159,12 +161,6 @@ public class ShopifySdkTest {
 				.withMinimumRequestRetryRandomDelay(10, TimeUnit.DAYS)
 				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).withConnectionTimeout(2, TimeUnit.MINUTES)
 				.withReadTimeout(3, TimeUnit.MINUTES).build();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void givenInvalidMaximumRetryTimeoutWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
-		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
-				.withMaximumRequestRetryTimeout(1, TimeUnit.MICROSECONDS).build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -433,7 +429,9 @@ public class ShopifySdkTest {
 						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
 						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 						.withMethod(Method.GET),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Link",
+						"<https://some-store.myshopify.com/admin/api/2019-10/orders?page_info=123>; rel=\"previous\", <https://humdingers-business-of-the-americas.myshopify.com/admin/api/2019-10/orders?page_info=456>; rel=\"next\"")
+						.withStatus(expectedStatusCode));
 
 		final ShopifyPage<ShopifyOrder> shopifyOrders = shopifySdk.getOrders(minimumCreationDateTime,
 				maximumCreationDate);
@@ -482,6 +480,8 @@ public class ShopifySdkTest {
 
 		assertEquals(shopifyLineItem1.getSku(),
 				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
+		assertEquals("456", shopifyOrders.getNextPageInfo());
+		assertEquals("123", shopifyOrders.getPreviousPageInfo());
 
 	}
 
@@ -549,7 +549,9 @@ public class ShopifySdkTest {
 						.withParam(ShopifySdk.UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
 						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreatedAtDateTime.toString())
 						.withMethod(Method.GET),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Link",
+						"<https://some-store.myshopify.com/admin/api/2019-10/orders?page_info=123>; rel=\"previous\", <https://humdingers-business-of-the-americas.myshopify.com/admin/api/2019-10/orders?page_info=456>; rel=\"next\"")
+						.withStatus(expectedStatusCode));
 
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getUpdatedOrdersCreatedBefore(
 				minimumUpdatedAtDateTime, maximumUpdatedAtDate, maximumCreatedAtDateTime, 250);
@@ -597,7 +599,8 @@ public class ShopifySdkTest {
 
 		assertEquals(shopifyLineItem1.getSku(),
 				shopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
-
+		assertEquals("456", shopifyOrdersPage.getNextPageInfo());
+		assertEquals("123", shopifyOrdersPage.getPreviousPageInfo());
 	}
 
 	@Test
@@ -640,7 +643,9 @@ public class ShopifySdkTest {
 						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
 						.withParam(ShopifySdk.CREATED_AT_MAX_QUERY_PARAMETER, maximumCreationDate.toString())
 						.withParam(ShopifySdk.ATTRIBUTION_APP_ID_QUERY_PARAMETER, "current").withMethod(Method.GET),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Link",
+						"<https://some-store.myshopify.com/admin/api/2019-10/orders?page_info=123>; rel=\"previous\", <https://humdingers-business-of-the-americas.myshopify.com/admin/api/2019-10/orders?page_info=456>; rel=\"next\"")
+						.withStatus(expectedStatusCode));
 
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime,
 				maximumCreationDate, "current");
@@ -663,6 +668,8 @@ public class ShopifySdkTest {
 				shopifyOrder.getFulfillments().get(0).getLineItems().get(0).getSku());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
 				shopifyOrder.getFulfillments().get(0).getLineItems().get(0).getName());
+		assertEquals("456", shopifyOrdersPage.getNextPageInfo());
+		assertEquals("123", shopifyOrdersPage.getPreviousPageInfo());
 	}
 
 	@Test
@@ -765,7 +772,9 @@ public class ShopifySdkTest {
 						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50)
 						.withParam(ShopifySdk.CREATED_AT_MIN_QUERY_PARAMETER, minimumCreationDateTime.toString())
 						.withMethod(Method.GET),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Link",
+						"<https://some-store.myshopify.com/admin/api/2019-10/orders?page_info=123>; rel=\"previous\", <https://humdingers-business-of-the-americas.myshopify.com/admin/api/2019-10/orders?page_info=456>; rel=\"next\"")
+						.withStatus(expectedStatusCode));
 
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getOrders(minimumCreationDateTime);
 
@@ -788,6 +797,8 @@ public class ShopifySdkTest {
 				actualShopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getSku());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
 				actualShopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName());
+		assertEquals("456", shopifyOrdersPage.getNextPageInfo());
+		assertEquals("123", shopifyOrdersPage.getPreviousPageInfo());
 	}
 
 	@Test
@@ -1465,7 +1476,9 @@ public class ShopifySdkTest {
 				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
 						.withParam(ShopifySdk.STATUS_QUERY_PARAMETER, ShopifySdk.ANY_STATUSES)
 						.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, 50).withMethod(Method.GET),
-				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Link",
+						"<https://some-store.myshopify.com/admin/api/2019-10/orders?page_info=123>; rel=\"previous\", <https://humdingers-business-of-the-americas.myshopify.com/admin/api/2019-10/orders?page_info=456>; rel=\"next\"")
+						.withStatus(expectedStatusCode));
 
 		final ShopifyPage<ShopifyOrder> shopifyOrdersPage = shopifySdk.getOrders();
 
@@ -1487,6 +1500,9 @@ public class ShopifySdkTest {
 				shopifyOrder.getFulfillments().get(0).getLineItems().get(0).getSku());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getName(),
 				shopifyOrder.getFulfillments().get(0).getLineItems().get(0).getName());
+
+		assertEquals("456", shopifyOrdersPage.getNextPageInfo());
+		assertEquals("123", shopifyOrdersPage.getPreviousPageInfo());
 	}
 
 	@Test

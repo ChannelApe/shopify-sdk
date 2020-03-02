@@ -102,6 +102,7 @@ import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
+	private static final long TWO_HUNDRED_MILLISECONDS = 200L;
 	private static final String EQUALS = "=";
 	private static final String AMPERSAND = "&";
 	private static final String REL_PREVIOUS_HEADER_KEY = "previous";
@@ -109,9 +110,7 @@ public class ShopifySdk {
 	private static final String EMPTY_STRING = "";
 	static final String RETRY_AFTER_HEADER = "Retry-After";
 	private static final String MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay must be larger than minimum request retry delay.";
-	private static final String INVALID_MAXIMUM_REQUEST_RETRY_TIMEOUT_MESSAGE = "Maximum request retry timeout cannot be set lower than 2 seconds.";
-	private static final String INVALID_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Maximum request retry delay cannot be set lower than 2 seconds.";
-	private static final String INVALID_MINIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Minimum request retry delay cannot be set lower than 1 second.";
+	private static final String INVALID_MINIMUM_REQUEST_RETRY_DELAY_MESSAGE = "Minimum request retry delay cannot be set lower than 200 milliseconds.";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifySdk.class);
 
@@ -173,8 +172,6 @@ public class ShopifySdk {
 	private static final String DEPRECATED_SHOPIFY_CALL_ERROR_MESSAGE = "Shopify call is deprecated. Please take note of the X-Shopify-API-Deprecated-Reason and correct the call.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}";
 	static final String GENERAL_ACCESS_TOKEN_EXCEPTION_MESSAGE = "There was a problem generating access token using shop subdomain of %s and authorization code of %s.";
 
-	private static final Long TWO_SECONDS_IN_MILLISECONDS = 2000L;
-	private static final Long ONE_SECOND_IN_MILLISECONDS = 1000L;
 	private static final Long DEFAULT_MAXIMUM_REQUEST_RETRY_TIMEOUT_IN_MILLISECONDS = 180000L;
 	private static final Long DEFAULT_MAXIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS = 5000L;
 	private static final Long DEFAULT_MINIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS = 1000L;
@@ -305,16 +302,9 @@ public class ShopifySdk {
 	}
 
 	private void validateConstructionOfShopifySdk() {
-		if (this.minimumRequestRetryRandomDelayMilliseconds < ONE_SECOND_IN_MILLISECONDS) {
+		if (this.minimumRequestRetryRandomDelayMilliseconds < TWO_HUNDRED_MILLISECONDS) {
 			throw new IllegalArgumentException(INVALID_MINIMUM_REQUEST_RETRY_DELAY_MESSAGE);
 		}
-		if (this.maximumRequestRetryRandomDelayMilliseconds < TWO_SECONDS_IN_MILLISECONDS) {
-			throw new IllegalArgumentException(INVALID_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE);
-		}
-		if (this.maximumRequestRetryTimeoutMilliseconds < TWO_SECONDS_IN_MILLISECONDS) {
-			throw new IllegalArgumentException(INVALID_MAXIMUM_REQUEST_RETRY_TIMEOUT_MESSAGE);
-		}
-
 		if (minimumRequestRetryRandomDelayMilliseconds > maximumRequestRetryRandomDelayMilliseconds) {
 			throw new IllegalArgumentException(
 					MINIMUM_REQUEST_RETRY_DELAY_CANNOT_BE_LARGER_THAN_MAXIMUM_REQUEST_RETRY_DELAY_MESSAGE);
