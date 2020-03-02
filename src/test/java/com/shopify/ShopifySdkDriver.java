@@ -31,6 +31,7 @@ import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyAttribute;
+import com.shopify.model.ShopifyCustomCollection;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
@@ -630,6 +631,12 @@ public class ShopifySdkDriver {
 		System.out.println(dtoAsString);
 		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderCreationRequest);
 		assertNotNull(actualShopifyOrder);
+	}
+
+	@Test
+	public void givenSomeValuesExistWhenRetrievingCustomCollectionsThenRetrieveCustomCollections() {
+		final List<ShopifyCustomCollection> retrievedCustomCollections = shopifySdk.getCustomCollections();
+		assertEquals(3, retrievedCustomCollections.size());
 	}
 
 	@Test
