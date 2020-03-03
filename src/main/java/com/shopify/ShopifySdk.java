@@ -121,7 +121,7 @@ public class ShopifySdk {
 	static final String OAUTH = "oauth";
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
-	static final String VERSION_2019_10 = "api/2019-10";
+	static final String VERSION_2020_01 = "api/2020-01";
 	static final String PRODUCTS = "products";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
@@ -425,7 +425,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyProduct> getProducts(final String pageInfo, final int pageSize) {
-		final Response response = get(getWebTarget().path(VERSION_2019_10).path(PRODUCTS)
+		final Response response = get(getWebTarget().path(VERSION_2020_01).path(PRODUCTS)
 				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
 		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
@@ -722,7 +722,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest) {
-		WebTarget target = getWebTarget().path(VERSION_2019_10).path(CUSTOMERS);
+		WebTarget target = getWebTarget().path(VERSION_2020_01).path(CUSTOMERS);
 		if (shopifyGetCustomersRequest.getPageInfo() != null) {
 			target = target.queryParam(PAGE_INFO_QUERY_PARAMETER, shopifyGetCustomersRequest.getPageInfo());
 		}
@@ -748,7 +748,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> searchCustomers(final String query) {
-		final Response response = get(getWebTarget().path(VERSION_2019_10).path(CUSTOMERS).path(SEARCH)
+		final Response response = get(getWebTarget().path(VERSION_2020_01).path(CUSTOMERS).path(SEARCH)
 				.queryParam(QUERY_QUERY_PARAMETER, query).queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
 		return getCustomers(response);
 	}
@@ -1121,6 +1121,6 @@ public class ShopifySdk {
 	}
 
 	private WebTarget buildOrdersEndpoint() {
-		return getWebTarget().path(VERSION_2019_10).path(ORDERS);
+		return getWebTarget().path(VERSION_2020_01).path(ORDERS);
 	}
 }
