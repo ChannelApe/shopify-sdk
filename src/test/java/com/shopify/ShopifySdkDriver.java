@@ -31,11 +31,13 @@ import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyAttribute;
+import com.shopify.model.ShopifyCustomCollection;
 import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGetCustomersRequest;
 import com.shopify.model.ShopifyGiftCard;
 import com.shopify.model.ShopifyGiftCardCreationRequest;
 import com.shopify.model.ShopifyInventoryLevel;
@@ -45,6 +47,7 @@ import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
 import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
+import com.shopify.model.ShopifyPage;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyProducts;
@@ -251,18 +254,54 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenSomePageWhenQueryingOrdersThenReturnShopifyOrders() {
-		final List<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(1);
+		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(250);
 		assertEquals(250, actualOrdersFirstPage.size());
+		assertNotNull(actualOrdersFirstPage.getNextPageInfo());
+		assertNull(actualOrdersFirstPage.getPreviousPageInfo());
 
-		final List<ShopifyOrder> actualOrdersSecondPage = shopifySdk.getOrders(2);
-		assertEquals(250, actualOrdersSecondPage.size());
+		String nextPageInfo = actualOrdersFirstPage.getNextPageInfo();
+		while (nextPageInfo != null) {
+			System.out.println("Getting next orders with page info: " + nextPageInfo);
+			final ShopifyPage<ShopifyOrder> orders = shopifySdk.getOrders(nextPageInfo, 250);
+			nextPageInfo = orders.getNextPageInfo();
+
+		}
+
+	}
+
+	@Test
+	public void givenSomeQueryWhenGettingCustomersFromMultiplePagesThenRetrieveCustomers() {
+		final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest.newBuilder()
+				.withCreatedAtMin(DateTime.now(DateTimeZone.UTC).minusYears(4)).withLimit(10).build();
+		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
+		assertEquals(10, actualCustomersPage.size());
+		assertNotNull(actualCustomersPage.getNextPageInfo());
+		assertNull(actualCustomersPage.getPreviousPageInfo());
+
+		String nextPageInfo = actualCustomersPage.getNextPageInfo();
+		while (nextPageInfo != null) {
+			System.out.println("Getting next customers with page info: " + nextPageInfo);
+			final ShopifyGetCustomersRequest paginatedGetRequest = ShopifyGetCustomersRequest.newBuilder()
+					.withPageInfo(nextPageInfo).withLimit(10).build();
+			final ShopifyPage<ShopifyCustomer> paginatedCustomers = shopifySdk.getCustomers(paginatedGetRequest);
+			nextPageInfo = paginatedCustomers.getNextPageInfo();
+
+		}
+
 	}
 
 	@Test
 	public void givenSomePageAndMinimumDateWhenQueryingOrdersThenReturnShopifyOrders() {
-		final List<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(new DateTime().minusDays(30), 1);
-		assertEquals(9, actualOrdersFirstPage.size());
-		assertNotNull(actualOrdersFirstPage.get(0).getFulfillments().get(0).getLineItems());
+		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(new DateTime().minusYears(4), 250);
+		assertEquals(250, actualOrdersFirstPage.size());
+
+		String nextPageInfo = actualOrdersFirstPage.getNextPageInfo();
+		while (nextPageInfo != null) {
+			System.out.println("Getting next orders with page info: " + nextPageInfo);
+			final ShopifyPage<ShopifyOrder> orders = shopifySdk.getOrders(nextPageInfo, 250);
+			nextPageInfo = orders.getNextPageInfo();
+
+		}
 
 	}
 
@@ -532,9 +571,9 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomeUpdatedAtMinWhenRetrievingUpdatedOrdersThenExpectUpdatedOrders()
 			throws JsonProcessingException {
-		final List<ShopifyOrder> actualShopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(
+		final ShopifyPage<ShopifyOrder> actualShopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(
 				DateTime.now(DateTimeZone.UTC).minusHours(24), DateTime.now(DateTimeZone.UTC),
-				DateTime.now(DateTimeZone.UTC), 1, 250);
+				DateTime.now(DateTimeZone.UTC), 250);
 		assertNotNull(actualShopifyOrders);
 		assertTrue(actualShopifyOrders.size() > 0);
 	}
@@ -592,6 +631,12 @@ public class ShopifySdkDriver {
 		System.out.println(dtoAsString);
 		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderCreationRequest);
 		assertNotNull(actualShopifyOrder);
+	}
+
+	@Test
+	public void givenSomeValuesExistWhenRetrievingCustomCollectionsThenRetrieveCustomCollections() {
+		final List<ShopifyCustomCollection> retrievedCustomCollections = shopifySdk.getCustomCollections();
+		assertEquals(3, retrievedCustomCollections.size());
 	}
 
 	@Test

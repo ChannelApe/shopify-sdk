@@ -46,6 +46,8 @@ public class ShopifyErrorResponseExceptionTest {
 		assertEquals(Type.UNKNOWN, actualShopifyErrorResponseException.getShopifyErrorCodes().get(0).getType());
 		assertEquals(expectedResponseBodyString,
 				actualShopifyErrorResponseException.getShopifyErrorCodes().get(0).getMessage());
+		assertEquals(expectedStatusCode, actualShopifyErrorResponseException.getStatusCode());
+		assertEquals(expectedResponseBodyString, actualShopifyErrorResponseException.getResponseBody());
 	}
 
 	@Test
@@ -76,6 +78,8 @@ public class ShopifyErrorResponseExceptionTest {
 		assertEquals(Type.UNKNOWN, actualShopifyErrorResponseException.getShopifyErrorCodes().get(0).getType());
 		assertEquals(expectedResponseBodyString,
 				actualShopifyErrorResponseException.getShopifyErrorCodes().get(0).getMessage());
+		assertEquals(expectedStatusCode, actualShopifyErrorResponseException.getStatusCode());
+		assertEquals(expectedResponseBodyString, actualShopifyErrorResponseException.getResponseBody());
 	}
 
 	@Test
@@ -110,6 +114,8 @@ public class ShopifyErrorResponseExceptionTest {
 				actualShopifyErrorResponseException.getShopifyErrorCodes().get(0).getType());
 		assertEquals("address1 can't be blank, zip is not valid for united states, and city can't be blank",
 				actualShopifyErrorResponseException.getShopifyErrorCodes().get(0).getMessage());
+		assertEquals(expectedStatusCode, actualShopifyErrorResponseException.getStatusCode());
+		assertEquals(expectedResponseBodyString, actualShopifyErrorResponseException.getResponseBody());
 	}
 
 }
