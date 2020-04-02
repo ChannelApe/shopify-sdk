@@ -460,9 +460,9 @@ public class ShopifySdk {
 		return mapPagedResponse(shopifyCustomCollectionsRoot.getCustomCollections(), response);
 	}
 
-	public ShopifyPage<ShopifyCustomCollection> getCustomCollections(final String cursor, final int pageSize) {
+	public ShopifyPage<ShopifyCustomCollection> getCustomCollections(final String pageInfo, final int pageSize) {
 		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS)
-				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, cursor));
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response
 				.readEntity(ShopifyCustomCollectionsRoot.class);
 		return mapPagedResponse(shopifyCustomCollectionsRoot.getCustomCollections(), response);
@@ -478,7 +478,7 @@ public class ShopifySdk {
 		while (customCollectionsPage.getNextPageInfo() != null) {
 			customCollectionsPage = getCustomCollections(customCollectionsPage.getNextPageInfo(),
 					DEFAULT_REQUEST_LIMIT);
-			LOGGER.info("Retrieved {} custom collections from cursor {}", customCollectionsPage.size(),
+			LOGGER.info("Retrieved {} custom collections from page info {}", customCollectionsPage.size(),
 					customCollectionsPage.getNextPageInfo());
 			shopifyCustomCollections.addAll(customCollectionsPage);
 		}
