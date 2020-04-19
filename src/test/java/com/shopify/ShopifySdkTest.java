@@ -157,8 +157,8 @@ public class ShopifySdkTest {
 
 	@Test
 	public void testGetShop() {
-		ShopifySdk shopifySdk = ShopifySdk.newBuilder().withApiUrl(
-				"https://testhevostore.myshopify.com/admin/api/2020-04/")
+		ShopifySdk shopifySdk = ShopifySdk.newBuilder()
+				.withSubdomain("testhevostore")
 				.withAccessToken("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")
 				.build();
 		final ShopifyShop actualShop = shopifySdk.getShop();
