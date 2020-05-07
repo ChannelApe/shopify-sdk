@@ -44,9 +44,13 @@ public class ShopifyTransaction {
 	@XmlElement(name = "created_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime createdAt;
+	private String id;
 
 	public String getDeviceId() {
 		return deviceId;
+	}
+	public String getId() {
+		return id;
 	}
 	public String getMessage() {
 		return message;
@@ -66,6 +70,9 @@ public class ShopifyTransaction {
 
 	public void setOrderId(final String orderId) {
 		this.orderId = orderId;
+	}
+	public void setId(final String id) {
+		this.id = id;
 	}
 
 	public void setDeviceId(final String deviceId) {
