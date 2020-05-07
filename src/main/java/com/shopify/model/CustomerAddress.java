@@ -28,10 +28,16 @@ public class CustomerAddress {
     @XmlElement(name = "last_name")
     private String lastName;
     private String company;
+    private String id;
 
     public String getAddress1() {
         return address1;
     }
+
+    public String getId() {
+        return id;
+    }
+
     public String getAddress2() {
         return address2;
     }
@@ -73,6 +79,9 @@ public class CustomerAddress {
     }
     public void setAddress1(final String address1) {
         this.address1 = address1;
+    }
+    public void setId(final String id) {
+        this.id = id;
     }
     public void setAddress2(final String address2) {
         this.address2 = address2;
