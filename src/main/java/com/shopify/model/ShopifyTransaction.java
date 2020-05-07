@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.shopify.model.adapters.CurrencyAdapter;
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,6 +29,36 @@ public class ShopifyTransaction {
 	@XmlElement(name = "maximum_refundable")
 	private BigDecimal maximumRefundable;
 	private ShopifyTransactionReceipt receipt;
+	@XmlElement(name = "location_id")
+	private String locationId;
+	@XmlElement(name = "device_id")
+	private String deviceId;
+	private String message;
+	@XmlElement(name = "payment_details")
+	private Object paymentDetails;
+	@XmlElement(name = "source_name")
+	private String sourceName;
+	@XmlElement(name = "processed_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime processedAt;
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+	public String getMessage() {
+		return message;
+	}
+
+	public Object getPaymentDetails() {
+		return paymentDetails;
+	}
+
+	public String getSourceName() {
+		return sourceName;
+	}
 
 	public String getOrderId() {
 		return orderId;
@@ -34,6 +66,22 @@ public class ShopifyTransaction {
 
 	public void setOrderId(final String orderId) {
 		this.orderId = orderId;
+	}
+
+	public void setDeviceId(final String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public void setPaymentDetails(Object paymentDetails) {
+		this.paymentDetails = paymentDetails;
+	}
+
+	public void setSourceName(String sourceName) {
+		this.sourceName = sourceName;
 	}
 
 	public String getKind() {
@@ -91,5 +139,30 @@ public class ShopifyTransaction {
 	public void setReceipt(final ShopifyTransactionReceipt receipt) {
 		this.receipt = receipt;
 	}
+
+	public DateTime getProcessedAt() {
+		return processedAt;
+	}
+
+	public void setProcessedAt(final DateTime processedAt) {
+		this.processedAt = processedAt;
+	}
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(final DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(final String locationId) {
+		this.locationId = locationId;
+	}
+
 
 }

@@ -110,32 +110,32 @@ public class ShopifySdkTest {
 				.withAccessToken("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")
 				.build();
 		String pageInfo = null;
+//
+//		try {
+//			ExecutorService executorService = Executors.newFixedThreadPool(10);
+//			List<ShopifyCountry> fullList = Arrays.asList();
+//
+//			List<Future<List<ShopifyCountry>>> futureList = new ArrayList<>();
+//			for (int i = 0; i <= 100; i++) {
+//				Future future = executorService.submit(new ManagedCustomerCallable(shopifySdk));
+//				futureList.add(future);
+//			}
+//
+//			for (Future<List<ShopifyCountry>> managedCustomerPageFuture : futureList) {
+//				managedCustomerPageFuture.get();
+//			}
+//			System.out.println();
+//		} catch (ExecutionException sshe) {
+//			System.out.println();
+//		} catch (Exception e) {
+//			System.out.println();
+//		}
 
-		try {
-			ExecutorService executorService = Executors.newFixedThreadPool(10);
-			List<ShopifyCountry> fullList = Arrays.asList();
 
-			List<Future<List<ShopifyCountry>>> futureList = new ArrayList<>();
-			for (int i = 0; i <= 100; i++) {
-				Future future = executorService.submit(new ManagedCustomerCallable(shopifySdk));
-				futureList.add(future);
-			}
-
-			for (Future<List<ShopifyCountry>> managedCustomerPageFuture : futureList) {
-				managedCustomerPageFuture.get();
-			}
-			System.out.println();
-		} catch (ExecutionException sshe) {
-			System.out.println();
-		} catch (Exception e) {
-			System.out.println();
-		}
-
-
-//		do {
-//			List<ShopifyLocation> shopifyCustomerSavedSearches = shopifySdk.getLocations();
-//			System.out.println(shopifyCustomerSavedSearches);
-//		} while (pageInfo != null);
+		do {
+			List<ShopifyTransaction> shopifyCustomerSavedSearches = shopifySdk.getOrderTransactions("2075709931556");
+			System.out.println(shopifyCustomerSavedSearches);
+		} while (pageInfo != null);
 	}
 
 

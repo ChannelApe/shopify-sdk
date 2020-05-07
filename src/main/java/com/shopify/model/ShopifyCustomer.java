@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,6 +38,8 @@ public class ShopifyCustomer {
 	@XmlElement(name = "total_spent")
 	private BigDecimal totalSpent;
 	private String note;
+	private List<Metafield> metafields;
+	private List<CustomerAddress> addresses;
 
 	public String getId() {
 		return id;
@@ -132,6 +135,22 @@ public class ShopifyCustomer {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	public List<Metafield> getMetafields() {
+		return metafields;
+	}
+
+	public void setMetafields(final List<Metafield> metafields) {
+		this.metafields = metafields;
+	}
+
+	public void setCustomerAddresses(final List<CustomerAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+	public List<CustomerAddress> getCustomerAddresses() {
+		return addresses;
 	}
 
 }
