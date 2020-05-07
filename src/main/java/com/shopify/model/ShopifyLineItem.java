@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,6 +41,10 @@ public class ShopifyLineItem {
 	private String fulfillmentStatus;
 	@XmlElement(name = "fulfillment_service")
 	private String fulfillmentService;
+	private boolean custom;
+	@XmlElement(name = "applied_discount_code")
+	private AppliedDiscountCode appliedDiscountCode;
+	private List<ShopifyProperty> properties;
 
 	public String getId() {
 		return id;
@@ -47,6 +52,14 @@ public class ShopifyLineItem {
 
 	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public AppliedDiscountCode getAppliedDiscountCode() {
+		return appliedDiscountCode;
+	}
+
+	public void setAppliedDiscountCode(final AppliedDiscountCode appliedDiscountCode) {
+		this.appliedDiscountCode = appliedDiscountCode;
 	}
 
 	public String getVariantId() {
@@ -125,6 +138,14 @@ public class ShopifyLineItem {
 		return requiresShipping;
 	}
 
+	public void setCustom(final boolean custom) {
+		this.custom = custom;
+	}
+
+	public boolean isCustom() {
+		return custom;
+	}
+
 	public void setRequiresShipping(final boolean requiresShipping) {
 		this.requiresShipping = requiresShipping;
 	}
@@ -191,6 +212,14 @@ public class ShopifyLineItem {
 
 	public void setFulfillmentService(final String fulfillmentService) {
 		this.fulfillmentService = fulfillmentService;
+	}
+
+	public List<ShopifyProperty> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<ShopifyProperty> shopifyProperties) {
+		this.properties = shopifyProperties;
 	}
 
 }

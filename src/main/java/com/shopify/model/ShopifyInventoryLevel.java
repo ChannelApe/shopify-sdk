@@ -1,9 +1,13 @@
 package com.shopify.model;
 
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -16,6 +20,18 @@ public class ShopifyInventoryLevel {
 	private String locationId;
 
 	private long available;
+
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(final DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
 	public String getInventoryItemId() {
 		return inventoryItemId;

@@ -77,7 +77,7 @@ public class ShopifyOrderTest {
 		shopifyOrder.setTaxLines(SOME_TAX_LINES);
 		shopifyOrder.setToken(SOME_TOKEN);
 		shopifyOrder.setTotalDiscounts(SOME_TOTAL_DISCOUNTS);
-		shopifyOrder.setTotaLineItemsPrice(SOME_TOTA_LINE_ITEMS_PRICE);
+		shopifyOrder.setTotalLineItemsPrice(SOME_TOTA_LINE_ITEMS_PRICE);
 		shopifyOrder.setTotalPrice(SOME_TOTAL_PRICE);
 		shopifyOrder.setTotalTax(SOME_TOTAL_TAX);
 		shopifyOrder.setTotalWeight(SOME_TOTAL_WEIGHT);
@@ -114,7 +114,7 @@ public class ShopifyOrderTest {
 		assertEquals(SOME_TAX_LINES, shopifyOrder.getTaxLines());
 		assertEquals(SOME_TOKEN, shopifyOrder.getToken());
 		assertEquals(SOME_TOTAL_DISCOUNTS, shopifyOrder.getTotalDiscounts());
-		assertEquals(SOME_TOTA_LINE_ITEMS_PRICE, shopifyOrder.getTotaLineItemsPrice());
+		assertEquals(SOME_TOTA_LINE_ITEMS_PRICE, shopifyOrder.getTotalLineItemsPrice());
 		assertEquals(SOME_TOTAL_PRICE, shopifyOrder.getTotalPrice());
 		assertEquals(SOME_TOTAL_TAX, shopifyOrder.getTotalTax());
 		assertEquals(SOME_TOTAL_WEIGHT, shopifyOrder.getTotalWeight());

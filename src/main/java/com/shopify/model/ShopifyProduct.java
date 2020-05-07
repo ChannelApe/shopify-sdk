@@ -34,15 +34,15 @@ public class ShopifyProduct {
 	private String vendor;
 	@XmlJavaTypeAdapter(TagsAdapter.class)
 	@XmlElement(name = "tags")
-	private Set<String> tags = new HashSet<>();
-	private List<Option> options = new LinkedList<>();
+	private Set<String> tags;
+	private List<Option> options;
 	@XmlElement(name = "metafields_global_title_tag")
 	private String metafieldsGlobalTitleTag;
 	@XmlElement(name = "metafields_global_description_tag")
 	private String metafieldsGlobalDescriptionTag;
-	private List<Image> images = new LinkedList<>();
+	private List<Image> images;
 	private Image image;
-	private List<ShopifyVariant> variants = new LinkedList<>();
+	private List<ShopifyVariant> variants;
 	@XmlElement(name = "published_at")
 	private String publishedAt;
 	private Boolean published;

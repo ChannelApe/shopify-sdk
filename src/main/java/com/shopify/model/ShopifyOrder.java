@@ -51,7 +51,7 @@ public class ShopifyOrder {
 	@XmlElement(name = "total_discounts")
 	private BigDecimal totalDiscounts;
 	@XmlElement(name = "total_line_items_price")
-	private BigDecimal totaLineItemsPrice;
+	private BigDecimal totalLineItemsPrice;
 	@XmlElement(name = "cart_token")
 	private String cartToken;
 	@XmlElement(name = "buyer_accepts_marketing")
@@ -88,21 +88,21 @@ public class ShopifyOrder {
 	@XmlElement(name = "order_status_url")
 	private String orderStatusUrl;
 	@XmlElement(name = "line_items")
-	private List<ShopifyLineItem> lineItems = new LinkedList<>();
-	private List<ShopifyFulfillment> fulfillments = new LinkedList<>();
+	private List<ShopifyLineItem> lineItems;
+	private List<ShopifyFulfillment> fulfillments;
 	@XmlElement(name = "billing_address")
-	private ShopifyAddress billingAddress = new ShopifyAddress();
+	private ShopifyAddress billingAddress;
 	@XmlElement(name = "shipping_address")
-	private ShopifyAddress shippingAddress = new ShopifyAddress();
-	private ShopifyCustomer customer = new ShopifyCustomer();
+	private ShopifyAddress shippingAddress;
+	private ShopifyCustomer customer;
 	@XmlElement(name = "shipping_lines")
-	private List<ShopifyShippingLine> shippingLines = new LinkedList<>();
+	private List<ShopifyShippingLine> shippingLines;
 	@XmlElement(name = "tax_lines")
-	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
+	private List<ShopifyTaxLine> taxLines;
 	@XmlElement(name = "note_attributes")
-	private List<ShopifyAttribute> noteAttributes = new LinkedList<>();
-	private List<ShopifyRefund> refunds = new LinkedList<>();
-	private List<Metafield> metafields = new LinkedList<>();
+	private List<ShopifyAttribute> noteAttributes;
+	private List<ShopifyRefund> refunds;
+	private List<Metafield> metafields;
 
 	public String getId() {
 		return id;
@@ -232,12 +232,12 @@ public class ShopifyOrder {
 		this.totalDiscounts = totalDiscounts;
 	}
 
-	public BigDecimal getTotaLineItemsPrice() {
-		return totaLineItemsPrice;
+	public BigDecimal getTotalLineItemsPrice() {
+		return totalLineItemsPrice;
 	}
 
-	public void setTotaLineItemsPrice(final BigDecimal totaLineItemsPrice) {
-		this.totaLineItemsPrice = totaLineItemsPrice;
+	public void setTotalLineItemsPrice(final BigDecimal totalLineItemsPrice) {
+		this.totalLineItemsPrice = totalLineItemsPrice;
 	}
 
 	public String getCartToken() {

@@ -17,11 +17,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -43,71 +44,6 @@ import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Count;
-import com.shopify.model.Image;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldValueType;
-import com.shopify.model.MetafieldsRoot;
-import com.shopify.model.OrderRiskRecommendation;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAccessTokenRoot;
-import com.shopify.model.ShopifyAddress;
-import com.shopify.model.ShopifyAttribute;
-import com.shopify.model.ShopifyCustomCollection;
-import com.shopify.model.ShopifyCustomCollectionCreationRequest;
-import com.shopify.model.ShopifyCustomCollectionRoot;
-import com.shopify.model.ShopifyCustomCollectionsRoot;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerRoot;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyCustomersRoot;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentRoot;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGetCustomersRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-import com.shopify.model.ShopifyLineItem;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyLocationsRoot;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderRisksRoot;
-import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyOrdersRoot;
-import com.shopify.model.ShopifyPage;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductCreationRequest;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-import com.shopify.model.ShopifyProductRoot;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyProductsRoot;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundLineItem;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyRefundShippingDetails;
-import com.shopify.model.ShopifyShippingLine;
-import com.shopify.model.ShopifyShop;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyTransactionReceipt;
-import com.shopify.model.ShopifyTransactionsRoot;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantCreationRequest;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRoot;
-import com.shopify.model.ShopifyVariantUpdateRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -155,14 +91,51 @@ public class ShopifySdkTest {
 
 	}
 
+	private class ManagedCustomerCallable implements Callable<List<ShopifyCountry>> {
+		private ShopifySdk shopifySdk;
+		public ManagedCustomerCallable(ShopifySdk shopifySdk) {
+			this.shopifySdk = shopifySdk;
+		}
+		@Override
+		public List<ShopifyCountry> call() throws Exception {
+			return shopifySdk.getCountries();
+		}
+	}
+
+
 	@Test
-	public void testGetShop() {
+	public void testGetShop() throws ExecutionException, InterruptedException {
 		ShopifySdk shopifySdk = ShopifySdk.newBuilder()
 				.withSubdomain("testhevostore")
 				.withAccessToken("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")
 				.build();
-		final ShopifyShop actualShop = shopifySdk.getShop();
-		System.out.println(actualShop);
+		String pageInfo = null;
+
+		try {
+			ExecutorService executorService = Executors.newFixedThreadPool(10);
+			List<ShopifyCountry> fullList = Arrays.asList();
+
+			List<Future<List<ShopifyCountry>>> futureList = new ArrayList<>();
+			for (int i = 0; i <= 100; i++) {
+				Future future = executorService.submit(new ManagedCustomerCallable(shopifySdk));
+				futureList.add(future);
+			}
+
+			for (Future<List<ShopifyCountry>> managedCustomerPageFuture : futureList) {
+				managedCustomerPageFuture.get();
+			}
+			System.out.println();
+		} catch (ExecutionException sshe) {
+			System.out.println();
+		} catch (Exception e) {
+			System.out.println();
+		}
+
+
+//		do {
+//			List<ShopifyLocation> shopifyCustomerSavedSearches = shopifySdk.getLocations();
+//			System.out.println(shopifyCustomerSavedSearches);
+//		} while (pageInfo != null);
 	}
 
 

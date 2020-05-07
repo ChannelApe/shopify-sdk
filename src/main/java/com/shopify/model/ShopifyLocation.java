@@ -1,9 +1,13 @@
 package com.shopify.model;
 
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,6 +22,13 @@ public class ShopifyLocation {
 	private String country;
 	private String phone;
 	private String province;
+
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
 
 	@XmlElement(name = "country_code")
 	private String countryCode;
@@ -123,5 +134,19 @@ public class ShopifyLocation {
 	public void setProvinceCode(final String provinceCode) {
 		this.provinceCode = provinceCode;
 	}
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
 
+	public void setCreatedAt(final DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(final DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 }
