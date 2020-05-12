@@ -98,6 +98,8 @@ public class ShopifySdk {
 	static final String CREATED_AT_MAX_QUERY_PARAMETER = "created_at_max";
 	static final String UPDATED_AT_MIN_QUERY_PARAMETER = "updated_at_min";
 	static final String UPDATED_AT_MAX_QUERY_PARAMETER = "updated_at_max";
+	static final String PROCESSED_AT_MIN_QUERY_PARAMETER = "processed_at_min";
+	static final String PROCESSED_AT_MAX_QUERY_PARAMETER = "processed_at_max";
 	static final String FIELDS = "fields";
 	static final String INVENTORY_ITEM_IDS = "inventory_item_ids";
 	static final String LOCATION_IDS = "location_ids";
@@ -753,13 +755,13 @@ public class ShopifySdk {
 		return getOrders(response);
 	}
 
-	public ShopifyPage<ShopifyTenderTransaction> getUpdatedTenderTransactions(final DateTime minimumUpdatedAtDate,
+	public ShopifyPage<ShopifyTenderTransaction> getProcessedTenderTransactions(final DateTime minimumUpdatedAtDate,
 													  final DateTime maximumUpdatedAtDate,
 													  final int pageSize, final String pageInfo) {
 		WebTarget webTarget = buildTenderTransactionsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
 		if (Strings.isNullOrEmpty(pageInfo)) {
-			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
-					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+			webTarget = webTarget.queryParam(PROCESSED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(PROCESSED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
 					.queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES);
 		}
 		final Response response = get(webTarget);
@@ -848,16 +850,10 @@ public class ShopifySdk {
 		return getCustomers(response);
 	}
 
-	public ShopifyPage<ShopifyCustomerSavedSearch> getUpdatedCustomerSavedSearch(final DateTime minimumUpdatedAtDate,
-													  final DateTime maximumUpdatedAtDate,
-													  final int pageSize, final String pageInfo) {
+	public ShopifyPage<ShopifyCustomerSavedSearch> getCustomerSavedSearches(final int pageSize, final String pageInfo) {
 		WebTarget webTarget = buildCustomerSavedSearchesEndpoint()
 				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
-		if (Strings.isNullOrEmpty(pageInfo)) {
-			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
-					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
-		}
 		final Response response = get(webTarget);
 		return getCustomerSavedSearches(response);
 	}
