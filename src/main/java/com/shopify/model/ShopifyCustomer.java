@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,8 +39,110 @@ public class ShopifyCustomer {
 	@XmlElement(name = "total_spent")
 	private BigDecimal totalSpent;
 	private String note;
-	private List<Metafield> metafields;
+	private Metafield metafield;
 	private List<CustomerAddress> addresses;
+	@XmlElement(name = "default_address")
+	private CustomerAddress defaultAddress;
+
+	@XmlElement(name = "accepts_marketing_updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime acceptsMarketingUpdatedAt;
+
+	private Currency currency;
+	@XmlElement(name = "marketing_opt_in_level")
+	private String marketingOptInLevel;
+	@XmlElement(name = "multipass_identifier")
+	private String multipassIdentifier;
+	private String tags;
+	@XmlElement(name = "tax_exempt")
+	private boolean taxExempt;
+	@XmlElement(name = "tax_exemptions")
+	private List<String> taxExemptions;
+	@XmlElement(name = "verified_email")
+	private boolean verifiedEmail;
+	@XmlElement(name = "last_order_id")
+	private String lastOrderId;
+	@XmlElement(name = "last_order_name")
+	private String lastOrderName;
+
+	public DateTime getAcceptsMarketingUpdatedAt() {
+		return acceptsMarketingUpdatedAt;
+	}
+	public void setAcceptsMarketingUpdatedAt(final DateTime acceptsMarketingUpdatedAt) {
+		this.acceptsMarketingUpdatedAt = acceptsMarketingUpdatedAt;
+	}
+
+	public String getLastOrderId() {
+		return lastOrderId;
+	}
+
+	public void setLastOrderId(String lastOrderId) {
+		this.lastOrderId = lastOrderId;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public String getMarketingOptInLevel() {
+		return marketingOptInLevel;
+	}
+
+	public void setMarketingOptInLevel(String marketingOptInLevel) {
+		this.marketingOptInLevel = marketingOptInLevel;
+	}
+
+	public boolean getVerifiedEmail() {
+		return verifiedEmail;
+	}
+
+	public void setVerifiedEmail(boolean verifiedEmail) {
+		this.verifiedEmail = verifiedEmail;
+	}
+
+	public List<String> getTaxExemptions() {
+		return this.taxExemptions;
+	}
+
+	public void setTaxExemptions(final List<String> taxExemptions) {
+		this.taxExemptions = taxExemptions;
+	}
+
+	public boolean getTaxExempt() {
+		return taxExempt;
+	}
+
+	public void setTaxExempt(boolean taxExempt) {
+		this.taxExempt = taxExempt;
+	}
+
+	public String getMultipassIdentifier() {
+		return multipassIdentifier;
+	}
+
+	public void setMultipassIdentifier(String multipassIdentifier) {
+		this.multipassIdentifier = multipassIdentifier;
+	}
+
+	public String getLastOrderName() {
+		return lastOrderName;
+	}
+
+	public void setLastOrderName(String lastOrderName) {
+		this.lastOrderName = lastOrderName;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
 
 	public String getId() {
 		return id;
@@ -55,6 +158,14 @@ public class ShopifyCustomer {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public CustomerAddress getDefaultAddress() {
+		return defaultAddress;
+	}
+
+	public void setDefaultAddress(CustomerAddress email) {
+		this.defaultAddress = defaultAddress;
 	}
 
 	public boolean isAcceptsMarketing() {
@@ -137,12 +248,12 @@ public class ShopifyCustomer {
 		this.note = note;
 	}
 
-	public List<Metafield> getMetafields() {
-		return metafields;
+	public Metafield getMetafield() {
+		return metafield;
 	}
 
-	public void setMetafields(final List<Metafield> metafields) {
-		this.metafields = metafields;
+	public void setMetafield(final Metafield metafield) {
+		this.metafield = metafield;
 	}
 
 	public void setCustomerAddresses(final List<CustomerAddress> addresses) {

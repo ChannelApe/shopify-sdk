@@ -372,7 +372,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 
@@ -426,8 +425,6 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrders.get(0).getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -491,7 +488,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 
@@ -546,8 +542,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrder.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrder.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrder.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -610,7 +604,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
@@ -640,8 +633,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrder.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrder.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrder.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -740,7 +731,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
@@ -769,8 +759,6 @@ public class ShopifySdkTest {
 				actualShopifyOrder1.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(actualShopifyOrder1.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				actualShopifyOrder1.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				actualShopifyOrder1.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -941,8 +929,6 @@ public class ShopifySdkTest {
 		shopifyProduct.setImages(Arrays.asList(image));
 		shopifyProduct.setProductType("Shoes");
 		shopifyProduct.setBodyHtml("Some Description");
-		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
-		shopifyProduct.setPublished(true);
 		shopifyProduct.setTitle("Some Title");
 		shopifyProduct.setVendor("Some Vendor");
 		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
@@ -1040,7 +1026,6 @@ public class ShopifySdkTest {
 				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
 		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
 		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
-		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
 		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
 		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
 		assertEquals(shopifyProduct.getVariants().get(0).getAvailable(),
@@ -1072,8 +1057,6 @@ public class ShopifySdkTest {
 		shopifyProduct.setImages(Arrays.asList(image));
 		shopifyProduct.setProductType("Shoes");
 		shopifyProduct.setBodyHtml("Some Description");
-		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
-		shopifyProduct.setPublished(true);
 		shopifyProduct.setTitle("Some Title");
 		shopifyProduct.setVendor("Some Vendor");
 		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
@@ -1174,7 +1157,6 @@ public class ShopifySdkTest {
 				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
 		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
 		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
-		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
 		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
 		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
 
@@ -1276,8 +1258,6 @@ public class ShopifySdkTest {
 		shopifyProduct.setImages(Arrays.asList(image));
 		shopifyProduct.setProductType("Shoes");
 		shopifyProduct.setBodyHtml("Some Description");
-		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
-		shopifyProduct.setPublished(true);
 		shopifyProduct.setTitle("Some Title");
 		shopifyProduct.setVendor("Some Vendor");
 		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
@@ -1327,7 +1307,6 @@ public class ShopifySdkTest {
 				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
 		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
 		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
-		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
 		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
 		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
 
@@ -1447,7 +1426,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
@@ -1472,8 +1450,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrder.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrder.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrder.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -3452,8 +3428,6 @@ public class ShopifySdkTest {
 		assertEquals(expectedShopifyFulfillment.isNotifyCustomer(), actualShopifyFulfillment.isNotifyCustomer());
 		assertEquals(expectedShopifyFulfillment.getStatus(), actualShopifyFulfillment.getStatus());
 		assertEquals(expectedShopifyFulfillment.getTrackingCompany(), actualShopifyFulfillment.getTrackingCompany());
-		assertEquals(expectedShopifyFulfillment.getTrackingNumber(), actualShopifyFulfillment.getTrackingNumber());
-		assertEquals(expectedShopifyFulfillment.getTrackingUrl(), actualShopifyFulfillment.getTrackingUrl());
 		assertEquals(expectedShopifyFulfillment.getTrackingUrls(), actualShopifyFulfillment.getTrackingUrls());
 		assertTrue(expectedShopifyFulfillment.getUpdatedAt().compareTo(actualShopifyFulfillment.getUpdatedAt()) == 0);
 	}
@@ -3468,8 +3442,6 @@ public class ShopifySdkTest {
 		currentFulfillment.setNotifyCustomer(true);
 		currentFulfillment.setStatus("cancelled");
 		currentFulfillment.setTrackingCompany("USPS");
-		currentFulfillment.setTrackingNumber("12341234");
-		currentFulfillment.setTrackingUrl("tracking_url");
 		currentFulfillment.setTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2"));
 		currentFulfillment.setUpdatedAt(SOME_DATE_TIME);
 		return currentFulfillment;

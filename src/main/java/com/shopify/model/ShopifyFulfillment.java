@@ -65,18 +65,21 @@ public class ShopifyFulfillment {
 	private DateTime updatedAt;
 	@XmlElement(name = "tracking_company")
 	private String trackingCompany;
-	@XmlElement(name = "tracking_number")
-	private String trackingNumber;
+	@XmlElement(name = "tracking_numbers")
+	private List<String> trackingNumbers;
 	@XmlElement(name = "notify_customer")
 	private boolean notifyCustomer;
 	@XmlElement(name = "line_items")
 	private List<ShopifyLineItem> lineItems = new LinkedList<>();
-	@XmlElement(name = "tracking_url")
-	private String trackingUrl;
 	@XmlElement(name = "tracking_urls")
 	private List<String> trackingUrls = new LinkedList<>();
 	@XmlElement(name = "location_id")
 	private String locationId;
+	private String name;
+	private Object receipt;
+	private String service;
+	@XmlElement(name = "shipment_status")
+	private String shipmentStatus;
 
 	public String getId() {
 		return id;
@@ -84,6 +87,38 @@ public class ShopifyFulfillment {
 
 	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public String getShipmentStatus() {
+		return shipmentStatus;
+	}
+
+	public void setShipmentStatus(final String shipmentStatus) {
+		this.shipmentStatus = shipmentStatus;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(final String service) {
+		this.service = service;
+	}
+
+	public Object getReceipt() {
+		return receipt;
+	}
+
+	public void setReceipt(final Object receipt) {
+		this.receipt = receipt;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 	public String getOrderId() {
@@ -126,20 +161,12 @@ public class ShopifyFulfillment {
 		this.trackingCompany = trackingCompany;
 	}
 
-	public String getTrackingNumber() {
-		return trackingNumber;
+	public List<String> getTrackingNumbers() {
+		return trackingNumbers;
 	}
 
-	public void setTrackingNumber(final String trackingNumber) {
-		this.trackingNumber = trackingNumber;
-	}
-
-	public String getTrackingUrl() {
-		return trackingUrl;
-	}
-
-	public void setTrackingUrl(final String trackingUrl) {
-		this.trackingUrl = trackingUrl;
+	public void setTrackingNumbers(final List<String> trackingNumbers) {
+		this.trackingNumbers = trackingNumbers;
 	}
 
 	public List<String> getTrackingUrls() {

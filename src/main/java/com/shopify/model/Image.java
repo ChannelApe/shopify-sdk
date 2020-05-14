@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
+import org.joda.time.DateTime;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -26,6 +29,45 @@ public class Image {
 	@XmlElement(name = "variant_ids")
 	private List<String> variantIds = new LinkedList<>();
 	private List<Metafield> metafields = new LinkedList<>();
+
+	private BigDecimal width;
+	private BigDecimal height;
+
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setCreatedAt(final DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public void setUpdatedAt(final DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public BigDecimal getWidth() {
+		return width;
+	}
+
+	public void setWidth(BigDecimal width) {
+		this.width = width;
+	}
+
+	public BigDecimal getHeight() {
+		return height;
+	}
+
+	public void setHeight(BigDecimal height) {
+		this.height = height;
+	}
 
 	public String getId() {
 		return id;

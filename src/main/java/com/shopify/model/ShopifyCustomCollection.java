@@ -17,6 +17,7 @@ public class ShopifyCustomCollection {
 	private String title;
 	private String handle;
 	private boolean published;
+	private Image image;
 
 	@XmlElement(name = "body_html")
 	private String bodyHtml;
@@ -48,6 +49,10 @@ public class ShopifyCustomCollection {
 
 	public String getBodyHtml() {
 		return bodyHtml;
+	}
+
+	public Image getImage() {
+		return image;
 	}
 
 	public String getHandle() {
@@ -93,6 +98,10 @@ public class ShopifyCustomCollection {
 
 	public void setHandle(String handle) {
 		this.handle = handle;
+	}
+
+	public void setImage(Image image) {
+		this.image = image;
 	}
 
 	public boolean isPublished() {

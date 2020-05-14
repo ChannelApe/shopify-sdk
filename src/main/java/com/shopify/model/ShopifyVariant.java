@@ -9,8 +9,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.InventoryPolicyAdapter;
+import org.joda.time.DateTime;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,12 +50,39 @@ public class ShopifyVariant {
 	@XmlElement(name = "requires_shipping")
 	private boolean requiresShipping;
 	private boolean taxable;
+	@XmlElement(name = "tax_code")
+	private String taxCode;
+
+	private BigDecimal weight;
+	@XmlElement(name = "weight_unit")
+	private String weightUnit;
 
 	@XmlElement(name = "inventory_item_id")
 	private String inventoryItemId;
 
 	@XmlTransient
 	private long available;
+
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(final DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+	public void setCreatedAt(final DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
 
 	public String getId() {
 		return id;
@@ -69,6 +98,30 @@ public class ShopifyVariant {
 
 	public void setProductId(final String productId) {
 		this.productId = productId;
+	}
+
+	public String getWeightUnit() {
+		return weightUnit;
+	}
+
+	public void setWeightUnit(final String weightUnit) {
+		this.weightUnit = weightUnit;
+	}
+
+	public BigDecimal getWeight() {
+		return weight;
+	}
+
+	public void setWeight(final BigDecimal weight) {
+		this.weight = weight;
+	}
+
+	public String getTaxCode() {
+		return taxCode;
+	}
+
+	public void setTaxCode(final String taxCode) {
+		this.taxCode = taxCode;
 	}
 
 	public String getTitle() {

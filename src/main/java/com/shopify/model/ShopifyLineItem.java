@@ -45,6 +45,8 @@ public class ShopifyLineItem {
 	@XmlElement(name = "applied_discount_code")
 	private AppliedDiscountCode appliedDiscountCode;
 	private List<ShopifyProperty> properties;
+	@XmlElement(name = "tax_lines")
+	private List<ShopifyTaxLine> taxLines;
 
 	public String getId() {
 		return id;
@@ -52,6 +54,14 @@ public class ShopifyLineItem {
 
 	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public List<ShopifyTaxLine> getTaxLines() {
+		return taxLines;
+	}
+
+	public void setTaxLines(final List<ShopifyTaxLine> taxLines) {
+		this.taxLines = taxLines;
 	}
 
 	public AppliedDiscountCode getAppliedDiscountCode() {

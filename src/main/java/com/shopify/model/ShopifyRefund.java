@@ -36,6 +36,13 @@ public class ShopifyRefund {
 	private List<ShopifyTransaction> transactions;
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;
+//	@XmlElement(name = "sub_total_set")
+//	private Object subTotalSet;
+//	@XmlElement(name = "total_tax_set")
+//	private Object totalTaxSet;
+//	private List<Object> duties;
+//	@XmlElement(name = "order_adjustments")
+//	private List<Object> orderAdjustments;
 
 	public String getId() {
 		return id;
@@ -44,6 +51,38 @@ public class ShopifyRefund {
 	public void setId(final String id) {
 		this.id = id;
 	}
+
+//	public Object getSubTotalSet() {
+//		return subTotalSet;
+//	}
+//
+//	public void setSubTotalSet(final Object subTotalSet) {
+//		this.subTotalSet = subTotalSet;
+//	}
+//
+//	public List<Object> getDuties() {
+//		return duties;
+//	}
+//
+//	public void setDuties(final List<Object> duties) {
+//		this.duties = duties;
+//	}
+//
+//	public List<Object> getOrderAdjustments() {
+//		return orderAdjustments;
+//	}
+//
+//	public void setOrderAdjustments(final List<Object> orderAdjustments) {
+//		this.orderAdjustments = orderAdjustments;
+//	}
+//
+//	public Object getTotalTaxSet() {
+//		return totalTaxSet;
+//	}
+//
+//	public void setTotalTaxSet(final Object totalTaxSet) {
+//		this.totalTaxSet = totalTaxSet;
+//	}
 
 	public List<ShopifyRefundLineItem> getRefundLineItems() {
 		return refundLineItems;

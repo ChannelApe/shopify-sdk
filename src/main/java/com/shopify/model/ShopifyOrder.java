@@ -103,6 +103,32 @@ public class ShopifyOrder {
 	private List<ShopifyAttribute> noteAttributes;
 	private List<ShopifyRefund> refunds;
 	private List<Metafield> metafields;
+//	@XmlElement(name = "current_total_duties_set")
+//	private Object currentTotalDutiesSet;
+//	@XmlElement(name = "discount_applications")
+//	private List<Object> discountApplications;
+//	@XmlElement(name = "discount_codes")
+//	private Object discountCodes;
+//	@XmlElement(name = "original_total_duties_set")
+//	private Object originalTotalDutiesSet;
+//	@XmlElement(name = "payment_gateway_names")
+//	private List<String> paymentGatewayNames;
+//	private String phone;
+//	@XmlElement(name = "presentment_currency")
+//	private String presentmentCurrency;
+//	@XmlElement(name = "subtotal_price_set")
+//	private Object subtotalPriceSet;
+//	private boolean test;
+//	@XmlElement(name = "total_discounts_set")
+//	private Object total_discounts_set;
+//	@XmlElement(name = "total_line_items_price_set")
+//	private Object totalLineItemsPriceSet;
+//	@XmlElement(name = "total_price_set")
+//	private Object totalPriceSet;
+//	@XmlElement(name = "total_tax_set")
+//	private Object totalTaxSet;
+//	@XmlElement(name = "total_tip_received")
+//	private BigDecimal totalTipReceived;
 
 	public String getId() {
 		return id;

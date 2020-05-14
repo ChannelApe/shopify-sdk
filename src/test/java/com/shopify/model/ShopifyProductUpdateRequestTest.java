@@ -103,7 +103,6 @@ public class ShopifyProductUpdateRequestTest {
 		assertEquals(SOME_CURRENT_PRODUCT_TYPE, actualShopifyProduct.getProductType());
 		final DateTime actualPublishedAt = DateTime.parse(actualShopifyProduct.getPublishedAt());
 		assertTrue(DateTime.now(DateTimeZone.UTC).compareTo(actualPublishedAt) >= 0);
-		assertTrue(actualShopifyProduct.isPublished());
 
 		final List<Option> actualOptions = actualShopifyProduct.getOptions();
 		assertEquals(3, actualOptions.size());
@@ -200,7 +199,6 @@ public class ShopifyProductUpdateRequestTest {
 		assertEquals(SOME_NEW_TAGS, actualShopifyProduct.getTags());
 		assertEquals(SOME_NEW_PRODUCT_TYPE, actualShopifyProduct.getProductType());
 		assertNull(actualShopifyProduct.getPublishedAt());
-		assertFalse(actualShopifyProduct.isPublished());
 
 		final List<Option> actualOptions = actualShopifyProduct.getOptions();
 		assertEquals(3, actualOptions.size());
