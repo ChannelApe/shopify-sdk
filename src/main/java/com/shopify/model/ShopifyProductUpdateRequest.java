@@ -63,7 +63,7 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 	}
 
 	public static interface TagsStep {
-		public SortedOptionNamesStep withTags(final Set<String> tags);
+		public SortedOptionNamesStep withTags(final String tags);
 
 		public SortedOptionNamesStep withSameTags();
 	}
@@ -249,7 +249,7 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 		}
 
 		@Override
-		public SortedOptionNamesStep withTags(final Set<String> tags) {
+		public SortedOptionNamesStep withTags(final String tags) {
 			if (doesNotEqual(tags, shopifyProduct.getTags())) {
 				shopifyProduct.setTags(tags);
 				changed = true;
@@ -313,12 +313,12 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 
 		@Override
 		public BuildStep withPublished(boolean published) {
-			if (shopifyProduct.isPublished() != published) {
+//			if (shopifyProduct.isPublished() != published) {
 				final String publishedAt = published ? DateTime.now(DateTimeZone.UTC).toString() : null;
 				shopifyProduct.setPublishedAt(publishedAt);
-				shopifyProduct.setPublished(published);
+//				shopifyProduct.setPublished(published);
 				changed = true;
-			}
+//			}
 			return this;
 		}
 

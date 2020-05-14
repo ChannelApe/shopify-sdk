@@ -267,7 +267,7 @@ public class ShopifySdkTest {
 								.append(expectedPath).toString()));
 
 		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
-				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumbers(Arrays.asList("12341234")).withNotifyCustomer(true)
 				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
 				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
@@ -304,7 +304,7 @@ public class ShopifySdkTest {
 				.anyTimes();
 
 		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
-				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumbers(Arrays.asList("12341234")).withNotifyCustomer(true)
 				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
 				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
@@ -340,7 +340,7 @@ public class ShopifySdkTest {
 
 		final ShopifyFulfillmentUpdateRequest request = ShopifyFulfillmentUpdateRequest.newBuilder()
 				.withCurrentShopifyFulfillment(currentFulfillment).withTrackingCompany("USPS")
-				.withTrackingNumber("12341234").withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
+				.withTrackingNumbers(Arrays.asList("12341234")).withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
 				.withLocationId("1").withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
 		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.updateFulfillment(request);
@@ -970,7 +970,7 @@ public class ShopifySdkTest {
 				.withTitle("Some Product Title").withMetafieldsGlobalTitleTag("Some Metafields Global Title Tag")
 				.withProductType("Shoes").withBodyHtml("Some Description")
 				.withMetafieldsGlobalDescriptionTag("Some Metafields Tag").withVendor("Some Vendor")
-				.withTags(Collections.emptySet()).withSortedOptionNames(Collections.emptyList())
+				.withTags(null).withSortedOptionNames(Collections.emptyList())
 				.withImageSources(Arrays.asList("http://channelape.com/1.png", "http://channelape.com/2.png"))
 				.withVariantCreationRequests(Arrays.asList(shopifyVariantCreationRequest)).withPublished(true).build();
 

@@ -3,6 +3,7 @@ package com.shopify.model;
 import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.TagsAdapter;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -203,4 +204,5 @@ public class ShopifyProduct {
 		};
 		return options.stream().sorted(optionPositionCompartor).map(Option::getName).collect(Collectors.toList());
 	}
+
 }

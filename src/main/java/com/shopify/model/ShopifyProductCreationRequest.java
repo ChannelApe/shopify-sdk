@@ -41,7 +41,7 @@ public class ShopifyProductCreationRequest implements ShopifyProductRequest {
 	}
 
 	public static interface TagsStep {
-		public SortedOptionNamesStep withTags(final Set<String> tags);
+		public SortedOptionNamesStep withTags(final String tags);
 	}
 
 	public static interface SortedOptionNamesStep {
@@ -169,7 +169,7 @@ public class ShopifyProductCreationRequest implements ShopifyProductRequest {
 		}
 
 		@Override
-		public SortedOptionNamesStep withTags(final Set<String> tags) {
+		public SortedOptionNamesStep withTags(final String tags) {
 			shopifyProduct.setTags(tags);
 			return this;
 		}

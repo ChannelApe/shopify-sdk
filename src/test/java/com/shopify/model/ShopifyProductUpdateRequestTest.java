@@ -31,7 +31,7 @@ public class ShopifyProductUpdateRequestTest {
 	private static final String SOME_CURRENT_PRODUCT_TYPE = "Energy";
 	private static final String SOME_CURRENT_BODY_HTML = "Some description";
 	private static final String SOME_CURRENT_VENDOR = "Clif";
-	private static final Set<String> SOME_CURRENT_TAGS = new HashSet<>(Arrays.asList("EuropaSports"));
+	private static final String SOME_CURRENT_TAGS = "EuropaSports";
 	private static final String SOME_CURRENT_FIRST_IMAGE_ID = "141414141";
 	private static final String SOME_CURRENT_SECOND_IMAGE_ID = "41414141414141";
 
@@ -45,7 +45,7 @@ public class ShopifyProductUpdateRequestTest {
 	private static final String SOME_NEW_BODY_HTML = "Some new and improved description";
 	private static final String SOME_SKU = "10004";
 	private static final String SOME_NEW_VENDOR = "Clifford";
-	private static final Set<String> SOME_NEW_TAGS = new HashSet<>(Arrays.asList("NewEuropaSports"));
+	private static final String SOME_NEW_TAGS = "NewEuropaSports";
 
 	private static final String SOME_FIRST_IMAGE_SOURCE = "image9191919";
 
