@@ -1,12 +1,5 @@
 package com.shopify;
 
-import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
-import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.util.ArrayList;
@@ -21,16 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,6 +91,23 @@ import com.shopify.model.ShopifyVariantCreationRequest;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
+import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -250,6 +250,41 @@ public class ShopifySdkTest {
 
 		assertNull(shopifySdk.getAccessToken());
 		shopifySdk.getShop();
+
+	}
+
+	@Test
+	public void givenPrivateAppCredentialsWhenCallinglToTheShopifyApiThenExpectAccessTokenToBeGeneratedAfterCallIsMade()
+		throws JsonProcessingException {
+
+		final String subdomainUrl = driver.getBaseUrl();
+
+		shopifySdk = ShopifySdk.newBuilder().withApiUrl(subdomainUrl).withApiKey("some-client-api-key")
+			.withPassword("some-client-password").withMaximumRequestRetryTimeout(2, TimeUnit.SECONDS).build();
+		String basicAuth = "Basic " + Base64.encodeBase64String("some-client-api-key:some-client-password".getBytes());
+
+		final String expectedShopPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.SHOP).toString();
+
+		final ShopifyShop shopifyShop = new ShopifyShop();
+
+		final Shop shop = new Shop();
+		shop.setId("4");
+		shop.setName("Some Generated Access Token Cool Shopify Store");
+		shopifyShop.setShop(shop);
+		final String expectedShopResponseBodyString = getJsonString(ShopifyShop.class, shopifyShop);
+
+		driver.addExpectation(
+			onRequestTo(expectedShopPath).withHeader(ShopifySdk.AUTHORIZATION_HEADER, basicAuth)
+				.withMethod(Method.GET),
+			giveResponse(expectedShopResponseBodyString, MediaType.APPLICATION_JSON)
+				.withStatus(Status.OK.getStatusCode()))
+			.anyTimes();
+
+		assertNull(shopifySdk.getAccessToken());
+		final ShopifyShop actualShop = shopifySdk.getShop();
+		assertNull(shopifySdk.getAccessToken());
+		assertEquals("4", actualShop.getShop().getId());
+		assertEquals("Some Generated Access Token Cool Shopify Store", actualShop.getShop().getName());
 
 	}
 
