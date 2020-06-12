@@ -23,7 +23,6 @@ import com.google.common.base.Strings;
 import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1281,7 +1280,7 @@ public class ShopifySdk {
 		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(mapper);
 
-		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+		return ClientBuilder.newClient().register(provider);
 	}
 
 	public class ShopifySdkRetryListener implements RetryListener {
