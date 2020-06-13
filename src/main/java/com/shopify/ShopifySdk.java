@@ -19,13 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.github.rholder.retry.Attempt;
@@ -93,12 +86,20 @@ import com.shopify.model.ShopifyRefund;
 import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyShop;
+import com.shopify.model.ShopifySmartCollection;
+import com.shopify.model.ShopifySmartCollectionsRoot;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyTransactionsRoot;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShopifySdk {
 
@@ -123,8 +124,10 @@ public class ShopifySdk {
 	static final String ACCESS_TOKEN = "access_token";
 	static final String VERSION_2020_01 = "api/2020-01";
 	static final String PRODUCTS = "products";
+	static final String COLLECTIONS = "collections";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
+	static final String SMART_COLLECTIONS = "smart_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
@@ -446,6 +449,33 @@ public class ShopifySdk {
 		return new ShopifyProducts(shopifyProducts);
 	}
 
+	public ShopifyPage<ShopifyProduct> getCollectionProducts(final String collectionId, final int pageSize) {
+		return this.getCollectionProducts(collectionId, null, pageSize);
+	}
+
+	public ShopifyPage<ShopifyProduct> getCollectionProducts(final String collectionId, final String pageInfo, final int pageSize) {
+		final String productsJson = new StringBuilder().append(PRODUCTS).append(JSON).toString();
+		final Response response = get(getWebTarget().path(VERSION_2020_01).path(COLLECTIONS).path(collectionId).path(productsJson)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
+		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
+	}
+
+	public ShopifyProducts getCollectionProducts(final String collectionId) {
+		final List<ShopifyProduct> shopifyProducts = new LinkedList<>();
+
+		ShopifyPage<ShopifyProduct> shopifyProductsPage = getCollectionProducts(collectionId, DEFAULT_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} products for collection {} from first page", shopifyProductsPage.size(), collectionId);
+		shopifyProducts.addAll(shopifyProductsPage);
+		while (shopifyProductsPage.getNextPageInfo() != null) {
+			shopifyProductsPage = getCollectionProducts(collectionId, shopifyProductsPage.getNextPageInfo(), DEFAULT_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} products for collection {} from page {}", shopifyProductsPage.size(),
+					collectionId, shopifyProductsPage.getNextPageInfo());
+			shopifyProducts.addAll(shopifyProductsPage);
+		}
+		return new ShopifyProducts(shopifyProducts);
+	}
+
 	public int getProductCount() {
 		final Response response = get(getWebTarget().path(PRODUCTS).path(COUNT));
 		final Count count = response.readEntity(Count.class);
@@ -495,6 +525,40 @@ public class ShopifySdk {
 		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootResponse = response
 				.readEntity(ShopifyCustomCollectionRoot.class);
 		return shopifyCustomCollectionRootResponse.getCustomCollection();
+	}
+
+	public ShopifyPage<ShopifySmartCollection> getSmartCollections(final int pageSize) {
+		final Response response = get(
+			getWebTarget().path(SMART_COLLECTIONS).queryParam(LIMIT_QUERY_PARAMETER, pageSize));
+		final ShopifySmartCollectionsRoot shopifySmartCollectionsRoot = response
+			.readEntity(ShopifySmartCollectionsRoot.class);
+		return mapPagedResponse(shopifySmartCollectionsRoot.getSmartCollections(), response);
+	}
+
+	public ShopifyPage<ShopifySmartCollection> getSmartCollections(final String pageInfo, final int pageSize) {
+		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS)
+			.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifySmartCollectionsRoot shopifySmartCollectionsRoot = response
+			.readEntity(ShopifySmartCollectionsRoot.class);
+		return mapPagedResponse(shopifySmartCollectionsRoot.getSmartCollections(), response);
+	}
+
+	public List<ShopifySmartCollection> getSmartCollections() {
+		final List<ShopifySmartCollection> shopifySmartCollections = new LinkedList<>();
+
+		ShopifyPage<ShopifySmartCollection> smartCollectionsPage = getSmartCollections(DEFAULT_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} custom collections from first page", smartCollectionsPage.size());
+		shopifySmartCollections.addAll(smartCollectionsPage);
+
+		while (smartCollectionsPage.getNextPageInfo() != null) {
+			smartCollectionsPage = getSmartCollections(smartCollectionsPage.getNextPageInfo(),
+				DEFAULT_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} smart collections from page info {}", smartCollectionsPage.size(),
+				smartCollectionsPage.getNextPageInfo());
+			shopifySmartCollections.addAll(smartCollectionsPage);
+		}
+
+		return smartCollectionsPage;
 	}
 
 	public ShopifyShop getShop() {
