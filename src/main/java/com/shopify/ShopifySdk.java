@@ -87,6 +87,7 @@ import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyShop;
 import com.shopify.model.ShopifySmartCollection;
+import com.shopify.model.ShopifySmartCollectionRoot;
 import com.shopify.model.ShopifySmartCollectionsRoot;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyTransactionsRoot;
@@ -482,6 +483,12 @@ public class ShopifySdk {
 		return count.getCount();
 	}
 
+	public ShopifyCustomCollection getCustomCollection(final String collectionId) {
+		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS).path(collectionId));
+		final ShopifyCustomCollectionRoot shopifyCsutomCollectionRootResponse = response.readEntity(ShopifyCustomCollectionRoot.class);
+		return shopifyCsutomCollectionRootResponse.getCustomCollection();
+	}
+
 	public ShopifyPage<ShopifyCustomCollection> getCustomCollections(final int pageSize) {
 		final Response response = get(
 				getWebTarget().path(CUSTOM_COLLECTIONS).queryParam(LIMIT_QUERY_PARAMETER, pageSize));
@@ -525,6 +532,12 @@ public class ShopifySdk {
 		final ShopifyCustomCollectionRoot shopifyCustomCollectionRootResponse = response
 				.readEntity(ShopifyCustomCollectionRoot.class);
 		return shopifyCustomCollectionRootResponse.getCustomCollection();
+	}
+
+	public ShopifySmartCollection getSmartCollection(final String collectionId) {
+		final Response response = get(getWebTarget().path(SMART_COLLECTIONS).path(collectionId));
+		final ShopifySmartCollectionRoot shopifySmartCollectionRootResponse = response.readEntity(ShopifySmartCollectionRoot.class);
+		return shopifySmartCollectionRootResponse.getSmartCollection();
 	}
 
 	public ShopifyPage<ShopifySmartCollection> getSmartCollections(final int pageSize) {
