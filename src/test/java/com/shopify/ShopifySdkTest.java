@@ -106,6 +106,8 @@ public class ShopifySdkTest {
 	@Test
 	public void testGetShop() throws ExecutionException, InterruptedException {
 		ShopifySdk shopifySdk = ShopifySdk.newBuilder()
+//				.withSubdomain("printfresh")
+//				.withAccessToken("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")
 				.withSubdomain("testhevostore")
 				.withAccessToken("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")
 				.build();
@@ -133,8 +135,9 @@ public class ShopifySdkTest {
 
 
 		do {
-			List<ShopifyTransaction> shopifyCustomerSavedSearches = shopifySdk.getOrderTransactions("2075709931556");
-			System.out.println(shopifyCustomerSavedSearches);
+			ShopifyPage<ShopifySmartCollection> shopifySmartCollections = shopifySdk.getUpdatedSmartCollections(new DateTime(1562930149000L), new DateTime(1594552550000L), 100, null);
+			System.out.println(shopifySmartCollections);
+			pageInfo = shopifySmartCollections.getNextPageInfo();
 		} while (pageInfo != null);
 	}
 

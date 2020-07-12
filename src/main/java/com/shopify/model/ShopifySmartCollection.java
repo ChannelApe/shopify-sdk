@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -41,7 +42,7 @@ public class ShopifySmartCollection {
 	@XmlElement(name = "admin_graphql_api_id")
 	private String adminGraphqlApiId;
 
-	private ShopifySmartCollectionRules rules;
+	private List<ShopifySmartCollectionRules> rules;
 
 	public boolean getDisjunctive() {
 		return disjunctive;
@@ -51,11 +52,11 @@ public class ShopifySmartCollection {
 		this.disjunctive = disjunctive;
 	}
 
-	public ShopifySmartCollectionRules getRules() {
+	public List<ShopifySmartCollectionRules> getRules() {
 		return rules;
 	}
 
-	public void setRules(ShopifySmartCollectionRules rules) {
+	public void setRules(List<ShopifySmartCollectionRules> rules) {
 		this.rules = rules;
 	}
 	public String getAdminGraphqlApiId() {
