@@ -1,19 +1,13 @@
 package com.shopify;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -117,6 +111,7 @@ public class ShopifySdk {
 	private static final String HTTPS = "https://";
 	private static final String API_TARGET = ".myshopify.com/admin";
 	static final String ACCESS_TOKEN_HEADER = "X-Shopify-Access-Token";
+	static final String AUTHORIZATION = "Authorization";
 	static final String DEPRECATED_REASON_HEADER = "X-Shopify-API-Deprecated-Reason";
 	static final String OAUTH = "oauth";
 	static final String REVOKE = "revoke";
@@ -181,6 +176,8 @@ public class ShopifySdk {
 	private String shopSubdomain;
 	private String apiUrl;
 	private String clientId;
+	private String apiKey;
+	private String password;
 	private String clientSecret;
 	private String authorizationToken;
 	private WebTarget webTarget;
@@ -194,7 +191,7 @@ public class ShopifySdk {
 	private static final String CUSTOMERS = "customers";
 	private static final String SEARCH = "search";
 
-	public static interface OptionalsStep {
+	public interface OptionalsStep {
 
 		/**
 		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
@@ -256,20 +253,26 @@ public class ShopifySdk {
 
 	}
 
-	public static interface AuthorizationTokenStep {
+	public interface AuthorizationTokenStep {
 		OptionalsStep withAuthorizationToken(final String authorizationToken);
 
 	}
 
-	public static interface ClientSecretStep {
+	public interface ClientSecretStep {
 		AuthorizationTokenStep withClientSecret(final String clientSecret);
 
 	}
 
-	public static interface AccessTokenStep {
+	public interface PasswordStep {
+		OptionalsStep withPassword(final String clientSecret);
+	}
+
+	public interface AccessTokenStep {
 		OptionalsStep withAccessToken(final String accessToken);
 
 		ClientSecretStep withClientId(final String clientId);
+
+		PasswordStep withApiKey(final String appId);
 	}
 
 	public static interface SubdomainStep {
@@ -289,6 +292,8 @@ public class ShopifySdk {
 			this.clientId = steps.clientId;
 			this.clientSecret = steps.clientSecret;
 			this.authorizationToken = steps.authorizationToken;
+			this.apiKey = steps.apiKey;
+			this.password = steps.password;
 			this.apiUrl = steps.apiUrl;
 			this.minimumRequestRetryRandomDelayMilliseconds = steps.minimumRequestRetryRandomDelayMilliseconds;
 			this.maximumRequestRetryRandomDelayMilliseconds = steps.maximumRequestRetryRandomDelayMilliseconds;
@@ -312,11 +317,15 @@ public class ShopifySdk {
 	}
 
 	protected static class Steps
-			implements SubdomainStep, ClientSecretStep, AuthorizationTokenStep, AccessTokenStep, OptionalsStep {
+			implements SubdomainStep,
+			ClientSecretStep, AuthorizationTokenStep, AccessTokenStep, PasswordStep,
+			OptionalsStep {
 
 		private String subdomain;
 		private String accessToken;
 		private String clientId;
+		private String apiKey;
+		private String password;
 		private String clientSecret;
 		private String authorizationToken;
 		private String apiUrl;
@@ -352,6 +361,18 @@ public class ShopifySdk {
 		@Override
 		public ClientSecretStep withClientId(final String clientId) {
 			this.clientId = clientId;
+			return this;
+		}
+
+		@Override
+		public PasswordStep withApiKey(String apiKey) {
+			this.apiKey = apiKey;
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withPassword(String password) {
+			this.password = password;
 			return this;
 		}
 
@@ -913,15 +934,26 @@ public class ShopifySdk {
 	}
 
 	private Response get(final WebTarget webTarget) {
-		final Callable<Response> responseCallable = () -> webTarget.request(MediaType.APPLICATION_JSON)
-				.header(ACCESS_TOKEN_HEADER, accessToken).get();
+		final Callable<Response> responseCallable = () -> buildCall(webTarget).get();
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, Status.OK);
 	}
 
+	private Invocation.Builder buildCall(WebTarget webTarget) {
+		Invocation.Builder builder = webTarget.request(MediaType.APPLICATION_JSON);
+		if (null != apiKey && null != password) {
+			builder.header(
+					AUTHORIZATION,
+					"Basic " + Base64.getEncoder().encodeToString((apiKey + ":" + password).getBytes()));
+		}
+		if (null != accessToken) {
+			builder.header(ACCESS_TOKEN_HEADER, accessToken);
+		}
+		return builder;
+	}
+
 	private Response delete(final WebTarget webTarget) {
-		final Callable<Response> responseCallable = () -> webTarget.request(MediaType.APPLICATION_JSON)
-				.header(ACCESS_TOKEN_HEADER, accessToken).delete();
+		final Callable<Response> responseCallable = () -> buildCall(webTarget).delete();
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, Status.OK);
 	}
@@ -929,7 +961,7 @@ public class ShopifySdk {
 	private <T> Response post(final WebTarget webTarget, final T object) {
 		final Callable<Response> responseCallable = () -> {
 			final Entity<T> entity = Entity.entity(object, MediaType.APPLICATION_JSON);
-			return webTarget.request(MediaType.APPLICATION_JSON).header(ACCESS_TOKEN_HEADER, accessToken).post(entity);
+			return buildCall(webTarget).post(entity);
 		};
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, Status.CREATED, Status.OK);
@@ -938,7 +970,7 @@ public class ShopifySdk {
 	private <T> Response put(final WebTarget webTarget, final T object) {
 		final Callable<Response> responseCallable = () -> {
 			final Entity<T> entity = Entity.entity(object, MediaType.APPLICATION_JSON);
-			return webTarget.request(MediaType.APPLICATION_JSON).header(ACCESS_TOKEN_HEADER, accessToken).put(entity);
+			return buildCall(webTarget).put(entity);
 		};
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, Status.OK);
@@ -1032,12 +1064,12 @@ public class ShopifySdk {
 
 			if (StringUtils.isNotBlank(this.shopSubdomain)) {
 				this.webTarget = CLIENT.target(
-						new StringBuilder().append(HTTPS).append(this.shopSubdomain).append(API_TARGET).toString());
+						HTTPS + this.shopSubdomain + API_TARGET);
 
 			} else {
 				this.webTarget = CLIENT.target(this.apiUrl);
 			}
-			if (this.accessToken == null) {
+			if (StringUtils.isBlank(this.apiKey) && this.accessToken == null) {
 				this.accessToken = generateToken();
 			}
 			final Shop shop = this.getShop().getShop();
@@ -1056,7 +1088,7 @@ public class ShopifySdk {
 
 	public class ShopifySdkRetryListener implements RetryListener {
 
-		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify: {} on attempt number {} and {} seconds since first attempt";
+		private static final String RETRY_EXCEPTION_ATTEMPT_MESSAGE = "An exception occurred while making an API call to shopify: On attempt number {} and {} seconds since first attempt";
 		private static final String RETRY_INVALID_RESPONSE_ATTEMPT_MESSAGE = "Waited {} seconds since first retry attempt. This is attempt {}. Please review the following failed request information.\nRequest Location of {}\nResponse Status Code of {}\nResponse Headers of:\n{}\nResponse Body of:\n{}";
 
 		@Override
