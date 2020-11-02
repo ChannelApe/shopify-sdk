@@ -22,6 +22,12 @@ public class ShopifyLocation {
 	private String country;
 	private String phone;
 	private String province;
+	private boolean active;
+	private boolean legacy;
+	@XmlElement(name = "localized_country_name")
+	private String localizedCountryName;
+	@XmlElement(name = "localized_province_name")
+	private String localizedProvinceName;
 
 	@XmlElement(name = "created_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
@@ -149,4 +155,37 @@ public class ShopifyLocation {
 	public void setUpdatedAt(final DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+
+	public boolean getActive() {
+		return active;
+	}
+
+	public void setActive(final boolean active) {
+		this.active = active;
+	}
+
+	public boolean getLegacy() {
+		return legacy;
+	}
+
+	public void setLegacy(final boolean legacy) {
+		this.legacy = legacy;
+	}
+
+	public String getLocalizedCountryName() {
+		return localizedCountryName;
+	}
+
+	public String getLocalizedProvinceName() {
+		return localizedProvinceName;
+	}
+
+	public void setLocalizedCountryName(final String localizedCountryName) {
+		this.localizedCountryName = localizedCountryName;
+	}
+
+	public void setLocalizedProvinceName(final String localizedProvinceName) {
+		this.localizedProvinceName = localizedProvinceName;
+	}
+
 }

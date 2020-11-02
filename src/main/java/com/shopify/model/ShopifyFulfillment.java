@@ -10,12 +10,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.DateTimeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class ShopifyFulfillment {
 
 	public enum Status {
@@ -81,125 +85,7 @@ public class ShopifyFulfillment {
 	private String service;
 	@XmlElement(name = "shipment_status")
 	private String shipmentStatus;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public String getShipmentStatus() {
-		return shipmentStatus;
-	}
-
-	public void setShipmentStatus(final String shipmentStatus) {
-		this.shipmentStatus = shipmentStatus;
-	}
-
-	public String getService() {
-		return service;
-	}
-
-	public void setService(final String service) {
-		this.service = service;
-	}
-
-	public Object getReceipt() {
-		return receipt;
-	}
-
-	public void setReceipt(final Object receipt) {
-		this.receipt = receipt;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(final String orderId) {
-		this.orderId = orderId;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(final String status) {
-		this.status = status;
-	}
-
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public String getTrackingCompany() {
-		return trackingCompany;
-	}
-
-	public void setTrackingCompany(final String trackingCompany) {
-		this.trackingCompany = trackingCompany;
-	}
-
-	public List<String> getTrackingNumbers() {
-		return trackingNumbers;
-	}
-
-	public void setTrackingNumbers(final List<String> trackingNumbers) {
-		this.trackingNumbers = trackingNumbers;
-	}
-
-	public List<String> getTrackingUrls() {
-		return trackingUrls;
-	}
-
-	public void setTrackingUrls(final List<String> trackingUrls) {
-		this.trackingUrls = trackingUrls;
-	}
-
-	public boolean isNotifyCustomer() {
-		return notifyCustomer;
-	}
-
-	public void setNotifyCustomer(final boolean notifyCustomer) {
-		this.notifyCustomer = notifyCustomer;
-	}
-
-	public List<ShopifyLineItem> getLineItems() {
-		return lineItems;
-	}
-
-	public void setLineItems(final List<ShopifyLineItem> lineItems) {
-		this.lineItems = lineItems;
-	}
-
-	public String getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(final String locationId) {
-		this.locationId = locationId;
-	}
+	@XmlElement(name = "variant_inventory_management")
+	private String variantInventoryManagement;
 
 }

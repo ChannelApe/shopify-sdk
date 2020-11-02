@@ -69,7 +69,7 @@ public class ShopifyDraftOrder {
 	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
 	@XmlElement(name = "note_attributes")
 	private List<ShopifyAttribute> noteAttributes = new LinkedList<>();
-	@XmlElement(name = "applied_discount_code")
+	@XmlElement(name = "applied_discount")
 	private AppliedDiscountCode appliedDiscountCode;
 
 	public String getId() {

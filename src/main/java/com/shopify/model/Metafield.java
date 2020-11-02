@@ -19,8 +19,7 @@ public class Metafield {
 	private String key;
 	private String value;
 	@XmlElement(name = "value_type")
-	@XmlJavaTypeAdapter(MetafieldValueTypeAdapter.class)
-	private MetafieldValueType valueType;
+	private String valueType;
 	private String namespace;
 	@XmlElement(name = "owner_id")
 	private String ownerId;
@@ -57,11 +56,11 @@ public class Metafield {
 		this.value = value;
 	}
 
-	public MetafieldValueType getValueType() {
+	public String getValueType() {
 		return valueType;
 	}
 
-	public void setValueType(MetafieldValueType valueType) {
+	public void setValueType(String valueType) {
 		this.valueType = valueType;
 	}
 

@@ -9,19 +9,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -133,11 +128,18 @@ public class ShopifySdkTest {
 //			System.out.println();
 //		}
 
-
+		ObjectMapper objectMapper = new ObjectMapper()
+				.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		List<Map<String, Object>> productOptions = new ArrayList<>();
 		do {
-			ShopifyPage<ShopifySmartCollection> shopifySmartCollections = shopifySdk.getUpdatedSmartCollections(new DateTime(1562930149000L), new DateTime(1594552550000L), 100, null);
-			System.out.println(shopifySmartCollections);
-			pageInfo = shopifySmartCollections.getNextPageInfo();
+			ShopifyPage<ShopifyProduct> shopifyProducts = shopifySdk.getUpdatedProducts(new DateTime(1577943611000L), new DateTime(1604295616000L), 50, null);
+//			System.out.println(shopifySmartCollections);
+			pageInfo = shopifyProducts.getNextPageInfo();
+			shopifyProducts.forEach(shopifyProduct -> {
+				shopifyProduct.setOptions(null);
+				objectMapper.convertValue(shopifyProduct, Map.class);
+			});
+
 		} while (pageInfo != null);
 	}
 
@@ -1180,7 +1182,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.name());
 		metafield.setOwnerResource("order");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VERSION_2020_04)
@@ -1858,10 +1860,10 @@ public class ShopifySdkTest {
 		shopifyCustomer.setLastname("Kazokas");
 
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setQuantity(3);
+		shopifyLineItem1.setQuantity(3l);
 		shopifyLineItem1.setVariantId("4123123");
 		final ShopifyLineItem shopifyLineItem2 = new ShopifyLineItem();
-		shopifyLineItem2.setQuantity(4);
+		shopifyLineItem2.setQuantity(4l);
 		shopifyLineItem2.setVariantId("5123123");
 		final List<ShopifyLineItem> shopifyLineItems = Arrays.asList(shopifyLineItem1, shopifyLineItem2);
 		final DateTime processedAt = new DateTime(DateTimeZone.UTC);
@@ -2096,10 +2098,10 @@ public class ShopifySdkTest {
 		shopifyCustomer.setLastname("Kazokas");
 
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setQuantity(3);
+		shopifyLineItem1.setQuantity(3l);
 		shopifyLineItem1.setVariantId("4123123");
 		final ShopifyLineItem shopifyLineItem2 = new ShopifyLineItem();
-		shopifyLineItem2.setQuantity(4);
+		shopifyLineItem2.setQuantity(4l);
 		shopifyLineItem2.setVariantId("5123123");
 		final List<ShopifyLineItem> shopifyLineItems = Arrays.asList(shopifyLineItem1, shopifyLineItem2);
 		final DateTime processedAt = new DateTime(DateTimeZone.UTC);
@@ -2714,7 +2716,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.toString());
 		metafield.setId("123");
 		metafield.setKey("channelape_product_id");
 		metafield.setNamespace("channelape");
@@ -2771,7 +2773,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.name());
 		metafield.setId("123");
 		metafield.setKey("channelape_variant_id");
 		metafield.setNamespace("channelape");
@@ -2827,7 +2829,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.name());
 		metafield.setOwnerResource("variant");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VARIANTS)

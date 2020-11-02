@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyProvince {
     private String code;
+    @XmlElement(name = "country_id")
     private String countryId;
     private String id;
     private String name;

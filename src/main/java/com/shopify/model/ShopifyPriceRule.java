@@ -70,6 +70,8 @@ public class ShopifyPriceRule {
     private String valueType;
     @XmlElement(name = "prerequisite_to_entitlement_quantity_ratio")
     private Object prerequisiteToEntitlementQuantity_Ratio;
+    @XmlElement(name = "prerequisite_to_entitlement_purchase")
+    private Object prerequisiteToEntitlementPurchase;
     @XmlElement(name = "allocation_limit")
     private int allocationLimit;
 
@@ -237,6 +239,9 @@ public class ShopifyPriceRule {
     }
     public void setPrerequisiteToEntitlementQuantity_Ratio(final Object prerequisiteToEntitlementQuantity_Ratio) {
         this.prerequisiteToEntitlementQuantity_Ratio = prerequisiteToEntitlementQuantity_Ratio;
+    }
+    public void setPrerequisiteToEntitlementPurchase(final Object prerequisiteToEntitlementPurchase) {
+        this.prerequisiteToEntitlementPurchase = prerequisiteToEntitlementPurchase;
     }
     public void setAllocationLimit(final int allocationLimit) {
         this.allocationLimit = allocationLimit;

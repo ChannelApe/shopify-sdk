@@ -62,6 +62,7 @@ public class ShopifySdk {
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
 	static final String VERSION_2020_04 = "api/2020-04";
+	static final String VERSION_2020_10 = "api/2020-10";
 	static final String PRODUCTS = "products";
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String INVENTORY_ITEMS = "inventory_items";
@@ -383,7 +384,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyProduct> getProducts(final String pageInfo, final int pageSize) {
-		final Response response = get(getWebTarget().path(VERSION_2020_04).path(PRODUCTS)
+		final Response response = get(getWebTarget().path(VERSION_2020_10).path(PRODUCTS)
 				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
 		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
@@ -824,7 +825,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest) {
-		WebTarget target = getWebTarget().path(VERSION_2020_04).path(CUSTOMERS);
+		WebTarget target = getWebTarget().path(VERSION_2020_10).path(CUSTOMERS);
 		if (shopifyGetCustomersRequest.getPageInfo() != null) {
 			target = target.queryParam(PAGE_INFO_QUERY_PARAMETER, shopifyGetCustomersRequest.getPageInfo());
 		}
@@ -900,7 +901,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> searchCustomers(final String query) {
-		final Response response = get(getWebTarget().path(VERSION_2020_04).path(CUSTOMERS).path(SEARCH)
+		final Response response = get(getWebTarget().path(VERSION_2020_10).path(CUSTOMERS).path(SEARCH)
 				.queryParam(QUERY_QUERY_PARAMETER, query).queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
 		return getCustomers(response);
 	}
@@ -987,7 +988,7 @@ public class ShopifySdk {
 
 	public ShopifyPage<ShopifyDiscountCode> getDiscountCodes(final String priceRuleId,
 													   final int pageSize, final String pageInfo) {
-		WebTarget webTarget = getWebTarget().path(VERSION_2020_04)
+		WebTarget webTarget = getWebTarget().path(VERSION_2020_10)
 				.path(PRICE_RULES).path(priceRuleId).path(DISCOUNT_CODES).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
 		final Response response = get(webTarget);
@@ -996,7 +997,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyMarketingEvent> getMarketingEvents(final int pageSize, final String pageInfo) {
-		WebTarget webTarget = getWebTarget().path(VERSION_2020_04)
+		WebTarget webTarget = getWebTarget().path(VERSION_2020_10)
 				.path(MARKETING_EVENTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
 				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
 		final Response response = get(webTarget);
@@ -1350,66 +1351,66 @@ public class ShopifySdk {
 	}
 
 	private WebTarget buildOrdersEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(ORDERS);
+		return getWebTarget().path(VERSION_2020_10).path(ORDERS);
 	}
 
 	private WebTarget buildTenderTransactionsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(TENDER_TRANSACTIONS);
+		return getWebTarget().path(VERSION_2020_10).path(TENDER_TRANSACTIONS);
 	}
 
 	private WebTarget buildCountriesEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(COUNTRIES);
+		return getWebTarget().path(VERSION_2020_10).path(COUNTRIES);
 	}
 
 	private WebTarget buildPoliciesEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(POLICIES);
+		return getWebTarget().path(VERSION_2020_10).path(POLICIES);
 	}
 
 	private WebTarget buildProductsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(PRODUCTS);
+		return getWebTarget().path(VERSION_2020_10).path(PRODUCTS);
 	}
 
 	private WebTarget buildInventoryLevelsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(INVENTORY_LEVELS);
+		return getWebTarget().path(VERSION_2020_10).path(INVENTORY_LEVELS);
 	}
 	private WebTarget buildInventoryItemsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(INVENTORY_ITEMS);
+		return getWebTarget().path(VERSION_2020_10).path(INVENTORY_ITEMS);
 	}
 
 	private WebTarget buildShopMetafieldsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(METAFIELDS);
+		return getWebTarget().path(VERSION_2020_10).path(METAFIELDS);
 	}
 
 	private WebTarget buildPriceRulesEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(PRICE_RULES);
+		return getWebTarget().path(VERSION_2020_10).path(PRICE_RULES);
 	}
 
 	private WebTarget buildCollectsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(COLLECTS);
+		return getWebTarget().path(VERSION_2020_10).path(COLLECTS);
 	}
 
 	private WebTarget buildCustomCollectionsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(CUSTOM_COLLECTIONS);
+		return getWebTarget().path(VERSION_2020_10).path(CUSTOM_COLLECTIONS);
 	}
 
 	private WebTarget buildSmartCollectionsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(SMART_COLLECTIONS);
+		return getWebTarget().path(VERSION_2020_10).path(SMART_COLLECTIONS);
 	}
 
 	private WebTarget buildDraftOrdersEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(DRAFT_ORDERS);
+		return getWebTarget().path(VERSION_2020_10).path(DRAFT_ORDERS);
 	}
 
 	private WebTarget buildCustomerSavedSearchesEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(CUSTOMER_SAVED_SEARCHES);
+		return getWebTarget().path(VERSION_2020_10).path(CUSTOMER_SAVED_SEARCHES);
 	}
 
 	private WebTarget buildCustomersEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(CUSTOMERS);
+		return getWebTarget().path(VERSION_2020_10).path(CUSTOMERS);
 	}
 
 	private WebTarget buildAbandonedCheckoutsEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(CHECKOUTS);
+		return getWebTarget().path(VERSION_2020_10).path(CHECKOUTS);
 	}
 
 }

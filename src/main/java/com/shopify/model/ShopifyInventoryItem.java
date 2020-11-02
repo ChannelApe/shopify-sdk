@@ -27,7 +27,7 @@ public class ShopifyInventoryItem {
 	@XmlElement(name = "country_code_of_origin")
 	private String countryCodeOfOrigin;
 	@XmlElement(name = "country_harmonized_system_codes")
-	private List<Object> countryHarmonizedSystemCodes;
+	private List<CountryHSC> countryHarmonizedSystemCodes;
 	@XmlElement(name = "harmonized_system_code")
 	private String harmonizedSystemCode;
 	@XmlElement(name = "province_code_of_origin")
@@ -66,7 +66,7 @@ public class ShopifyInventoryItem {
 	public String getCountryCodeOfOrigin() {
 		return countryCodeOfOrigin;
 	}
-	public List<Object> getCountryHarmonizedSystemCodes() {
+	public List<CountryHSC> getCountryHarmonizedSystemCodes() {
 		return countryHarmonizedSystemCodes;
 	}
 	public String getHarmonizedSystemCode() {
@@ -90,7 +90,7 @@ public class ShopifyInventoryItem {
 	public void setCountryCodeOfOrigin(final String countryCodeOfOrigin) {
 		this.countryCodeOfOrigin = countryCodeOfOrigin;
 	}
-	public void setCountryHarmonizedSystemCodes(final List<Object> countryHarmonizedSystemCodes) {
+	public void setCountryHarmonizedSystemCodes(final List<CountryHSC> countryHarmonizedSystemCodes) {
 		this.countryHarmonizedSystemCodes = countryHarmonizedSystemCodes;
 	}
 	public void setHarmonizedSystemCode(final String harmonizedSystemCode) {

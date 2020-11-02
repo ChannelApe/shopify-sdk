@@ -202,6 +202,7 @@ public class ShopifyProduct {
 				return o1.getPosition() - o2.getPosition();
 			}
 		};
+		if (null == options) return null;
 		return options.stream().sorted(optionPositionCompartor).map(Option::getName).collect(Collectors.toList());
 	}
 

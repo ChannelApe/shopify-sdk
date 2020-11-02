@@ -385,7 +385,7 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 		}
 
 		private boolean doesNotEqual(final Set<String> s1, final Set<String> s2) {
-			return !s1.equals(s2);
+			return s1 == null || !s1.equals(s2);
 		}
 
 	}

@@ -1,8 +1,12 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.DateTimeAdapter;
+import lombok.Data;
 import org.joda.time.DateTime;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -10,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyTenderTransaction {
     private String id;
     @XmlElement(name = "order_id")
@@ -22,71 +29,10 @@ public class ShopifyTenderTransaction {
     @XmlElement(name = "remote_reference")
     private String remoteReference;
     @XmlElement(name = "payment_details")
-    private Object paymentDetails;
+    private PaymentDetails paymentDetails;
     @XmlElement(name = "payment_method")
     private String paymentMethod;
     @XmlElement(name = "processed_at")
     @XmlJavaTypeAdapter(DateTimeAdapter.class)
     private DateTime processedAt;
-
-    public String getId() {
-        return id;
-    }
-    public String getOrderId() {
-        return orderId;
-    }
-    public BigDecimal getAmount() {
-        return amount;
-    }
-    public Currency getCurrency() {
-        return currency;
-    }
-    public String getUserId() {
-        return userId;
-    }
-    public boolean getTest() {
-        return test;
-    }
-    public String getRemoteReference() {
-        return remoteReference;
-    }
-    public Object getPaymentDetails() {
-        return paymentDetails;
-    }
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-    public DateTime getProcessedAt() {
-        return processedAt;
-    }
-    public void setId(final String id) {
-        this.id = id;
-    }
-    public void setOrderId(final String orderId) {
-        this.orderId = orderId;
-    }
-    public void setAmount(final BigDecimal amount) {
-        this.amount = amount;
-    }
-    public void setCurrency(final Currency currency) {
-        this.currency = currency;
-    }
-    public void setUserId(final String userId) {
-        this.userId = userId;
-    }
-    public void setTest(final boolean test) {
-        this.test = test;
-    }
-    public void setRemoteReference(final String remoteReference) {
-        this.remoteReference = remoteReference;
-    }
-    public void setPaymentDetails(final Object paymentDetails) {
-        this.paymentDetails = paymentDetails;
-    }
-    public void setPaymentMethod(final String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-    public void setProcessedAt(final DateTime processedAt) {
-        this.processedAt = processedAt;
-    }
 }
