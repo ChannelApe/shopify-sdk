@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.DateTimeAdapter;
 import org.joda.time.DateTime;
 
@@ -11,6 +12,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyCustomCollection {
 
 	private String id;

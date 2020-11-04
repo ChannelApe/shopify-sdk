@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,8 +12,9 @@ import java.math.BigDecimal;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Money {
-    private BigDecimal amount;
+@Data
+public class Price {
     @XmlElement(name = "currency_code")
     private String currencyCode;
+    private BigDecimal amount;
 }

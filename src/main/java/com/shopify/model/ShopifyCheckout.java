@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.CurrencyAdapter;
 import com.shopify.model.adapters.DateTimeAdapter;
 import org.joda.time.DateTime;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyCheckout {
 	@XmlElement(name = "abandoned_checkout_url")
 	private String abandonedCheckoutUrl;

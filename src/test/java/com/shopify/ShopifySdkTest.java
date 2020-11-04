@@ -128,8 +128,6 @@ public class ShopifySdkTest {
 //			System.out.println();
 //		}
 
-		ObjectMapper objectMapper = new ObjectMapper()
-				.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		List<Map<String, Object>> productOptions = new ArrayList<>();
 		do {
 			ShopifyPage<ShopifyProduct> shopifyProducts = shopifySdk.getUpdatedProducts(new DateTime(1577943611000L), new DateTime(1604295616000L), 50, null);
@@ -141,10 +139,14 @@ public class ShopifySdkTest {
 			});
 
 		} while (pageInfo != null);
+
+		shopifySdk.getShop();
 	}
 
 
-	@Test(expected = IllegalArgumentException.class)
+	ObjectMapper objectMapper = new ObjectMapper()
+					.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//		@Test(expected = IllegalArgumentException.class)
 	public void givenMinimumDelayIsLargerThanMaximumDelayWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
 		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
 				.withMinimumRequestRetryRandomDelay(10, TimeUnit.DAYS)

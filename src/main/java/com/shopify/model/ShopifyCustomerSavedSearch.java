@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.DateTimeAdapter;
 import org.joda.time.DateTime;
 
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyCustomerSavedSearch {
 	private String id;
 	@XmlElement(name = "created_at")

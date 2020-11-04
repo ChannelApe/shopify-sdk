@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.DateTimeAdapter;
 import org.joda.time.DateTime;
 
@@ -11,6 +12,7 @@ import java.util.Currency;
 import java.util.List;
 
 @XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Shop {
 
 	private String id;

@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.TagsAdapter;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyProduct {
 
 	private String id;
