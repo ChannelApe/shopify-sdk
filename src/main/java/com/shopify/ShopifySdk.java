@@ -37,6 +37,7 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
@@ -996,9 +997,8 @@ public class ShopifySdk {
 	}
 
 	private static boolean hasNotBeenSaved(final Response response) {
-		response.bufferEntity();
 		if ((UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus()) && response.hasEntity()) {
-			final String shopifyErrorResponse = response.readEntity(String.class);
+			final String shopifyErrorResponse = ResponseEntityToStringMapper.map(response);
 			LOGGER.debug(shopifyErrorResponse);
 			return shopifyErrorResponse.contains(COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE);
 		}
@@ -1064,8 +1064,7 @@ public class ShopifySdk {
 			if (attempt.hasResult()) {
 				final Response response = (Response) attempt.getResult();
 
-				response.bufferEntity();
-				final String responseBody = response.readEntity(String.class);
+				final String responseBody = ResponseEntityToStringMapper.map(response);
 
 				if (LOGGER.isWarnEnabled() && !hasExceededRateLimit(response) && shouldRetryResponse(response)) {
 

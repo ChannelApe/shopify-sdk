@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.shopify.model.InventoryPolicy;
-import com.shopify.model.adapters.InventoryPolicyAdapter;
 
 public class InventoryPolicyAdapterTest {
 
