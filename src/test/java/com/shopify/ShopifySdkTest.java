@@ -100,6 +100,7 @@ import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyRefundShippingDetails;
 import com.shopify.model.ShopifyShippingLine;
 import com.shopify.model.ShopifyShop;
+import com.shopify.model.ShopifyTaxLine;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyTransactionReceipt;
 import com.shopify.model.ShopifyTransactionsRoot;
@@ -382,6 +383,13 @@ public class ShopifySdkTest {
 		shopifyLineItem1.setId("1234565");
 		shopifyLineItem1.setSku("847289374");
 		shopifyLineItem1.setName("Really Cool Product");
+
+		final ShopifyTaxLine shopifyTaxLine1LineItem1 = buildTaxLine(new BigDecimal(41.22), new BigDecimal(46.3),
+				"Some Tax Line1");
+		final ShopifyTaxLine shopifyTaxLine1LineItem2 = buildTaxLine(new BigDecimal(54.22), new BigDecimal(26.3),
+				"Some Tax Line2");
+		shopifyLineItem1
+				.setTaxLines(new LinkedList<>(Arrays.asList(shopifyTaxLine1LineItem1, shopifyTaxLine1LineItem2)));
 		shopifyOrder1.setLineItems(Arrays.asList(shopifyLineItem1));
 
 		final ShopifyFulfillment shopifyFulfillment = new ShopifyFulfillment();
@@ -438,6 +446,20 @@ public class ShopifySdkTest {
 
 		assertEquals(shopifyOrder1.getId(), shopifyOrders.get(0).getId());
 		assertEquals(shopifyOrder1.getEmail(), shopifyOrders.get(0).getEmail());
+
+		assertEquals(2, shopifyOrders.get(0).getLineItems().get(0).getTaxLines().size());
+		assertEquals(shopifyTaxLine1LineItem1.getRate(),
+				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(0).getRate());
+		assertEquals(shopifyTaxLine1LineItem1.getPrice(),
+				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(0).getPrice());
+		assertEquals(shopifyTaxLine1LineItem1.getTitle(),
+				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(0).getTitle());
+		assertEquals(shopifyTaxLine1LineItem2.getRate(),
+				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(1).getRate());
+		assertEquals(shopifyTaxLine1LineItem2.getPrice(),
+				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(1).getPrice());
+		assertEquals(shopifyTaxLine1LineItem2.getTitle(),
+				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(1).getTitle());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
 				shopifyOrders.get(0).getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
@@ -3539,4 +3561,11 @@ public class ShopifySdkTest {
 		assertEquals(new BigDecimal(32.12), actualCustomer.getTotalSpent());
 	}
 
+	private ShopifyTaxLine buildTaxLine(final BigDecimal price, final BigDecimal rate, final String title) {
+		final ShopifyTaxLine shopifyTaxLine1LineItem1 = new ShopifyTaxLine();
+		shopifyTaxLine1LineItem1.setPrice(price);
+		shopifyTaxLine1LineItem1.setRate(rate);
+		shopifyTaxLine1LineItem1.setTitle(title);
+		return shopifyTaxLine1LineItem1;
+	}
 }

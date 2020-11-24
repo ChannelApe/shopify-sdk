@@ -173,6 +173,33 @@ public class ShopifySdkDriver {
 		assertEquals(null, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
 		assertEquals("ABC-1234570",
 				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
+
+		assertEquals(1, actualShopifyOrder.getTaxLines().size());
+		assertTrue(BigDecimal.valueOf(8.64).compareTo(actualShopifyOrder.getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06).compareTo(actualShopifyOrder.getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax", actualShopifyOrder.getTaxLines().get(0).getTitle());
+
+		assertEquals(2, actualShopifyOrder.getLineItems().get(0).getTaxLines().size());
+		assertEquals(1, actualShopifyOrder.getLineItems().get(1).getTaxLines().size());
+
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getTitle());
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getTitle());
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getTitle());
 	}
 
 	@Test
