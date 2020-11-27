@@ -6,9 +6,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.shopify.model.MetafieldValueType;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-
 public class ShopifyProductMetafieldCreationRequestTest {
 
 	private static final String SOME_PRODUCT_ID = UUID.randomUUID().toString();
