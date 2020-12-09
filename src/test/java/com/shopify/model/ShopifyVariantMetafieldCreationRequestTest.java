@@ -6,9 +6,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.shopify.model.MetafieldValueType;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-
 public class ShopifyVariantMetafieldCreationRequestTest {
 
 	private static final String SOME_VARIANT_ID = UUID.randomUUID().toString();

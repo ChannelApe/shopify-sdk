@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.shopify.model.ShopifyInventoryLevel;
-
 public class ShopifyInventoryLevelTest {
 
 	@Test

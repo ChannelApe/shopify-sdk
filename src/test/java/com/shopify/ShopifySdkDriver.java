@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -689,6 +690,19 @@ public class ShopifySdkDriver {
 
 		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
 		assertEquals("RyanTest", updatedCustomer.getFirstName());
+	}
+
+	@Test
+	public void givenSomeErrorOccurrsWhenCreatingFulfillmentThenExpectCorrectErrors() {
+		try {
+			shopifySdk.createFulfillment(ShopifyFulfillmentCreationRequest.newBuilder().withOrderId("2854620102717")
+					.withTrackingCompany("UPS").withTrackingNumber("ABC-123").withNotifyCustomer(false)
+					.withLineItems(new LinkedList<>()).withLocationId("5523767400")
+					.withTrackingUrls(Arrays.asList("http://google.com/123")).build());
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@After
