@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import java.util.Currency;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,7 +34,9 @@ public class ShopifyRefund {
 	@XmlElement(name = "refund_line_items")
 	private List<ShopifyRefundLineItem> refundLineItems;
 	private ShopifyRefundShippingDetails shipping;
-	private List<ShopifyTransaction> transactions;
+	private List<ShopifyTransaction> transactions = new LinkedList<>();
+	@XmlElement(name = "order_adjustments")
+	private List<ShopifyAdjustment> adjustments = new LinkedList<>();
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;
 
@@ -107,6 +110,14 @@ public class ShopifyRefund {
 
 	public void setTransactions(final List<ShopifyTransaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	public List<ShopifyAdjustment> getAdjustments() {
+		return adjustments;
+	}
+
+	public void setAdjustments(List<ShopifyAdjustment> adjustments) {
+		this.adjustments = adjustments;
 	}
 
 	public Currency getCurrency() {

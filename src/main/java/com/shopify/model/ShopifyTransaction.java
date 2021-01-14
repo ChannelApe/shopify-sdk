@@ -15,18 +15,29 @@ import com.shopify.model.adapters.CurrencyAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyTransaction {
 
+	private String id;
 	@XmlElement(name = "order_id")
 	private String orderId;
 	private String kind;
 	private String gateway;
 	@XmlElement(name = "parent_id")
 	private String parentId;
+	private String status;
+	private String message;
 	private BigDecimal amount;
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;
 	@XmlElement(name = "maximum_refundable")
 	private BigDecimal maximumRefundable;
 	private ShopifyTransactionReceipt receipt;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getOrderId() {
 		return orderId;
@@ -58,6 +69,22 @@ public class ShopifyTransaction {
 
 	public void setParentId(final String parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public BigDecimal getAmount() {
