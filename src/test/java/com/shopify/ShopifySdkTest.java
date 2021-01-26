@@ -53,6 +53,7 @@ import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAccessTokenRoot;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyAdjustment;
 import com.shopify.model.ShopifyAttribute;
 import com.shopify.model.ShopifyCustomCollection;
 import com.shopify.model.ShopifyCustomCollectionCreationRequest;
@@ -421,6 +422,31 @@ public class ShopifySdkTest {
 
 		shopifyRefund1.setRefundLineItems(Arrays.asList(shopifyRefundedLineItem));
 
+		final ShopifyTransaction shopifyTransaction1 = new ShopifyTransaction();
+		shopifyTransaction1.setId("123");
+		shopifyTransaction1.setMessage("Refunded 12.72 from manual gateway");
+		shopifyTransaction1.setAmount(new BigDecimal("12.72"));
+		shopifyTransaction1.setStatus("SUCCESS");
+
+		final ShopifyTransaction shopifyTransaction2 = new ShopifyTransaction();
+		shopifyTransaction1.setId("456");
+		shopifyTransaction1.setAmount(new BigDecimal("10.50"));
+		shopifyTransaction1.setStatus("FAILURE");
+
+		shopifyRefund1.setTransactions(Arrays.asList(shopifyTransaction1, shopifyTransaction2));
+
+		final ShopifyAdjustment shopifyAdjustment1 = new ShopifyAdjustment();
+		shopifyAdjustment1.setId("1230");
+		shopifyAdjustment1.setAmount(new BigDecimal("-12.00"));
+		shopifyAdjustment1.setTaxAmount(new BigDecimal("-0.72"));
+		shopifyAdjustment1.setReason("Shipping Refund");
+
+		final ShopifyAdjustment shopifyAdjustment2 = new ShopifyAdjustment();
+		shopifyAdjustment2.setId("4560");
+		shopifyAdjustment2.setAmount(new BigDecimal("-10.00"));
+
+		shopifyRefund1.setAdjustments(Arrays.asList(shopifyAdjustment1, shopifyAdjustment2));
+
 		shopifyOrder1.setRefunds(Arrays.asList(shopifyRefund1));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
 
@@ -499,6 +525,40 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getSubtotal());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getRefundLineItems().get(0).getTotalTax(),
 				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getTotalTax());
+
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getId(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getAmount(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getAmount());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getMessage(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getMessage());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getStatus(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getStatus());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getId(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getAmount(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getAmount());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getMessage(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getMessage());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getStatus(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getStatus());
+
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(0).getId(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(0).getId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(0).getAmount(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(0).getAmount());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(0).getTaxAmount(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(0).getTaxAmount());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(0).getReason(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(0).getReason());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(1).getId(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(1).getId());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(1).getAmount(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(1).getAmount());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(1).getTaxAmount(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(1).getTaxAmount());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(1).getReason(),
+				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(1).getReason());
 
 		assertEquals(shopifyLineItem1.getSku(),
 				shopifyOrders.get(0).getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
