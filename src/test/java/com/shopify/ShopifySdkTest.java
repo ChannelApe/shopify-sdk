@@ -425,13 +425,21 @@ public class ShopifySdkTest {
 		final ShopifyTransaction shopifyTransaction1 = new ShopifyTransaction();
 		shopifyTransaction1.setId("123");
 		shopifyTransaction1.setMessage("Refunded 12.72 from manual gateway");
-		shopifyTransaction1.setAmount(new BigDecimal("12.72"));
+		shopifyTransaction1.setAmount(new BigDecimal(12.72));
 		shopifyTransaction1.setStatus("SUCCESS");
+		shopifyTransaction1.setKind("refund_discrepancy");
+		shopifyTransaction1.setGateway("manual");
+		shopifyTransaction1.setCurrency(Currency.getInstance("USD"));
+		shopifyTransaction1.setMaximumRefundable(new BigDecimal(15.99));
 
 		final ShopifyTransaction shopifyTransaction2 = new ShopifyTransaction();
 		shopifyTransaction1.setId("456");
 		shopifyTransaction1.setAmount(new BigDecimal("10.50"));
 		shopifyTransaction1.setStatus("FAILURE");
+		shopifyTransaction1.setKind("refund_discrepancy");
+		shopifyTransaction1.setGateway("manual");
+		shopifyTransaction1.setCurrency(Currency.getInstance("USD"));
+		shopifyTransaction1.setMaximumRefundable(new BigDecimal(15.99));
 
 		shopifyRefund1.setTransactions(Arrays.asList(shopifyTransaction1, shopifyTransaction2));
 
@@ -534,6 +542,15 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getMessage());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getStatus(),
 				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getStatus());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getKind(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getKind());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getGateway(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getGateway());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getCurrency(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getCurrency());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(0).getMaximumRefundable(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(0).getMaximumRefundable());
+
 		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getId(),
 				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getId());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getAmount(),
@@ -542,6 +559,14 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getMessage());
 		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getStatus(),
 				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getStatus());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getKind(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getKind());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getGateway(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getGateway());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getCurrency(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getCurrency());
+		assertEquals(shopifyOrder1.getRefunds().get(0).getTransactions().get(1).getMaximumRefundable(),
+				shopifyOrders.get(0).getRefunds().get(0).getTransactions().get(1).getMaximumRefundable());
 
 		assertEquals(shopifyOrder1.getRefunds().get(0).getAdjustments().get(0).getId(),
 				shopifyOrders.get(0).getRefunds().get(0).getAdjustments().get(0).getId());
