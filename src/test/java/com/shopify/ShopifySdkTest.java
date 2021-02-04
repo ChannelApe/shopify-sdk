@@ -433,13 +433,13 @@ public class ShopifySdkTest {
 		shopifyTransaction1.setMaximumRefundable(new BigDecimal(15.99));
 
 		final ShopifyTransaction shopifyTransaction2 = new ShopifyTransaction();
-		shopifyTransaction1.setId("456");
-		shopifyTransaction1.setAmount(new BigDecimal("10.50"));
-		shopifyTransaction1.setStatus("FAILURE");
-		shopifyTransaction1.setKind("refund_discrepancy");
-		shopifyTransaction1.setGateway("manual");
-		shopifyTransaction1.setCurrency(Currency.getInstance("USD"));
-		shopifyTransaction1.setMaximumRefundable(new BigDecimal(15.99));
+		shopifyTransaction2.setId("456");
+		shopifyTransaction2.setAmount(new BigDecimal("10.50"));
+		shopifyTransaction2.setStatus("FAILURE");
+		shopifyTransaction2.setKind("refund_discrepancy");
+		shopifyTransaction2.setGateway("manual");
+		shopifyTransaction2.setCurrency(Currency.getInstance("USD"));
+		shopifyTransaction2.setMaximumRefundable(new BigDecimal(15.99));
 
 		shopifyRefund1.setTransactions(Arrays.asList(shopifyTransaction1, shopifyTransaction2));
 

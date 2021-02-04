@@ -26,7 +26,7 @@ public class ShopifyAdjustment {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
@@ -34,7 +34,7 @@ public class ShopifyAdjustment {
 		return orderId;
 	}
 
-	public void setOrderId(String orderId) {
+	public void setOrderId(final String orderId) {
 		this.orderId = orderId;
 	}
 
@@ -42,7 +42,7 @@ public class ShopifyAdjustment {
 		return refundId;
 	}
 
-	public void setRefundId(String refundId) {
+	public void setRefundId(final String refundId) {
 		this.refundId = refundId;
 	}
 
@@ -50,7 +50,7 @@ public class ShopifyAdjustment {
 		return amount;
 	}
 
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(final BigDecimal amount) {
 		this.amount = amount;
 	}
 
@@ -58,7 +58,7 @@ public class ShopifyAdjustment {
 		return taxAmount;
 	}
 
-	public void setTaxAmount(BigDecimal taxAmount) {
+	public void setTaxAmount(final BigDecimal taxAmount) {
 		this.taxAmount = taxAmount;
 	}
 
@@ -66,7 +66,7 @@ public class ShopifyAdjustment {
 		return kind;
 	}
 
-	public void setKind(String kind) {
+	public void setKind(final String kind) {
 		this.kind = kind;
 	}
 
@@ -74,7 +74,7 @@ public class ShopifyAdjustment {
 		return reason;
 	}
 
-	public void setReason(String reason) {
+	public void setReason(final String reason) {
 		this.reason = reason;
 	}
 

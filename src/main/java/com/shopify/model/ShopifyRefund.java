@@ -116,7 +116,7 @@ public class ShopifyRefund {
 		return adjustments;
 	}
 
-	public void setAdjustments(List<ShopifyAdjustment> adjustments) {
+	public void setAdjustments(final List<ShopifyAdjustment> adjustments) {
 		this.adjustments = adjustments;
 	}
 
