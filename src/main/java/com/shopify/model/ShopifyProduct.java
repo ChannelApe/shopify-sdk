@@ -24,6 +24,7 @@ public class ShopifyProduct {
 	private String id;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String title;
+	private String status;
 	@XmlElement(name = "product_type")
 	private String productType;
 	@XmlElement(name = "body_html")
@@ -83,6 +84,14 @@ public class ShopifyProduct {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getTitle() {
