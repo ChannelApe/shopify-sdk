@@ -19,9 +19,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.google.common.base.Strings;
+import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,67 +39,6 @@ import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Count;
-import com.shopify.model.Image;
-import com.shopify.model.ImageAltTextCreationRequest;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldsRoot;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAccessTokenRoot;
-import com.shopify.model.ShopifyCancelOrderRequest;
-import com.shopify.model.ShopifyCustomCollection;
-import com.shopify.model.ShopifyCustomCollectionCreationRequest;
-import com.shopify.model.ShopifyCustomCollectionRoot;
-import com.shopify.model.ShopifyCustomCollectionsRoot;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerRoot;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyCustomerUpdateRoot;
-import com.shopify.model.ShopifyCustomersRoot;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentRoot;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGetCustomersRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyImageRoot;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyLocationsRoot;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderRisksRoot;
-import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyOrderUpdateRoot;
-import com.shopify.model.ShopifyOrdersRoot;
-import com.shopify.model.ShopifyPage;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductCreationRequest;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-import com.shopify.model.ShopifyProductRequest;
-import com.shopify.model.ShopifyProductRoot;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyProductsRoot;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyShop;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyTransactionsRoot;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRoot;
-import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
@@ -122,11 +62,20 @@ public class ShopifySdk {
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
 	static final String VERSION_2020_04 = "api/2020-04";
+	static final String VERSION_2020_10 = "api/2020-10";
 	static final String PRODUCTS = "products";
+	static final String INVENTORY_LEVELS = "inventory_levels";
+	static final String INVENTORY_ITEMS = "inventory_items";
+	static final String COLLECTS = "collects";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
+	static final String SMART_COLLECTIONS = "smart_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
+	static final String TENDER_TRANSACTIONS = "tender_transactions";
+	static final String COUNTRIES = "countries";
+	static final String POLICIES = "policies";
+	static final String DRAFT_ORDERS = "draft_orders";
 	static final String FULFILLMENTS = "fulfillments";
 	static final String ACTIVATE = "activate";
 	static final String IMAGES = "images";
@@ -135,9 +84,11 @@ public class ShopifySdk {
 	static final String CLOSE = "close";
 	static final String CANCEL = "cancel";
 	static final String METAFIELDS = "metafields";
+	static final String PRICE_RULES = "price_rules";
+	static final String MARKETING_EVENTS = "marketing_events";
+	static final String DISCOUNT_CODES = "discount_codes";
 	static final String RISKS = "risks";
 	static final String LOCATIONS = "locations";
-	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String JSON = ".json";
 	static final String LIMIT_QUERY_PARAMETER = "limit";
 	static final String PAGE_INFO_QUERY_PARAMETER = "page_info";
@@ -147,6 +98,12 @@ public class ShopifySdk {
 	static final String CREATED_AT_MAX_QUERY_PARAMETER = "created_at_max";
 	static final String UPDATED_AT_MIN_QUERY_PARAMETER = "updated_at_min";
 	static final String UPDATED_AT_MAX_QUERY_PARAMETER = "updated_at_max";
+	static final String PROCESSED_AT_MIN_QUERY_PARAMETER = "processed_at_min";
+	static final String PROCESSED_AT_MAX_QUERY_PARAMETER = "processed_at_max";
+	static final String FIELDS = "fields";
+	static final String INVENTORY_ITEM_IDS = "inventory_item_ids";
+	static final String LOCATION_IDS = "location_ids";
+	static final String IDS = "ids";
 	static final String ATTRIBUTION_APP_ID_QUERY_PARAMETER = "attribution_app_id";
 	static final String IDS_QUERY_PARAMETER = "ids";
 	static final String SINCE_ID_QUERY_PARAMETER = "since_id";
@@ -192,7 +149,9 @@ public class ShopifySdk {
 	private static final Client CLIENT = buildClient();
 
 	private static final String CUSTOMERS = "customers";
+	private static final String CUSTOMER_SAVED_SEARCHES = "customer_saved_searches";
 	private static final String SEARCH = "search";
+	private static final String CHECKOUTS = "checkouts";
 
 	public static interface OptionalsStep {
 
@@ -425,10 +384,78 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyProduct> getProducts(final String pageInfo, final int pageSize) {
-		final Response response = get(getWebTarget().path(VERSION_2020_04).path(PRODUCTS)
+		final Response response = get(getWebTarget().path(VERSION_2020_10).path(PRODUCTS)
 				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
 		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
+	}
+
+	public ShopifyPage<ShopifyProduct> getUpdatedProducts(final DateTime minimumUpdatedAtDate,
+													  final DateTime maximumUpdatedAtDate,
+													  final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildProductsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		return getProducts(response);
+	}
+
+	public ShopifyPage<ShopifyInventoryLevel> getInventoryLevels(
+			final int pageSize, final String pageInfo, List<String> locationIds, List<String> inventoryItemIds) {
+		WebTarget webTarget = buildInventoryLevelsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			if (null != locationIds) {
+				webTarget = webTarget.queryParam(LOCATION_IDS, String.join(",", locationIds));
+			}
+			if (null != inventoryItemIds) {
+				webTarget = webTarget.queryParam(INVENTORY_ITEM_IDS, String.join(",", inventoryItemIds));
+			}
+		}
+		final Response response = get(webTarget);
+		return getInventoryLevels(response);
+	}
+
+	public ShopifyPage<ShopifyInventoryItem> getInventoryItems(final int pageSize, final String pageInfo, List<String> ids) {
+		WebTarget webTarget = buildInventoryItemsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(IDS, String.join(",", ids));
+		}
+		final Response response = get(webTarget);
+		return getInventoryItems(response);
+	}
+
+	public ShopifyPage<ShopifyProduct> getUpdatedProductsWithFields(final DateTime minimumUpdatedAtDate,
+														  final DateTime maximumUpdatedAtDate,
+														  final int pageSize, final String pageInfo, List<String> fields) {
+		WebTarget webTarget = buildProductsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+					.queryParam(FIELDS, String.join( ",", fields));
+			;
+		}
+		final Response response = get(webTarget);
+		return getProducts(response);
+	}
+
+	private ShopifyPage<ShopifyProduct> getProducts(final Response response) {
+		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
+		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
+	}
+
+	private ShopifyPage<ShopifyInventoryLevel> getInventoryLevels(final Response response) {
+		final ShopifyInventoryLevelsRoot shopifyInventoryLevelsRoot = response.readEntity(ShopifyInventoryLevelsRoot.class);
+		return mapPagedResponse(shopifyInventoryLevelsRoot.getInventoryLevels(), response);
+	}
+
+	private ShopifyPage<ShopifyInventoryItem> getInventoryItems(final Response response) {
+		final ShopifyInventoryItemsRoot shopifyInventoryItemsRoot = response.readEntity(ShopifyInventoryItemsRoot.class);
+		return mapPagedResponse(shopifyInventoryItemsRoot.getInventoryItems(), response);
 	}
 
 	public ShopifyProducts getProducts() {
@@ -467,6 +494,55 @@ public class ShopifySdk {
 				.readEntity(ShopifyCustomCollectionsRoot.class);
 		return mapPagedResponse(shopifyCustomCollectionsRoot.getCustomCollections(), response);
 	}
+
+	public ShopifyPage<ShopifyCustomCollection> getUpdatedCustomCollections(final DateTime minimumUpdatedAtDate,
+														  final DateTime maximumUpdatedAtDate,
+														  final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildCustomCollectionsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		return getCustomCollections(response);
+	}
+
+	private ShopifyPage<ShopifyCustomCollection> getCustomCollections(Response response) {
+		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response
+				.readEntity(ShopifyCustomCollectionsRoot.class);
+		return mapPagedResponse(shopifyCustomCollectionsRoot.getCustomCollections(), response);
+	}
+
+	public ShopifyPage<ShopifyCollect> getCollects(final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildCollectsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		final Response response = get(webTarget);
+		return getCollects(response);
+	}
+
+	private ShopifyPage<ShopifyCollect> getCollects(Response response) {
+		final ShopifyCollectsRoot shopifyCollectsRoot = response
+				.readEntity(ShopifyCollectsRoot.class);
+		return mapPagedResponse(shopifyCollectsRoot.getCollects(), response);
+	}
+
+	public ShopifyPage<ShopifySmartCollection> getUpdatedSmartCollections(final DateTime minimumUpdatedAtDate,
+																  final DateTime maximumUpdatedAtDate,
+																  final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildSmartCollectionsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		return getSmartCollections(response);
+	}
+
+	private ShopifyPage<ShopifySmartCollection> getSmartCollections(Response response) {
+		final ShopifySmartCollectionsRoot shopifySmartCollectionsRoot = response
+				.readEntity(ShopifySmartCollectionsRoot.class);
+		return mapPagedResponse(shopifySmartCollectionsRoot.getSmartCollections(), response);
+	}
+
 
 	public List<ShopifyCustomCollection> getCustomCollections() {
 		final List<ShopifyCustomCollection> shopifyCustomCollections = new LinkedList<>();
@@ -666,6 +742,33 @@ public class ShopifySdk {
 		return getOrders(response);
 	}
 
+	public ShopifyPage<ShopifyOrder> getUpdatedOrders(final DateTime minimumUpdatedAtDate,
+																   final DateTime maximumUpdatedAtDate,
+													  final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildOrdersEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+					.queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES);
+		}
+		final Response response = get(webTarget);
+		return getOrders(response);
+	}
+
+	public ShopifyPage<ShopifyTenderTransaction> getProcessedTenderTransactions(final DateTime minimumUpdatedAtDate,
+													  final DateTime maximumUpdatedAtDate,
+													  final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildTenderTransactionsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(PROCESSED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(PROCESSED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+					.queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES);
+		}
+		final Response response = get(webTarget);
+		return getTenderTransactions(response);
+	}
+
+
 	public ShopifyFulfillment createFulfillment(
 			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest) {
 		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
@@ -722,7 +825,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest) {
-		WebTarget target = getWebTarget().path(VERSION_2020_04).path(CUSTOMERS);
+		WebTarget target = getWebTarget().path(VERSION_2020_10).path(CUSTOMERS);
 		if (shopifyGetCustomersRequest.getPageInfo() != null) {
 			target = target.queryParam(PAGE_INFO_QUERY_PARAMETER, shopifyGetCustomersRequest.getPageInfo());
 		}
@@ -747,8 +850,58 @@ public class ShopifySdk {
 		return getCustomers(response);
 	}
 
+	public ShopifyPage<ShopifyCustomerSavedSearch> getCustomerSavedSearches(final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildCustomerSavedSearchesEndpoint()
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		final Response response = get(webTarget);
+		return getCustomerSavedSearches(response);
+	}
+
+	public ShopifyPage<ShopifyCustomer> getUpdatedCustomers(final DateTime minimumUpdatedAtDate,
+																				 final DateTime maximumUpdatedAtDate,
+																				 final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildCustomersEndpoint()
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		return getCustomers(response);
+	}
+
+	public ShopifyPage<ShopifyCheckout> getUpdatedAbandonedCheckouts(final DateTime minimumUpdatedAtDate,
+															final DateTime maximumUpdatedAtDate,
+															final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildAbandonedCheckoutsEndpoint()
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		return getAbandonedCheckouts(response);
+	}
+
+	public ShopifyPage<ShopifyDraftOrder> getUpdatedDraftOrders(final DateTime minimumUpdatedAtDate,
+																	 final DateTime maximumUpdatedAtDate,
+																	 final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildDraftOrdersEndpoint()
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		return getDraftOrders(response);
+	}
+
 	public ShopifyPage<ShopifyCustomer> searchCustomers(final String query) {
-		final Response response = get(getWebTarget().path(VERSION_2020_04).path(CUSTOMERS).path(SEARCH)
+		final Response response = get(getWebTarget().path(VERSION_2020_10).path(CUSTOMERS).path(SEARCH)
 				.queryParam(QUERY_QUERY_PARAMETER, query).queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
 		return getCustomers(response);
 	}
@@ -807,10 +960,67 @@ public class ShopifySdk {
 		return metafieldsRootResponse.getMetafields();
 	}
 
+	public ShopifyPage<Metafield> getShopMetafields(final DateTime minimumUpdatedAtDate,
+											 final DateTime maximumUpdatedAtDate,
+											 final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildShopMetafieldsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		final MetafieldsRoot metafieldsRootResponse = response.readEntity(MetafieldsRoot.class);
+		return mapPagedResponse(metafieldsRootResponse.getMetafields(), response);
+	}
+
+	public ShopifyPage<ShopifyPriceRule> getPriceRules(final DateTime minimumUpdatedAtDate,
+													final DateTime maximumUpdatedAtDate,
+													final int pageSize, final String pageInfo) {
+		WebTarget webTarget = buildPriceRulesEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		if (Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+					.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString());
+		}
+		final Response response = get(webTarget);
+		final ShopifyPriceRulesRoot shopifyPriceRulesRoot = response.readEntity(ShopifyPriceRulesRoot.class);
+		return mapPagedResponse(shopifyPriceRulesRoot.getPriceRules(), response);
+	}
+
+	public ShopifyPage<ShopifyDiscountCode> getDiscountCodes(final String priceRuleId,
+													   final int pageSize, final String pageInfo) {
+		WebTarget webTarget = getWebTarget().path(VERSION_2020_10)
+				.path(PRICE_RULES).path(priceRuleId).path(DISCOUNT_CODES).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		final Response response = get(webTarget);
+		final ShopifyDiscountCodesRoot shopifyDiscountCodesRoot = response.readEntity(ShopifyDiscountCodesRoot.class);
+		return mapPagedResponse(shopifyDiscountCodesRoot.getDiscountCodes(), response);
+	}
+
+	public ShopifyPage<ShopifyMarketingEvent> getMarketingEvents(final int pageSize, final String pageInfo) {
+		WebTarget webTarget = getWebTarget().path(VERSION_2020_10)
+				.path(MARKETING_EVENTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		final Response response = get(webTarget);
+		final ShopifyMarketingEventsRoot shopifyMarketingEventsRoot = response.readEntity(ShopifyMarketingEventsRoot.class);
+		return mapPagedResponse(shopifyMarketingEventsRoot.getMarketingEvents(), response);
+	}
+
 	public List<ShopifyOrderRisk> getOrderRisks(final String orderId) {
 		final Response response = get(buildOrdersEndpoint().path(orderId).path(RISKS));
 		final ShopifyOrderRisksRoot shopifyOrderRisksRootResponse = response.readEntity(ShopifyOrderRisksRoot.class);
 		return shopifyOrderRisksRootResponse.getRisks();
+	}
+
+	public List<ShopifyCountry> getCountries() {
+		final Response response = get(buildCountriesEndpoint());
+		final ShopifyCountriesRoot shopifyCountriesRoot = response.readEntity(ShopifyCountriesRoot.class);
+		return shopifyCountriesRoot.getCountries();
+	}
+
+	public List<ShopifyPolicy> getPolicies() {
+		final Response response = get(buildPoliciesEndpoint());
+		final ShopifyPoliciesRoot shopifyPoliciesRoot = response.readEntity(ShopifyPoliciesRoot.class);
+		return shopifyPoliciesRoot.getPolicies();
 	}
 
 	public List<ShopifyLocation> getLocations() {
@@ -871,6 +1081,21 @@ public class ShopifySdk {
 		return mapPagedResponse(shopifyCustomersRootResponse.getCustomers(), response);
 	}
 
+	private ShopifyPage<ShopifyCheckout> getAbandonedCheckouts(final Response response) {
+		final ShopifyCheckoutsRoot shopifyCheckoutsRoot = response.readEntity(ShopifyCheckoutsRoot.class);
+		return mapPagedResponse(shopifyCheckoutsRoot.getCheckouts(), response);
+	}
+
+	private ShopifyPage<ShopifyDraftOrder> getDraftOrders(final Response response) {
+		final ShopifyDraftOrdersRoot shopifyDraftOrdersRoot = response.readEntity(ShopifyDraftOrdersRoot.class);
+		return mapPagedResponse(shopifyDraftOrdersRoot.getDraftOrders(), response);
+	}
+
+	private ShopifyPage<ShopifyCustomerSavedSearch> getCustomerSavedSearches(final Response response) {
+		final ShopifyCustomerSavedSearchesRoot shopifyCustomerSavedSearchesRoot = response.readEntity(ShopifyCustomerSavedSearchesRoot.class);
+		return mapPagedResponse(shopifyCustomerSavedSearchesRoot.getCustomerSavedSearches(), response);
+	}
+
 	private ShopifyRefund calculateRefund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
 		final ShopifyRefundRoot shopifyRefundRoot = new ShopifyRefundRoot();
 
@@ -910,6 +1135,11 @@ public class ShopifySdk {
 	private ShopifyPage<ShopifyOrder> getOrders(final Response response) {
 		final ShopifyOrdersRoot shopifyOrderRootResponse = response.readEntity(ShopifyOrdersRoot.class);
 		return mapPagedResponse(shopifyOrderRootResponse.getOrders(), response);
+	}
+
+	private ShopifyPage<ShopifyTenderTransaction> getTenderTransactions(final Response response) {
+		final ShopifyTenderTransactionsRoot shopifyTenderTransactionsRoot = response.readEntity(ShopifyTenderTransactionsRoot.class);
+		return mapPagedResponse(shopifyTenderTransactionsRoot.getTenderTransactions(), response);
 	}
 
 	private Response get(final WebTarget webTarget) {
@@ -1051,7 +1281,7 @@ public class ShopifySdk {
 		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(mapper);
 
-		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+		return ClientBuilder.newClient().register(provider);
 	}
 
 	public class ShopifySdkRetryListener implements RetryListener {
@@ -1121,7 +1351,66 @@ public class ShopifySdk {
 	}
 
 	private WebTarget buildOrdersEndpoint() {
-		return getWebTarget().path(VERSION_2020_04).path(ORDERS);
+		return getWebTarget().path(VERSION_2020_10).path(ORDERS);
+	}
+
+	private WebTarget buildTenderTransactionsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(TENDER_TRANSACTIONS);
+	}
+
+	private WebTarget buildCountriesEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(COUNTRIES);
+	}
+
+	private WebTarget buildPoliciesEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(POLICIES);
+	}
+
+	private WebTarget buildProductsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(PRODUCTS);
+	}
+
+	private WebTarget buildInventoryLevelsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(INVENTORY_LEVELS);
+	}
+	private WebTarget buildInventoryItemsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(INVENTORY_ITEMS);
+	}
+
+	private WebTarget buildShopMetafieldsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(METAFIELDS);
+	}
+
+	private WebTarget buildPriceRulesEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(PRICE_RULES);
+	}
+
+	private WebTarget buildCollectsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(COLLECTS);
+	}
+
+	private WebTarget buildCustomCollectionsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(CUSTOM_COLLECTIONS);
+	}
+
+	private WebTarget buildSmartCollectionsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(SMART_COLLECTIONS);
+	}
+
+	private WebTarget buildDraftOrdersEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(DRAFT_ORDERS);
+	}
+
+	private WebTarget buildCustomerSavedSearchesEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(CUSTOMER_SAVED_SEARCHES);
+	}
+
+	private WebTarget buildCustomersEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(CUSTOMERS);
+	}
+
+	private WebTarget buildAbandonedCheckoutsEndpoint() {
+		return getWebTarget().path(VERSION_2020_10).path(CHECKOUTS);
 	}
 
 }

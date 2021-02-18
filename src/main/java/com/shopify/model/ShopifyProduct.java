@@ -1,30 +1,30 @@
 package com.shopify.model;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shopify.model.adapters.DateTimeAdapter;
+import com.shopify.model.adapters.EscapedStringAdapter;
+import com.shopify.model.adapters.TagsAdapter;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.shopify.model.adapters.EscapedStringAdapter;
-import com.shopify.model.adapters.TagsAdapter;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyProduct {
 
 	private String id;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String title;
+	private String status;
 	@XmlElement(name = "product_type")
 	private String productType;
 	@XmlElement(name = "body_html")
@@ -34,18 +34,49 @@ public class ShopifyProduct {
 	private String vendor;
 	@XmlJavaTypeAdapter(TagsAdapter.class)
 	@XmlElement(name = "tags")
-	private Set<String> tags = new HashSet<>();
-	private List<Option> options = new LinkedList<>();
+	private String tags;
+	private List<Option> options;
 	@XmlElement(name = "metafields_global_title_tag")
 	private String metafieldsGlobalTitleTag;
 	@XmlElement(name = "metafields_global_description_tag")
 	private String metafieldsGlobalDescriptionTag;
-	private List<Image> images = new LinkedList<>();
+	private List<Image> images;
 	private Image image;
-	private List<ShopifyVariant> variants = new LinkedList<>();
+	private List<ShopifyVariant> variants;
 	@XmlElement(name = "published_at")
 	private String publishedAt;
-	private Boolean published;
+	@XmlElement(name = "published_scope")
+	private String publishedScope;
+	@XmlElement(name = "template_suffix")
+	private String templateSuffix;
+	private String handle;
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setCreatedAt(final DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public void setUpdatedAt(final DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getHandle() {
+		return handle;
+	}
+
+	public void setHandle(String handle) {
+		this.handle = handle;
+	}
 
 	public String getId() {
 		return id;
@@ -53,6 +84,14 @@ public class ShopifyProduct {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getTitle() {
@@ -87,11 +126,27 @@ public class ShopifyProduct {
 		this.vendor = vendor;
 	}
 
-	public Set<String> getTags() {
+	public String getPublishedScope() {
+		return publishedScope;
+	}
+
+	public void setPublishedScope(String publishedScope) {
+		this.publishedScope = publishedScope;
+	}
+
+	public String getTemplateSuffix() {
+		return templateSuffix;
+	}
+
+	public void setTemplateSuffix(String templateSuffix) {
+		this.templateSuffix = templateSuffix;
+	}
+
+	public String getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<String> tags) {
+	public void setTags(String tags) {
 		this.tags = tags;
 	}
 
@@ -151,14 +206,6 @@ public class ShopifyProduct {
 		this.publishedAt = publishedAt;
 	}
 
-	public Boolean isPublished() {
-		return (published == null) ? StringUtils.isNotBlank(publishedAt) : published;
-	}
-
-	public void setPublished(Boolean published) {
-		this.published = published;
-	}
-
 	public List<String> getSortedOptionNames() {
 		final Comparator<Option> optionPositionCompartor = new Comparator<Option>() {
 			@Override
@@ -166,6 +213,8 @@ public class ShopifyProduct {
 				return o1.getPosition() - o2.getPosition();
 			}
 		};
+		if (null == options) return null;
 		return options.stream().sorted(optionPositionCompartor).map(Option::getName).collect(Collectors.toList());
 	}
+
 }

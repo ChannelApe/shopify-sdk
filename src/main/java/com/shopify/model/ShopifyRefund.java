@@ -9,13 +9,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.CurrencyAdapter;
 import com.shopify.model.adapters.DateTimeAdapter;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyRefund {
 
 	private String id;
@@ -36,85 +40,10 @@ public class ShopifyRefund {
 	private List<ShopifyTransaction> transactions;
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public List<ShopifyRefundLineItem> getRefundLineItems() {
-		return refundLineItems;
-	}
-
-	public void setRefundLineItems(final List<ShopifyRefundLineItem> refundLineItems) {
-		this.refundLineItems = refundLineItems;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(final String orderId) {
-		this.orderId = orderId;
-	}
-
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(final String note) {
-		this.note = note;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(final String userId) {
-		this.userId = userId;
-	}
-
-	public DateTime getProcessedAt() {
-		return processedAt;
-	}
-
-	public void setProcessedAt(final DateTime processedAt) {
-		this.processedAt = processedAt;
-	}
-
-	public ShopifyRefundShippingDetails getShipping() {
-		return shipping;
-	}
-
-	public void setShipping(final ShopifyRefundShippingDetails shipping) {
-		this.shipping = shipping;
-	}
-
-	public List<ShopifyTransaction> getTransactions() {
-		return transactions;
-	}
-
-	public void setTransactions(final List<ShopifyTransaction> transactions) {
-		this.transactions = transactions;
-	}
-
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(final Currency currency) {
-		this.currency = currency;
-	}
+	private List<ShopifyDuty> duties;
+	@XmlElement(name = "order_adjustments")
+	private List<OrderAdjustment> orderAdjustments;
+	@XmlElement(name = "refund_duties")
+	private List<RefundDuty> refundDuties;
 
 }

@@ -201,7 +201,7 @@ public class ShopifySdkDriver {
 		shopifyLineItem.setQuantity(1);
 		final List<ShopifyLineItem> lineItems = Arrays.asList(shopifyLineItem);
 		final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest = ShopifyFulfillmentCreationRequest
-				.newBuilder().withOrderId("649449373755").withTrackingCompany("USPS").withTrackingNumber("1338")
+				.newBuilder().withOrderId("649449373755").withTrackingCompany("USPS").withTrackingNumbers(Arrays.asList("1338"))
 				.withNotifyCustomer(true).withLineItems(lineItems).withLocationId("18407653435")
 				.withTrackingUrls(Arrays.asList("https://ups.com/1234", "https://ups.com/432423")).build();
 
@@ -210,7 +210,7 @@ public class ShopifySdkDriver {
 		assertNotNull(shopifyFulfillment.getId());
 		assertEquals("649449373755", shopifyFulfillment.getOrderId());
 		assertEquals("USPS", shopifyFulfillment.getTrackingCompany());
-		assertEquals("1338", shopifyFulfillment.getTrackingNumber());
+		assertEquals("1338", shopifyFulfillment.getTrackingNumbers());
 		assertEquals("18407653435", shopifyFulfillment.getLocationId());
 		assertTrue(Arrays.asList("https://ups.com/1234", "https://ups.com/432423")
 				.containsAll(shopifyFulfillment.getTrackingUrls()));
@@ -227,7 +227,7 @@ public class ShopifySdkDriver {
 
 		final ShopifyFulfillmentUpdateRequest shopifyFulfillmentUpdateRequest = ShopifyFulfillmentUpdateRequest
 				.newBuilder().withCurrentShopifyFulfillment(currentShopifyFulfillment).withTrackingCompany("FedEx")
-				.withTrackingNumber("1339").withNotifyCustomer(true)
+				.withTrackingNumbers(Arrays.asList("1339")).withNotifyCustomer(true)
 				.withLineItems(currentShopifyFulfillment.getLineItems()).withLocationId("18407653435")
 				.withTrackingUrls(Arrays.asList("123.com")).build();
 
@@ -236,7 +236,7 @@ public class ShopifySdkDriver {
 		assertNotNull(shopifyFulfillment.getId());
 		assertEquals("FedEx", shopifyFulfillment.getTrackingCompany());
 		assertEquals("649449373755", shopifyFulfillment.getOrderId());
-		assertEquals("1339", shopifyFulfillment.getTrackingNumber());
+		assertEquals("1339", shopifyFulfillment.getTrackingNumbers());
 		assertEquals("18407653435", shopifyFulfillment.getLocationId());
 		assertTrue(Arrays.asList("http://123.com").containsAll(shopifyFulfillment.getTrackingUrls()));
 		System.out.println("Updated Shopify Fulfillment ID " + shopifyFulfillment.getId());

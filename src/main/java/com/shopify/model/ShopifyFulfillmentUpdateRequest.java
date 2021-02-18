@@ -15,7 +15,7 @@ public class ShopifyFulfillmentUpdateRequest {
 	}
 
 	public static interface TrackingNumberStep {
-		NotifyCustomerStep withTrackingNumber(final String trackingNumber);
+		NotifyCustomerStep withTrackingNumbers(final List<String> trackingNumbers);
 	}
 
 	public static interface NotifyCustomerStep {
@@ -67,8 +67,8 @@ public class ShopifyFulfillmentUpdateRequest {
 		}
 
 		@Override
-		public NotifyCustomerStep withTrackingNumber(final String trackingNumber) {
-			request.setTrackingNumber(trackingNumber);
+		public NotifyCustomerStep withTrackingNumbers(final List<String> trackingNumber) {
+			request.setTrackingNumbers(trackingNumber);
 			return this;
 		}
 

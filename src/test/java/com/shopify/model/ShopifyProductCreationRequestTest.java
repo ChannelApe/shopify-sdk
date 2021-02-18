@@ -30,7 +30,7 @@ public class ShopifyProductCreationRequestTest {
 	private static final String SOME_PRODUCT_TYPE = "Energy";
 	private static final String SOME_BODY_HTML = "Some description";
 	private static final String SOME_VENDOR = "Clif";
-	private static final Set<String> SOME_TAGS = new HashSet<>(Arrays.asList("EuropaSports"));
+	private static final String SOME_TAGS = "EuropaSports";
 	private static final String SOME_SECOND_IMAGE_SOURCE = "image9191919";
 	private static final String SOME_FIRST_IMAGE_SOURCE = "image2133";
 
@@ -91,7 +91,6 @@ public class ShopifyProductCreationRequestTest {
 		assertEquals(SOME_PRODUCT_TYPE, actualShopifyProduct.getProductType());
 		final DateTime actualPublishedAt = DateTime.parse(actualShopifyProduct.getPublishedAt());
 		assertTrue(DateTime.now(DateTimeZone.UTC).compareTo(actualPublishedAt) >= 0);
-		assertTrue(actualShopifyProduct.isPublished());
 
 		final List<Option> actualOptions = actualShopifyProduct.getOptions();
 		assertEquals(3, actualOptions.size());
@@ -185,7 +184,6 @@ public class ShopifyProductCreationRequestTest {
 		assertEquals(SOME_TAGS, actualShopifyProduct.getTags());
 		assertEquals(SOME_PRODUCT_TYPE, actualShopifyProduct.getProductType());
 		assertNull(actualShopifyProduct.getPublishedAt());
-		assertFalse(actualShopifyProduct.isPublished());
 
 		final List<Option> actualOptions = actualShopifyProduct.getOptions();
 		assertEquals(3, actualOptions.size());

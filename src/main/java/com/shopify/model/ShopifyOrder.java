@@ -2,7 +2,6 @@ package com.shopify.model;
 
 import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,15 +10,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.CurrencyAdapter;
 import com.shopify.model.adapters.DateTimeAdapter;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyOrder {
-
+	@XmlElement(name = "app_id")
+	private String appId;
 	private String id;
 	private String email;
 	@XmlElement(name = "closed_at")
@@ -51,9 +55,11 @@ public class ShopifyOrder {
 	@XmlElement(name = "total_discounts")
 	private BigDecimal totalDiscounts;
 	@XmlElement(name = "total_line_items_price")
-	private BigDecimal totaLineItemsPrice;
+	private BigDecimal totalLineItemsPrice;
 	@XmlElement(name = "cart_token")
 	private String cartToken;
+	@XmlElement(name = "checkout_token")
+	private String checkoutToken;
 	@XmlElement(name = "buyer_accepts_marketing")
 	private boolean buyerAcceptsMarketing;
 	private String name;
@@ -88,371 +94,48 @@ public class ShopifyOrder {
 	@XmlElement(name = "order_status_url")
 	private String orderStatusUrl;
 	@XmlElement(name = "line_items")
-	private List<ShopifyLineItem> lineItems = new LinkedList<>();
-	private List<ShopifyFulfillment> fulfillments = new LinkedList<>();
+	private List<ShopifyLineItem> lineItems;
+	private List<ShopifyFulfillment> fulfillments;
 	@XmlElement(name = "billing_address")
-	private ShopifyAddress billingAddress = new ShopifyAddress();
+	private ShopifyAddress billingAddress;
 	@XmlElement(name = "shipping_address")
-	private ShopifyAddress shippingAddress = new ShopifyAddress();
-	private ShopifyCustomer customer = new ShopifyCustomer();
+	private ShopifyAddress shippingAddress;
+	private ShopifyCustomer customer;
 	@XmlElement(name = "shipping_lines")
-	private List<ShopifyShippingLine> shippingLines = new LinkedList<>();
+	private List<ShopifyShippingLine> shippingLines;
 	@XmlElement(name = "tax_lines")
-	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
+	private List<ShopifyTaxLine> taxLines;
 	@XmlElement(name = "note_attributes")
-	private List<ShopifyAttribute> noteAttributes = new LinkedList<>();
-	private List<ShopifyRefund> refunds = new LinkedList<>();
-	private List<Metafield> metafields = new LinkedList<>();
+	private List<ShopifyAttribute> noteAttributes;
+	private List<ShopifyRefund> refunds;
+	private List<Metafield> metafields;
+	@XmlElement(name = "client_details")
+	private ClientDetails clientDetails;
+	@XmlElement(name = "current_total_duties_set")
+	private PriceSet currentTotalDutiesSet;
+	@XmlElement(name = "discount_applications")
+	private List<DiscountApplication> discountApplications;
+	@XmlElement(name = "discount_codes")
+	private List<DiscountCode> discountCodes;
+	@XmlElement(name = "original_total_duties_set")
+	private PriceSet originalTotalDutiesSet;
+	@XmlElement(name = "payment_gateway_names")
+	private List<String> paymentGatewayNames;
+	private String phone;
+	@XmlElement(name = "presentment_currency")
+	private String presentmentCurrency;
+	@XmlElement(name = "subtotal_price_set")
+	private PriceSet subtotalPriceSet;
+	private boolean test;
+	@XmlElement(name = "total_discounts_set")
+	private PriceSet total_discounts_set;
+	@XmlElement(name = "total_line_items_price_set")
+	private PriceSet totalLineItemsPriceSet;
+	@XmlElement(name = "total_price_set")
+	private PriceSet totalPriceSet;
+	@XmlElement(name = "total_tax_set")
+	private PriceSet totalTaxSet;
+	@XmlElement(name = "total_tip_received")
+	private BigDecimal totalTipReceived;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(final String email) {
-		this.email = email;
-	}
-
-	public DateTime getClosedAt() {
-		return closedAt;
-	}
-
-	public void setClosedAt(final DateTime closedAt) {
-		this.closedAt = closedAt;
-	}
-
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public int getNumber() {
-		return number;
-	}
-
-	public void setNumber(final int number) {
-		this.number = number;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(final String note) {
-		this.note = note;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(final String token) {
-		this.token = token;
-	}
-
-	public BigDecimal getTotalPrice() {
-		return totalPrice;
-	}
-
-	public void setTotalPrice(final BigDecimal totalPrice) {
-		this.totalPrice = totalPrice;
-	}
-
-	public BigDecimal getSubtotalPrice() {
-		return subtotalPrice;
-	}
-
-	public void setSubtotalPrice(final BigDecimal subtotalPrice) {
-		this.subtotalPrice = subtotalPrice;
-	}
-
-	public long getTotalWeight() {
-		return totalWeight;
-	}
-
-	public void setTotalWeight(final long totalWeight) {
-		this.totalWeight = totalWeight;
-	}
-
-	public BigDecimal getTotalTax() {
-		return totalTax;
-	}
-
-	public void setTotalTax(final BigDecimal totalTax) {
-		this.totalTax = totalTax;
-	}
-
-	public boolean isTaxesIncluded() {
-		return taxesIncluded;
-	}
-
-	public void setTaxesIncluded(final boolean taxesIncluded) {
-		this.taxesIncluded = taxesIncluded;
-	}
-
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(final Currency currency) {
-		this.currency = currency;
-	}
-
-	public String getFinancialStatus() {
-		return financialStatus;
-	}
-
-	public void setFinancialStatus(final String financialStatus) {
-		this.financialStatus = financialStatus;
-	}
-
-	public BigDecimal getTotalDiscounts() {
-		return totalDiscounts;
-	}
-
-	public void setTotalDiscounts(final BigDecimal totalDiscounts) {
-		this.totalDiscounts = totalDiscounts;
-	}
-
-	public BigDecimal getTotaLineItemsPrice() {
-		return totaLineItemsPrice;
-	}
-
-	public void setTotaLineItemsPrice(final BigDecimal totaLineItemsPrice) {
-		this.totaLineItemsPrice = totaLineItemsPrice;
-	}
-
-	public String getCartToken() {
-		return cartToken;
-	}
-
-	public void setCartToken(final String cartToken) {
-		this.cartToken = cartToken;
-	}
-
-	public boolean isBuyerAcceptsMarketing() {
-		return buyerAcceptsMarketing;
-	}
-
-	public void setBuyerAcceptsMarketing(final boolean buyerAcceptsMarketing) {
-		this.buyerAcceptsMarketing = buyerAcceptsMarketing;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public String getReferringSite() {
-		return referringSite;
-	}
-
-	public void setReferringSite(final String referringSite) {
-		this.referringSite = referringSite;
-	}
-
-	public String getLandingSite() {
-		return landingSite;
-	}
-
-	public void setLandingSite(final String landingSite) {
-		this.landingSite = landingSite;
-	}
-
-	public DateTime getCancelledAt() {
-		return cancelledAt;
-	}
-
-	public void setCancelledAt(final DateTime cancelledAt) {
-		this.cancelledAt = cancelledAt;
-	}
-
-	public String getCancelReason() {
-		return cancelReason;
-	}
-
-	public void setCancelReason(final String cancelReason) {
-		this.cancelReason = cancelReason;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(final String userId) {
-		this.userId = userId;
-	}
-
-	public String getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(final String locationId) {
-		this.locationId = locationId;
-	}
-
-	public DateTime getProcessedAt() {
-		return processedAt;
-	}
-
-	public void setProcessedAt(final DateTime processedAt) {
-		this.processedAt = processedAt;
-	}
-
-	public String getBrowserIp() {
-		return browserIp;
-	}
-
-	public void setBrowserIp(final String browserIp) {
-		this.browserIp = browserIp;
-	}
-
-	public String getOrderNumber() {
-		return orderNumber;
-	}
-
-	public void setOrderNumber(final String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
-
-	public String getProcessingMethod() {
-		return processingMethod;
-	}
-
-	public void setProcessingMethod(final String processingMethod) {
-		this.processingMethod = processingMethod;
-	}
-
-	public String getSourceName() {
-		return sourceName;
-	}
-
-	public void setSourceName(final String sourceName) {
-		this.sourceName = sourceName;
-	}
-
-	public String getFulfillmentStatus() {
-		return fulfillmentStatus;
-	}
-
-	public void setFulfillmentStatus(final String fulfillmentStatus) {
-		this.fulfillmentStatus = fulfillmentStatus;
-	}
-
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(final String tags) {
-		this.tags = tags;
-	}
-
-	public String getOrderStatusUrl() {
-		return orderStatusUrl;
-	}
-
-	public void setOrderStatusUrl(final String orderStatusUrl) {
-		this.orderStatusUrl = orderStatusUrl;
-	}
-
-	public List<ShopifyLineItem> getLineItems() {
-		return lineItems;
-	}
-
-	public void setLineItems(final List<ShopifyLineItem> lineItems) {
-		this.lineItems = lineItems;
-	}
-
-	public List<ShopifyFulfillment> getFulfillments() {
-		return fulfillments;
-	}
-
-	public void setFulfillments(final List<ShopifyFulfillment> fulfillments) {
-		this.fulfillments = fulfillments;
-	}
-
-	public ShopifyAddress getBillingAddress() {
-		return billingAddress;
-	}
-
-	public void setBillingAddress(final ShopifyAddress billingAddress) {
-		this.billingAddress = billingAddress;
-	}
-
-	public ShopifyAddress getShippingAddress() {
-		return shippingAddress;
-	}
-
-	public void setShippingAddress(final ShopifyAddress shippingAddress) {
-		this.shippingAddress = shippingAddress;
-	}
-
-	public ShopifyCustomer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(final ShopifyCustomer customer) {
-		this.customer = customer;
-	}
-
-	public List<ShopifyShippingLine> getShippingLines() {
-		return shippingLines;
-	}
-
-	public void setShippingLines(final List<ShopifyShippingLine> shippingLines) {
-		this.shippingLines = shippingLines;
-	}
-
-	public List<ShopifyTaxLine> getTaxLines() {
-		return taxLines;
-	}
-
-	public void setTaxLines(final List<ShopifyTaxLine> taxLines) {
-		this.taxLines = taxLines;
-	}
-
-	public List<ShopifyAttribute> getNoteAttributes() {
-		return noteAttributes;
-	}
-
-	public void setNoteAttributes(final List<ShopifyAttribute> noteAttributes) {
-		this.noteAttributes = noteAttributes;
-	}
-
-	public List<Metafield> getMetafields() {
-		return metafields;
-	}
-
-	public void setMetafields(final List<Metafield> metafields) {
-		this.metafields = metafields;
-	}
-
-	public List<ShopifyRefund> getRefunds() {
-		return refunds;
-	}
-
-	public void setRefunds(final List<ShopifyRefund> refunds) {
-		this.refunds = refunds;
-	}
 }

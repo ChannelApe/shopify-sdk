@@ -2,7 +2,7 @@ package com.shopify.model;
 
 public enum MetafieldValueType {
 
-	STRING("string"), INTEGER("integer");
+	STRING("string"), INTEGER("integer"), JSONSTRING("json_string");
 
 	static final String NO_MATCHING_ENUMS_ERROR_MESSAGE = "No matching enum found for %s";
 	private final String value;
@@ -16,6 +16,8 @@ public enum MetafieldValueType {
 			return MetafieldValueType.STRING;
 		} else if (INTEGER.toString().equals(value)) {
 			return MetafieldValueType.INTEGER;
+		} else if (JSONSTRING.toString().equals(value)) {
+			return MetafieldValueType.JSONSTRING;
 		}
 		throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
 	}

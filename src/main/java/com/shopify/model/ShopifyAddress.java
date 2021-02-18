@@ -1,5 +1,7 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyAddress {
 
 	@XmlElement(name = "first_name")

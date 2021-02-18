@@ -18,7 +18,7 @@ public class ShopifyFulfillmentUpdateRequestTest {
 	private static final List<String> SOME_TRACKING_URLS = Arrays.asList("123.com");
 	private static final String SOME_LOCATION_ID = "93284234";
 	private static final String SOME_TRACKING_COMPANY = "USPS";
-	private static final String SOME_TRACKING_NUMBER = "404042AD";
+	private static final List<String> SOME_TRACKING_NUMBERS = Arrays.asList("404042AD");
 	private static final boolean SOME_NOTIFY_CUSTOMER = true;
 	private static final List<ShopifyLineItem> SOME_LINE_ITEMS = Arrays.asList(new ShopifyLineItem(),
 			new ShopifyLineItem());
@@ -29,12 +29,12 @@ public class ShopifyFulfillmentUpdateRequestTest {
 		currentShopifyFulfillment.setId(UUID.randomUUID().toString());
 		currentShopifyFulfillment.setOrderId(UUID.randomUUID().toString());
 		currentShopifyFulfillment.setTrackingCompany("FedEx");
-		currentShopifyFulfillment.setTrackingNumber("404004104140DDF");
+		currentShopifyFulfillment.setTrackingNumbers(Arrays.asList("404004104140DDF"));
 		currentShopifyFulfillment.setLineItems(Arrays.asList(new ShopifyLineItem()));
 
 		final ShopifyFulfillmentUpdateRequest shopifyFulfillmentUpdateRequest = ShopifyFulfillmentUpdateRequest
 				.newBuilder().withCurrentShopifyFulfillment(currentShopifyFulfillment)
-				.withTrackingCompany(SOME_TRACKING_COMPANY).withTrackingNumber(SOME_TRACKING_NUMBER)
+				.withTrackingCompany(SOME_TRACKING_COMPANY).withTrackingNumbers(SOME_TRACKING_NUMBERS)
 				.withNotifyCustomer(SOME_NOTIFY_CUSTOMER).withLineItems(SOME_LINE_ITEMS)
 				.withLocationId(SOME_LOCATION_ID).withTrackingUrls(SOME_TRACKING_URLS).build();
 
@@ -42,7 +42,7 @@ public class ShopifyFulfillmentUpdateRequestTest {
 
 		assertEquals(currentShopifyFulfillment.getId(), actualRequest.getId());
 		assertEquals(currentShopifyFulfillment.getOrderId(), actualRequest.getOrderId());
-		assertEquals(SOME_TRACKING_NUMBER, actualRequest.getTrackingNumber());
+		assertEquals(SOME_TRACKING_NUMBERS, actualRequest.getTrackingNumbers());
 		assertEquals(SOME_TRACKING_COMPANY, actualRequest.getTrackingCompany());
 		assertEquals(SOME_NOTIFY_CUSTOMER, actualRequest.isNotifyCustomer());
 		assertSame(SOME_LINE_ITEMS, actualRequest.getLineItems());

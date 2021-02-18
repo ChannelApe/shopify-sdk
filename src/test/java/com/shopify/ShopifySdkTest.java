@@ -9,19 +9,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.shopify.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -43,71 +39,6 @@ import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Count;
-import com.shopify.model.Image;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldValueType;
-import com.shopify.model.MetafieldsRoot;
-import com.shopify.model.OrderRiskRecommendation;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAccessTokenRoot;
-import com.shopify.model.ShopifyAddress;
-import com.shopify.model.ShopifyAttribute;
-import com.shopify.model.ShopifyCustomCollection;
-import com.shopify.model.ShopifyCustomCollectionCreationRequest;
-import com.shopify.model.ShopifyCustomCollectionRoot;
-import com.shopify.model.ShopifyCustomCollectionsRoot;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerRoot;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyCustomersRoot;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentRoot;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGetCustomersRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-import com.shopify.model.ShopifyLineItem;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyLocationsRoot;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderRisksRoot;
-import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyOrdersRoot;
-import com.shopify.model.ShopifyPage;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductCreationRequest;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-import com.shopify.model.ShopifyProductRoot;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyProductsRoot;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundLineItem;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyRefundShippingDetails;
-import com.shopify.model.ShopifyShippingLine;
-import com.shopify.model.ShopifyShop;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyTransactionReceipt;
-import com.shopify.model.ShopifyTransactionsRoot;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantCreationRequest;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRoot;
-import com.shopify.model.ShopifyVariantUpdateRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -155,18 +86,83 @@ public class ShopifySdkTest {
 
 	}
 
-	@Test
-	public void testGetShop() {
-		ShopifySdk shopifySdk = ShopifySdk.newBuilder().withApiUrl(
-				"https://testhevostore.myshopify.com/admin/api/2020-04/")
-				.withAccessToken("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")
-				.build();
-		final ShopifyShop actualShop = shopifySdk.getShop();
-		System.out.println(actualShop);
+	private class ManagedCustomerCallable implements Callable<List<ShopifyCountry>> {
+		private ShopifySdk shopifySdk;
+		public ManagedCustomerCallable(ShopifySdk shopifySdk) {
+			this.shopifySdk = shopifySdk;
+		}
+		@Override
+		public List<ShopifyCountry> call() throws Exception {
+			return shopifySdk.getCountries();
+		}
 	}
 
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
+	public void testGetShop() throws ExecutionException, InterruptedException {
+		ShopifySdk shopifySdk = ShopifySdk.newBuilder()
+//				.withSubdomain("printfresh")
+//				.withAccessToken("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")
+				.withSubdomain("testhevostore")
+				.withAccessToken("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")
+				.build();
+		String pageInfo = null;
+//
+//		try {
+//			ExecutorService executorService = Executors.newFixedThreadPool(10);
+//			List<ShopifyCountry> fullList = Arrays.asList();
+//
+//			List<Future<List<ShopifyCountry>>> futureList = new ArrayList<>();
+//			for (int i = 0; i <= 100; i++) {
+//				Future future = executorService.submit(new ManagedCustomerCallable(shopifySdk));
+//				futureList.add(future);
+//			}
+//
+//			for (Future<List<ShopifyCountry>> managedCustomerPageFuture : futureList) {
+//				managedCustomerPageFuture.get();
+//			}
+//			System.out.println();
+//		} catch (ExecutionException sshe) {
+//			System.out.println();
+//		} catch (Exception e) {
+//			System.out.println();
+//		}
+
+		long count = 0;
+		long startTime = System.currentTimeMillis();
+		try {
+			do {
+				long t1 = 1579046400000L+ 24 * 3600000L;
+				long t2 = t1 + 24 * 3600000L;
+				long st = System.currentTimeMillis();
+				ShopifyPage<ShopifyOrder> shopifyProducts = shopifySdk.getUpdatedOrders(new DateTime(t1), new DateTime(t2), 250, pageInfo);
+//				System.out.println("Start order count = " + count + " time = " + (System.currentTimeMillis() - st));
+//				int ind = 0;
+//				for (ShopifyOrder o : shopifyProducts) {
+//					long stTxn = System.currentTimeMillis();
+//					shopifySdk.getOrderTransactions(o.getId());
+//					shopifySdk.getOrderRisks(o.getId());
+//					shopifySdk.getOrderMetafields(o.getId());
+//					System.out.println("Txn = " + ind + " = " + (System.currentTimeMillis() - stTxn));
+//					ind++;
+//				}
+				count = count + shopifyProducts.size();
+				System.out.println("Number = " + count + " page info = " + shopifyProducts.getNextPageInfo());
+				pageInfo = shopifyProducts.getNextPageInfo();
+
+			} while (pageInfo != null);
+			System.out.println("Number = " + count);
+		} catch (Exception e) {
+			System.out.println();
+		}
+		System.out.println("Total time = " + (System.currentTimeMillis() - startTime));
+		shopifySdk.getShop();
+	}
+
+
+	ObjectMapper objectMapper = new ObjectMapper()
+					.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//		@Test(expected = IllegalArgumentException.class)
 	public void givenMinimumDelayIsLargerThanMaximumDelayWhenCreatingShopifySdkThenExpectIllegalArgumentException() {
 		ShopifySdk.newBuilder().withApiUrl("").withAccessToken(accessToken)
 				.withMinimumRequestRetryRandomDelay(10, TimeUnit.DAYS)
@@ -294,7 +290,7 @@ public class ShopifySdkTest {
 								.append(expectedPath).toString()));
 
 		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
-				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumbers(Arrays.asList("12341234")).withNotifyCustomer(true)
 				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
 				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
@@ -331,7 +327,7 @@ public class ShopifySdkTest {
 				.anyTimes();
 
 		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
-				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumbers(Arrays.asList("12341234")).withNotifyCustomer(true)
 				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
 				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
@@ -367,7 +363,7 @@ public class ShopifySdkTest {
 
 		final ShopifyFulfillmentUpdateRequest request = ShopifyFulfillmentUpdateRequest.newBuilder()
 				.withCurrentShopifyFulfillment(currentFulfillment).withTrackingCompany("USPS")
-				.withTrackingNumber("12341234").withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
+				.withTrackingNumbers(Arrays.asList("12341234")).withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
 				.withLocationId("1").withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
 		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.updateFulfillment(request);
@@ -399,7 +395,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 
@@ -453,8 +448,6 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrders.get(0).getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrders.get(0).getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -518,7 +511,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 
@@ -573,8 +565,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrder.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrder.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrder.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -637,7 +627,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
@@ -667,8 +656,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrder.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrder.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrder.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -767,7 +754,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
@@ -796,8 +782,6 @@ public class ShopifySdkTest {
 				actualShopifyOrder1.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(actualShopifyOrder1.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				actualShopifyOrder1.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				actualShopifyOrder1.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -968,8 +952,6 @@ public class ShopifySdkTest {
 		shopifyProduct.setImages(Arrays.asList(image));
 		shopifyProduct.setProductType("Shoes");
 		shopifyProduct.setBodyHtml("Some Description");
-		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
-		shopifyProduct.setPublished(true);
 		shopifyProduct.setTitle("Some Title");
 		shopifyProduct.setVendor("Some Vendor");
 		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
@@ -1011,7 +993,7 @@ public class ShopifySdkTest {
 				.withTitle("Some Product Title").withMetafieldsGlobalTitleTag("Some Metafields Global Title Tag")
 				.withProductType("Shoes").withBodyHtml("Some Description")
 				.withMetafieldsGlobalDescriptionTag("Some Metafields Tag").withVendor("Some Vendor")
-				.withTags(Collections.emptySet()).withSortedOptionNames(Collections.emptyList())
+				.withTags(null).withSortedOptionNames(Collections.emptyList())
 				.withImageSources(Arrays.asList("http://channelape.com/1.png", "http://channelape.com/2.png"))
 				.withVariantCreationRequests(Arrays.asList(shopifyVariantCreationRequest)).withPublished(true).build();
 
@@ -1067,7 +1049,6 @@ public class ShopifySdkTest {
 				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
 		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
 		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
-		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
 		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
 		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
 		assertEquals(shopifyProduct.getVariants().get(0).getAvailable(),
@@ -1099,8 +1080,6 @@ public class ShopifySdkTest {
 		shopifyProduct.setImages(Arrays.asList(image));
 		shopifyProduct.setProductType("Shoes");
 		shopifyProduct.setBodyHtml("Some Description");
-		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
-		shopifyProduct.setPublished(true);
 		shopifyProduct.setTitle("Some Title");
 		shopifyProduct.setVendor("Some Vendor");
 		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
@@ -1201,7 +1180,6 @@ public class ShopifySdkTest {
 				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
 		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
 		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
-		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
 		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
 		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
 
@@ -1222,7 +1200,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.name());
 		metafield.setOwnerResource("order");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VERSION_2020_04)
@@ -1303,8 +1281,6 @@ public class ShopifySdkTest {
 		shopifyProduct.setImages(Arrays.asList(image));
 		shopifyProduct.setProductType("Shoes");
 		shopifyProduct.setBodyHtml("Some Description");
-		shopifyProduct.setTags(new HashSet<>(Arrays.asList("Shoes", "Apparel")));
-		shopifyProduct.setPublished(true);
 		shopifyProduct.setTitle("Some Title");
 		shopifyProduct.setVendor("Some Vendor");
 		shopifyProduct.setPublishedAt("2018-01-01T00:00:00");
@@ -1354,7 +1330,6 @@ public class ShopifySdkTest {
 				actualShopifyProduct.getMetafieldsGlobalDescriptionTag());
 		assertEquals(shopifyProduct.getProductType(), actualShopifyProduct.getProductType());
 		assertEquals(shopifyProduct.getPublishedAt(), actualShopifyProduct.getPublishedAt());
-		assertTrue(shopifyProduct.getTags().containsAll(actualShopifyProduct.getTags()));
 		assertEquals(shopifyProduct.getTitle(), actualShopifyProduct.getTitle());
 		assertEquals(shopifyProduct.getVariants().get(0).getId(), actualShopifyProduct.getVariants().get(0).getId());
 
@@ -1474,7 +1449,6 @@ public class ShopifySdkTest {
 		shopifyFulfillment.setCreatedAt(SOME_DATE_TIME);
 		shopifyFulfillment.setId("somelineitemid1");
 		shopifyFulfillment.setLineItems(Arrays.asList(shopifyLineItem1));
-		shopifyFulfillment.setTrackingUrl(null);
 		shopifyFulfillment.setTrackingUrls(new LinkedList<>());
 		shopifyOrder1.setFulfillments(Arrays.asList(shopifyFulfillment));
 		shopifyOrdersRoot.setOrders(Arrays.asList(shopifyOrder1));
@@ -1499,8 +1473,6 @@ public class ShopifySdkTest {
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(), shopifyOrder.getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
 				.compareTo(shopifyOrder.getFulfillments().get(0).getCreatedAt()) == 0);
-		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrl(),
-				shopifyOrder.getFulfillments().get(0).getTrackingUrl());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getTrackingUrls(),
 				shopifyOrder.getFulfillments().get(0).getTrackingUrls());
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getLineItems().get(0).getId(),
@@ -1906,10 +1878,10 @@ public class ShopifySdkTest {
 		shopifyCustomer.setLastname("Kazokas");
 
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setQuantity(3);
+		shopifyLineItem1.setQuantity(3l);
 		shopifyLineItem1.setVariantId("4123123");
 		final ShopifyLineItem shopifyLineItem2 = new ShopifyLineItem();
-		shopifyLineItem2.setQuantity(4);
+		shopifyLineItem2.setQuantity(4l);
 		shopifyLineItem2.setVariantId("5123123");
 		final List<ShopifyLineItem> shopifyLineItems = Arrays.asList(shopifyLineItem1, shopifyLineItem2);
 		final DateTime processedAt = new DateTime(DateTimeZone.UTC);
@@ -2144,10 +2116,10 @@ public class ShopifySdkTest {
 		shopifyCustomer.setLastname("Kazokas");
 
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setQuantity(3);
+		shopifyLineItem1.setQuantity(3l);
 		shopifyLineItem1.setVariantId("4123123");
 		final ShopifyLineItem shopifyLineItem2 = new ShopifyLineItem();
-		shopifyLineItem2.setQuantity(4);
+		shopifyLineItem2.setQuantity(4l);
 		shopifyLineItem2.setVariantId("5123123");
 		final List<ShopifyLineItem> shopifyLineItems = Arrays.asList(shopifyLineItem1, shopifyLineItem2);
 		final DateTime processedAt = new DateTime(DateTimeZone.UTC);
@@ -2762,7 +2734,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.toString());
 		metafield.setId("123");
 		metafield.setKey("channelape_product_id");
 		metafield.setNamespace("channelape");
@@ -2819,7 +2791,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.name());
 		metafield.setId("123");
 		metafield.setKey("channelape_variant_id");
 		metafield.setNamespace("channelape");
@@ -2875,7 +2847,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.STRING.name());
 		metafield.setOwnerResource("variant");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.VARIANTS)
@@ -3479,8 +3451,6 @@ public class ShopifySdkTest {
 		assertEquals(expectedShopifyFulfillment.isNotifyCustomer(), actualShopifyFulfillment.isNotifyCustomer());
 		assertEquals(expectedShopifyFulfillment.getStatus(), actualShopifyFulfillment.getStatus());
 		assertEquals(expectedShopifyFulfillment.getTrackingCompany(), actualShopifyFulfillment.getTrackingCompany());
-		assertEquals(expectedShopifyFulfillment.getTrackingNumber(), actualShopifyFulfillment.getTrackingNumber());
-		assertEquals(expectedShopifyFulfillment.getTrackingUrl(), actualShopifyFulfillment.getTrackingUrl());
 		assertEquals(expectedShopifyFulfillment.getTrackingUrls(), actualShopifyFulfillment.getTrackingUrls());
 		assertTrue(expectedShopifyFulfillment.getUpdatedAt().compareTo(actualShopifyFulfillment.getUpdatedAt()) == 0);
 	}
@@ -3495,8 +3465,6 @@ public class ShopifySdkTest {
 		currentFulfillment.setNotifyCustomer(true);
 		currentFulfillment.setStatus("cancelled");
 		currentFulfillment.setTrackingCompany("USPS");
-		currentFulfillment.setTrackingNumber("12341234");
-		currentFulfillment.setTrackingUrl("tracking_url");
 		currentFulfillment.setTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2"));
 		currentFulfillment.setUpdatedAt(SOME_DATE_TIME);
 		return currentFulfillment;
