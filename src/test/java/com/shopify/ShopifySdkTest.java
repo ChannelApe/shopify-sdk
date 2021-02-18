@@ -128,18 +128,34 @@ public class ShopifySdkTest {
 //			System.out.println();
 //		}
 
-		List<Map<String, Object>> productOptions = new ArrayList<>();
-		do {
-			ShopifyPage<ShopifyProduct> shopifyProducts = shopifySdk.getUpdatedProducts(new DateTime(1577943611000L), new DateTime(1604295616000L), 50, null);
-//			System.out.println(shopifySmartCollections);
-			pageInfo = shopifyProducts.getNextPageInfo();
-			shopifyProducts.forEach(shopifyProduct -> {
-				shopifyProduct.setOptions(null);
-				objectMapper.convertValue(shopifyProduct, Map.class);
-			});
+		long count = 0;
+		long startTime = System.currentTimeMillis();
+		try {
+			do {
+				long t1 = 1579046400000L+ 24 * 3600000L;
+				long t2 = t1 + 24 * 3600000L;
+				long st = System.currentTimeMillis();
+				ShopifyPage<ShopifyOrder> shopifyProducts = shopifySdk.getUpdatedOrders(new DateTime(t1), new DateTime(t2), 250, pageInfo);
+//				System.out.println("Start order count = " + count + " time = " + (System.currentTimeMillis() - st));
+//				int ind = 0;
+//				for (ShopifyOrder o : shopifyProducts) {
+//					long stTxn = System.currentTimeMillis();
+//					shopifySdk.getOrderTransactions(o.getId());
+//					shopifySdk.getOrderRisks(o.getId());
+//					shopifySdk.getOrderMetafields(o.getId());
+//					System.out.println("Txn = " + ind + " = " + (System.currentTimeMillis() - stTxn));
+//					ind++;
+//				}
+				count = count + shopifyProducts.size();
+				System.out.println("Number = " + count + " page info = " + shopifyProducts.getNextPageInfo());
+				pageInfo = shopifyProducts.getNextPageInfo();
 
-		} while (pageInfo != null);
-
+			} while (pageInfo != null);
+			System.out.println("Number = " + count);
+		} catch (Exception e) {
+			System.out.println();
+		}
+		System.out.println("Total time = " + (System.currentTimeMillis() - startTime));
 		shopifySdk.getShop();
 	}
 
