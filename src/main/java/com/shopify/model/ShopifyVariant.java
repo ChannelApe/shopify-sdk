@@ -35,7 +35,7 @@ public class ShopifyVariant {
 	private String barcode;
 	private int position;
 	private long grams;
-	@XmlTransient
+	@XmlElement(name = "inventory_quantity")
 	private Long inventoryQuantity;
 	@XmlElement(name = "image_id")
 	private String imageId;
