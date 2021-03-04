@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.shopify.mappers.ObjectMapperProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -1047,11 +1048,7 @@ public class ShopifySdk {
 	}
 
 	private static Client buildClient() {
-		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
-		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
-		provider.setMapper(mapper);
-
-		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+		return ClientBuilder.newClient().register(JacksonFeature.class).register(ObjectMapperProvider.class);
 	}
 
 	public class ShopifySdkRetryListener implements RetryListener {
