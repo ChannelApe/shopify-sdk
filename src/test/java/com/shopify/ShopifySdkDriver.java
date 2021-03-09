@@ -81,7 +81,7 @@ public class ShopifySdkDriver {
 	public void setUp() {
 		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN)
 				.withMaximumRequestRetryTimeout(5, TimeUnit.SECONDS)
-				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).build();
+				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).withApiVersion("2020-07").build();
 	}
 
 	@Test
