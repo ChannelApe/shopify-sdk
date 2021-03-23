@@ -43,6 +43,7 @@ public class ShopifyVariant {
 	private String option2;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String option3;
+	private BigDecimal weight;
 	@XmlElement(name = "fulfillment_service")
 	private String fulfillmentService;
 	@XmlElement(name = "requires_shipping")
@@ -85,6 +86,14 @@ public class ShopifyVariant {
 
 	public void setPrice(final BigDecimal price) {
 		this.price = price;
+	}
+	
+	public BigDecimal getWeight() {
+		return weight;
+	}
+
+	public void setWeight(final BigDecimal weight) {
+		this.weight = weight;
 	}
 
 	public BigDecimal getCompareAtPrice() {
