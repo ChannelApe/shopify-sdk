@@ -137,5 +137,30 @@ public class ShopifyOrder {
 	private PriceSet totalTaxSet;
 	@XmlElement(name = "total_tip_received")
 	private BigDecimal totalTipReceived;
+	@XmlElement(name = "current_total_discounts")
+	private BigDecimal currentTotalDiscounts;
+	@XmlElement(name = "current_total_discounts_set")
+	private PriceSet currentTotalDiscountsSet;
+	@XmlElement(name = "current_total_price")
+	private BigDecimal currentTotalPrice;
+	@XmlElement(name = "current_total_price_set")
+	private PriceSet currentTotalPriceSet;
+	@XmlElement(name = "current_subtotal_price")
+	private BigDecimal currentSubtotalPrice;
+	@XmlElement(name = "current_subtotal_price_set")
+	private PriceSet currentSubtotalPriceSet;
+	@XmlElement(name = "current_total_tax")
+	private BigDecimal currentTotalTax;
+	@XmlElement(name = "current_total_tax_set")
+	private PriceSet currentTotalTaxSet;
+	@XmlElement(name = "customer_locale")
+	private String customerLocale;
+	@XmlElement(name = "total_outstanding")
+	private BigDecimal totalOutstanding;
+	@XmlElement(name = "total_shipping_price_set")
+	private PriceSet totalShippingPriceSet;
+
+
+
 
 }
