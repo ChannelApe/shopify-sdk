@@ -12,8 +12,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shopify.model.adapters.TagsAdapter;
-
 public class TagsAdapterTest {
 
 	private static final Set<String> TAGS = new HashSet<>(Arrays.asList("tag1", "tag2", "tag3"));

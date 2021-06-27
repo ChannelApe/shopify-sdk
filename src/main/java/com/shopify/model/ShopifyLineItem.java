@@ -1,6 +1,8 @@
 package com.shopify.model;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,6 +42,8 @@ public class ShopifyLineItem {
 	private String fulfillmentStatus;
 	@XmlElement(name = "fulfillment_service")
 	private String fulfillmentService;
+	@XmlElement(name = "tax_lines")
+	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
 
 	public String getId() {
 		return id;
@@ -191,6 +195,14 @@ public class ShopifyLineItem {
 
 	public void setFulfillmentService(final String fulfillmentService) {
 		this.fulfillmentService = fulfillmentService;
+	}
+
+	public List<ShopifyTaxLine> getTaxLines() {
+		return taxLines;
+	}
+
+	public void setTaxLines(final List<ShopifyTaxLine> taxLines) {
+		this.taxLines = taxLines;
 	}
 
 }

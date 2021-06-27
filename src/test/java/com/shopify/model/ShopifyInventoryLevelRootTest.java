@@ -4,9 +4,6 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-
 public class ShopifyInventoryLevelRootTest {
 
 	@Test

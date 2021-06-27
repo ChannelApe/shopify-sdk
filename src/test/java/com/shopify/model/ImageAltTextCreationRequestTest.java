@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.shopify.model.ImageAltTextCreationRequest;
-import com.shopify.model.Metafield;
-
 public class ImageAltTextCreationRequestTest {
 
 	@Test

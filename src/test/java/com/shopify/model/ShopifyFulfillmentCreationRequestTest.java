@@ -9,10 +9,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyLineItem;
-
 public class ShopifyFulfillmentCreationRequestTest {
 
 	private static final List<String> SOME_TRACKING_URLS = Arrays.asList("https://ups.com/123", "https://ups.com/456");

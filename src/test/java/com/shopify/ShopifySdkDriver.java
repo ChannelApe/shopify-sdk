@@ -9,6 +9,8 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Currency;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -79,7 +81,7 @@ public class ShopifySdkDriver {
 	public void setUp() {
 		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN)
 				.withMaximumRequestRetryTimeout(5, TimeUnit.SECONDS)
-				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).build();
+				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).withApiVersion("2020-07").build();
 	}
 
 	@Test
@@ -173,6 +175,66 @@ public class ShopifySdkDriver {
 		assertEquals(null, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
 		assertEquals("ABC-1234570",
 				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
+
+		assertEquals(1, actualShopifyOrder.getTaxLines().size());
+		assertTrue(BigDecimal.valueOf(8.64).compareTo(actualShopifyOrder.getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06).compareTo(actualShopifyOrder.getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax", actualShopifyOrder.getTaxLines().get(0).getTitle());
+
+		assertEquals(2, actualShopifyOrder.getLineItems().get(0).getTaxLines().size());
+		assertEquals(1, actualShopifyOrder.getLineItems().get(1).getTaxLines().size());
+
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getTitle());
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getTitle());
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getTitle());
+	}
+
+	@Test
+	public void givenValidOrderIdWithRefundTransactionsAndAdjustmentAndNoRefundLineItemsWhenRetrievingOrderThenReturnShopifyOrder() {
+		final String orderId = "2934166880317";
+
+		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder(orderId);
+
+		assertEquals("humding-6593", actualShopifyOrder.getName());
+		assertEquals(1, actualShopifyOrder.getRefunds().size());
+
+		assertEquals("702404231229", actualShopifyOrder.getRefunds().get(0).getId());
+
+		assertEquals(0, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().size());
+
+		assertEquals("3714516516925", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getId());
+		assertEquals("3621807685693", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getParentId());
+		assertEquals(Currency.getInstance("USD"),
+				actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getCurrency());
+		assertEquals("manual", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getGateway());
+		assertEquals("refund", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getKind());
+		assertTrue(BigDecimal.valueOf(25.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getAmount()) == 0);
+
+		assertEquals("130293006397", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getId());
+		assertEquals("702404231229", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getRefundId());
+		assertEquals("refund_discrepancy", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getKind());
+		assertEquals("Refund discrepancy", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getReason());
+		assertTrue(BigDecimal.valueOf(-25.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getAmount()) == 0);
+		assertTrue(BigDecimal.valueOf(0.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getTaxAmount()) == 0);
+
 	}
 
 	@Test
@@ -662,6 +724,19 @@ public class ShopifySdkDriver {
 
 		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
 		assertEquals("RyanTest", updatedCustomer.getFirstName());
+	}
+
+	@Test
+	public void givenSomeErrorOccurrsWhenCreatingFulfillmentThenExpectCorrectErrors() {
+		try {
+			shopifySdk.createFulfillment(ShopifyFulfillmentCreationRequest.newBuilder().withOrderId("2854620102717")
+					.withTrackingCompany("UPS").withTrackingNumber("ABC-123").withNotifyCustomer(false)
+					.withLineItems(new LinkedList<>()).withLocationId("5523767400")
+					.withTrackingUrls(Arrays.asList("http://google.com/123")).build());
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@After

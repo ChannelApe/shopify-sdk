@@ -30,6 +30,7 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
@@ -104,6 +105,7 @@ import org.slf4j.LoggerFactory;
 
 public class ShopifySdk {
 
+	static final String API_VERSION_PREFIX = "api";
 	private static final long TWO_HUNDRED_MILLISECONDS = 200L;
 	private static final String EQUALS = "=";
 	private static final String AMPERSAND = "&";
@@ -123,7 +125,6 @@ public class ShopifySdk {
 	static final String OAUTH = "oauth";
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
-	static final String VERSION_2020_01 = "api/2020-01";
 	static final String PRODUCTS = "products";
 	static final String COLLECTIONS = "collections";
 	static final String VARIANTS = "variants";
@@ -184,6 +185,7 @@ public class ShopifySdk {
 
 	private String shopSubdomain;
 	private String apiUrl;
+	private String apiVersion;
 	private String clientId;
 	private String clientSecret;
 	private String authorizationToken;
@@ -256,6 +258,18 @@ public class ShopifySdk {
 		 */
 		OptionalsStep withReadTimeout(int duration, TimeUnit timeUnit);
 
+		/**
+		 * String representation of the version you want to use. If not populated, this
+		 * will use shopify oldest stable version. Although this is not recommended so
+		 * you can target a set of shopify features. Ex: '2020-10' '2020-07' '2020-04'.
+		 * If you are specifying the API URL ensure you leave off the version if you are
+		 * using this.
+		 *
+		 * @param apiVersion
+		 * @return
+		 */
+		OptionalsStep withApiVersion(final String apiVersion);
+
 		ShopifySdk build();
 
 	}
@@ -294,6 +308,7 @@ public class ShopifySdk {
 			this.clientSecret = steps.clientSecret;
 			this.authorizationToken = steps.authorizationToken;
 			this.apiUrl = steps.apiUrl;
+			this.apiVersion = steps.apiVersion;
 			this.minimumRequestRetryRandomDelayMilliseconds = steps.minimumRequestRetryRandomDelayMilliseconds;
 			this.maximumRequestRetryRandomDelayMilliseconds = steps.maximumRequestRetryRandomDelayMilliseconds;
 			this.maximumRequestRetryTimeoutMilliseconds = steps.maximumRequestRetryTimeoutMilliseconds;
@@ -324,6 +339,7 @@ public class ShopifySdk {
 		private String clientSecret;
 		private String authorizationToken;
 		private String apiUrl;
+		private String apiVersion;
 		private long minimumRequestRetryRandomDelayMilliseconds = DEFAULT_MINIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS;
 		private long maximumRequestRetryRandomDelayMilliseconds = DEFAULT_MAXIMUM_REQUEST_RETRY_RANDOM_DELAY_IN_MILLISECONDS;
 		private long maximumRequestRetryTimeoutMilliseconds = DEFAULT_MAXIMUM_REQUEST_RETRY_TIMEOUT_IN_MILLISECONDS;
@@ -401,11 +417,17 @@ public class ShopifySdk {
 			return this;
 		}
 
+		@Override
+		public OptionalsStep withApiVersion(final String apiVersion) {
+			this.apiVersion = apiVersion;
+			return this;
+		}
+
 	}
 
 	public boolean revokeOAuthToken() {
 		try {
-			final Response response = delete(getWebTarget().path(OAUTH).path(REVOKE));
+			final Response response = delete(getUnversionedWebTarget().path(OAUTH).path(REVOKE));
 			return Status.OK.getStatusCode() == response.getStatus();
 		} catch (final ShopifyErrorResponseException e) {
 			return false;
@@ -429,8 +451,8 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyProduct> getProducts(final String pageInfo, final int pageSize) {
-		final Response response = get(getWebTarget().path(VERSION_2020_01).path(PRODUCTS)
-				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final Response response = get(getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
 		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
 	}
@@ -799,7 +821,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> getCustomers(final ShopifyGetCustomersRequest shopifyGetCustomersRequest) {
-		WebTarget target = getWebTarget().path(VERSION_2020_01).path(CUSTOMERS);
+		WebTarget target = getWebTarget().path(CUSTOMERS);
 		if (shopifyGetCustomersRequest.getPageInfo() != null) {
 			target = target.queryParam(PAGE_INFO_QUERY_PARAMETER, shopifyGetCustomersRequest.getPageInfo());
 		}
@@ -825,14 +847,15 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyCustomer> searchCustomers(final String query) {
-		final Response response = get(getWebTarget().path(VERSION_2020_01).path(CUSTOMERS).path(SEARCH)
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(SEARCH)
 				.queryParam(QUERY_QUERY_PARAMETER, query).queryParam(LIMIT_QUERY_PARAMETER, DEFAULT_REQUEST_LIMIT));
 		return getCustomers(response);
 	}
 
 	public ShopifyFulfillment cancelFulfillment(final String orderId, final String fulfillmentId) {
+		final WebTarget buildOrdersEndpoint = buildOrdersEndpoint();
 		final Response response = post(
-				buildOrdersEndpoint().path(orderId).path(FULFILLMENTS).path(fulfillmentId).path(CANCEL),
+				buildOrdersEndpoint.path(orderId).path(FULFILLMENTS).path(fulfillmentId).path(CANCEL),
 				new ShopifyFulfillment());
 		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
 		return shopifyFulfillmentRootResponse.getFulfillment();
@@ -1073,9 +1096,8 @@ public class ShopifySdk {
 	}
 
 	private static boolean hasNotBeenSaved(final Response response) {
-		response.bufferEntity();
 		if ((UNPROCESSABLE_ENTITY_STATUS_CODE == response.getStatus()) && response.hasEntity()) {
-			final String shopifyErrorResponse = response.readEntity(String.class);
+			final String shopifyErrorResponse = ResponseEntityToStringMapper.map(response);
 			LOGGER.debug(shopifyErrorResponse);
 			return shopifyErrorResponse.contains(COULD_NOT_BE_SAVED_SHOPIFY_ERROR_MESSAGE);
 		}
@@ -1086,8 +1108,8 @@ public class ShopifySdk {
 		try {
 
 			final Entity<String> entity = Entity.entity(EMPTY_STRING, MediaType.APPLICATION_JSON);
-			final Response response = this.webTarget.path(OAUTH).path(ACCESS_TOKEN).queryParam(CLIENT_ID, this.clientId)
-					.queryParam(CLIENT_SECRET, this.clientSecret)
+			final Response response = this.getUnversionedWebTarget().path(OAUTH).path(ACCESS_TOKEN)
+					.queryParam(CLIENT_ID, this.clientId).queryParam(CLIENT_SECRET, this.clientSecret)
 					.queryParam(AUTHORIZATION_CODE, this.authorizationToken).request(MediaType.APPLICATION_JSON)
 					.post(entity);
 
@@ -1104,6 +1126,14 @@ public class ShopifySdk {
 		}
 	}
 
+	private WebTarget getUnversionedWebTarget() {
+		if (StringUtils.isNotBlank(this.shopSubdomain)) {
+			return CLIENT
+					.target(new StringBuilder().append(HTTPS).append(this.shopSubdomain).append(API_TARGET).toString());
+		}
+		return CLIENT.target(this.apiUrl);
+	}
+
 	private WebTarget getWebTarget() {
 		if (this.webTarget == null) {
 
@@ -1114,9 +1144,13 @@ public class ShopifySdk {
 			} else {
 				this.webTarget = CLIENT.target(this.apiUrl);
 			}
+			if (StringUtils.isNotBlank(this.apiVersion)) {
+				this.webTarget = this.webTarget.path(API_VERSION_PREFIX).path(this.apiVersion);
+			}
 			if (this.accessToken == null) {
 				this.accessToken = generateToken();
 			}
+
 			final Shop shop = this.getShop().getShop();
 			LOGGER.info(SHOP_RETRIEVED_MESSAGE, shop.getId(), shop.getName());
 		}
@@ -1141,8 +1175,7 @@ public class ShopifySdk {
 			if (attempt.hasResult()) {
 				final Response response = (Response) attempt.getResult();
 
-				response.bufferEntity();
-				final String responseBody = response.readEntity(String.class);
+				final String responseBody = ResponseEntityToStringMapper.map(response);
 
 				if (LOGGER.isWarnEnabled() && !hasExceededRateLimit(response) && shouldRetryResponse(response)) {
 
@@ -1198,6 +1231,6 @@ public class ShopifySdk {
 	}
 
 	private WebTarget buildOrdersEndpoint() {
-		return getWebTarget().path(VERSION_2020_01).path(ORDERS);
+		return getWebTarget().path(ORDERS);
 	}
 }
