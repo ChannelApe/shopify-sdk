@@ -3419,6 +3419,35 @@ public class ShopifySdkTest {
 	}
 
 	@Test
+	public void givenCollectionWithNoProductsWhenRetrievingProductsByCollectionThenReturnEmptyShopifyProducts()
+		throws JsonProcessingException {
+		addCollectionsProductsPageDriverExpectation("collection-id", null, 50, 0, null);
+
+		final ShopifyProducts actualShopifyProducts = shopifySdk.getCollectionProducts("collection-id");
+
+		assertEquals(0, actualShopifyProducts.size());
+	}
+
+	@Test
+	public void givenCollectionWith305ProductsWhenRetrievingCollectionProductsThenReturnShopifyProductsWith305Products()
+		throws JsonProcessingException {
+		addCollectionsProductsPageDriverExpectation("collection-id", null, 50, 50, "2");
+		addCollectionsProductsPageDriverExpectation("collection-id", "2", 50, 50, "3");
+		addCollectionsProductsPageDriverExpectation("collection-id", "3", 50, 50, "4");
+		addCollectionsProductsPageDriverExpectation("collection-id", "4", 50, 50, "5");
+		addCollectionsProductsPageDriverExpectation("collection-id", "5", 50, 50, "6");
+		addCollectionsProductsPageDriverExpectation("collection-id", "6", 50, 50, "7");
+		addCollectionsProductsPageDriverExpectation("collection-id", "7", 50, 5, null);
+
+		final ShopifyProducts actualShopifyProducts = shopifySdk.getCollectionProducts("collection-id");
+
+		assertEquals(305, actualShopifyProducts.size());
+		for (final ShopifyProduct actualShopifyProduct : actualShopifyProducts.values()) {
+			assertNotNull(actualShopifyProduct.getId());
+		}
+	}
+
+	@Test
 	public void givenSomeCustomCollectionsCreationRequestCreateAndReturnCustomCollection()
 			throws JsonProcessingException {
 		final String expectedCreationPath = new StringBuilder().append(FORWARD_SLASH)
@@ -3671,6 +3700,42 @@ public class ShopifySdkTest {
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
 				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS)
+				.toString();
+		ClientDriverRequest expectedRequest = onRequestTo(expectedPath)
+				.withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+				.withParam(ShopifySdk.LIMIT_QUERY_PARAMETER, pageLimit).withMethod(Method.GET);
+		if (pageInfo != null) {
+			expectedRequest = expectedRequest.withParam(ShopifySdk.PAGE_INFO_QUERY_PARAMETER, pageInfo);
+		}
+		ClientDriverResponse expectedResponse = giveResponse(responseBodyString, MediaType.APPLICATION_JSON)
+				.withStatus(Status.OK.getStatusCode());
+		if (nextPageInfo != null) {
+			expectedResponse = expectedResponse.withHeader("Link",
+					"<http://localhost?page_info=" + nextPageInfo + ">; rel=\"next\"");
+		}
+
+		driver.addExpectation(expectedRequest, expectedResponse).anyTimes();
+
+	}
+
+	private void addCollectionsProductsPageDriverExpectation(final String collectionId, final String pageInfo, final int pageLimit, final int pageSize,
+			final String nextPageInfo) throws JsonProcessingException {
+		final ShopifyProductsRoot pageShopifyProductsRoot = new ShopifyProductsRoot();
+		final List<ShopifyProduct> firstPageShopifyProducts = new ArrayList<>(pageLimit);
+		for (int i = 0; i < pageSize; i++) {
+			final ShopifyProduct shopifyProduct = new ShopifyProduct();
+			shopifyProduct.setId(UUID.randomUUID().toString());
+			firstPageShopifyProducts.add(shopifyProduct);
+		}
+		pageShopifyProductsRoot.setProducts(firstPageShopifyProducts);
+
+		final String responseBodyString = getJsonString(ShopifyProductsRoot.class, pageShopifyProductsRoot);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
+				.append(FORWARD_SLASH).append(SOME_API_VERSION)
+				.append(FORWARD_SLASH).append(ShopifySdk.COLLECTIONS)
+				.append(FORWARD_SLASH).append(collectionId)
+				.append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS).append(ShopifySdk.JSON)
 				.toString();
 		ClientDriverRequest expectedRequest = onRequestTo(expectedPath)
 				.withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
