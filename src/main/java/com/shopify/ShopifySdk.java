@@ -572,7 +572,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifySmartCollection> getSmartCollections(final String pageInfo, final int pageSize) {
-		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS)
+		final Response response = get(getWebTarget().path(SMART_COLLECTIONS)
 			.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifySmartCollectionsRoot shopifySmartCollectionsRoot = response
 			.readEntity(ShopifySmartCollectionsRoot.class);
@@ -594,7 +594,7 @@ public class ShopifySdk {
 			shopifySmartCollections.addAll(smartCollectionsPage);
 		}
 
-		return smartCollectionsPage;
+		return shopifySmartCollections;
 	}
 
 	public ShopifyShop getShop() {
