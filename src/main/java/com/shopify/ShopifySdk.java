@@ -478,8 +478,9 @@ public class ShopifySdk {
 
 	public ShopifyPage<ShopifyProduct> getCollectionProducts(final String collectionId, final String pageInfo, final int pageSize) {
 		final String productsJson = new StringBuilder().append(PRODUCTS).append(JSON).toString();
-		final Response response = get(getWebTarget().path(VERSION_2020_01).path(COLLECTIONS).path(collectionId).path(productsJson)
-				.queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final Response response = get(getWebTarget().path(COLLECTIONS).path(collectionId).path(productsJson)
+			.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+			.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
 		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
 		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
 	}
