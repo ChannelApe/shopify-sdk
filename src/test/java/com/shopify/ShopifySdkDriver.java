@@ -9,11 +9,16 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Currency;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,15 +26,20 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldValueType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
+import com.shopify.model.ShopifyAttribute;
+import com.shopify.model.ShopifyCustomCollection;
 import com.shopify.model.ShopifyCustomer;
+import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
+import com.shopify.model.ShopifyGetCustomersRequest;
 import com.shopify.model.ShopifyGiftCard;
 import com.shopify.model.ShopifyGiftCardCreationRequest;
 import com.shopify.model.ShopifyInventoryLevel;
@@ -38,6 +48,8 @@ import com.shopify.model.ShopifyLocation;
 import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
 import com.shopify.model.ShopifyOrderRisk;
+import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
+import com.shopify.model.ShopifyPage;
 import com.shopify.model.ShopifyProduct;
 import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyProducts;
@@ -48,6 +60,7 @@ import com.shopify.model.ShopifyRefundCreationRequest;
 import com.shopify.model.ShopifyRefundLineItem;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyRefundShippingDetails;
+import com.shopify.model.ShopifyShippingLine;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
@@ -66,7 +79,9 @@ public class ShopifySdkDriver {
 
 	@Before
 	public void setUp() {
-		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN).build();
+		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN)
+				.withMaximumRequestRetryTimeout(5, TimeUnit.SECONDS)
+				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).withApiVersion("2020-07").build();
 	}
 
 	@Test
@@ -160,6 +175,66 @@ public class ShopifySdkDriver {
 		assertEquals(null, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
 		assertEquals("ABC-1234570",
 				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
+
+		assertEquals(1, actualShopifyOrder.getTaxLines().size());
+		assertTrue(BigDecimal.valueOf(8.64).compareTo(actualShopifyOrder.getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06).compareTo(actualShopifyOrder.getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax", actualShopifyOrder.getTaxLines().get(0).getTitle());
+
+		assertEquals(2, actualShopifyOrder.getLineItems().get(0).getTaxLines().size());
+		assertEquals(1, actualShopifyOrder.getLineItems().get(1).getTaxLines().size());
+
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getTitle());
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getTitle());
+		assertTrue(BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getPrice()) == 0);
+		assertTrue(BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getRate()) == 0);
+		assertEquals("Pennsylvania State Tax",
+				actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getTitle());
+	}
+
+	@Test
+	public void givenValidOrderIdWithRefundTransactionsAndAdjustmentAndNoRefundLineItemsWhenRetrievingOrderThenReturnShopifyOrder() {
+		final String orderId = "2934166880317";
+
+		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder(orderId);
+
+		assertEquals("humding-6593", actualShopifyOrder.getName());
+		assertEquals(1, actualShopifyOrder.getRefunds().size());
+
+		assertEquals("702404231229", actualShopifyOrder.getRefunds().get(0).getId());
+
+		assertEquals(0, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().size());
+
+		assertEquals("3714516516925", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getId());
+		assertEquals("3621807685693", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getParentId());
+		assertEquals(Currency.getInstance("USD"),
+				actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getCurrency());
+		assertEquals("manual", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getGateway());
+		assertEquals("refund", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getKind());
+		assertTrue(BigDecimal.valueOf(25.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getAmount()) == 0);
+
+		assertEquals("130293006397", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getId());
+		assertEquals("702404231229", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getRefundId());
+		assertEquals("refund_discrepancy", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getKind());
+		assertEquals("Refund discrepancy", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getReason());
+		assertTrue(BigDecimal.valueOf(-25.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getAmount()) == 0);
+		assertTrue(BigDecimal.valueOf(0.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getTaxAmount()) == 0);
+
 	}
 
 	@Test
@@ -241,18 +316,54 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenSomePageWhenQueryingOrdersThenReturnShopifyOrders() {
-		final List<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(1);
+		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(250);
 		assertEquals(250, actualOrdersFirstPage.size());
+		assertNotNull(actualOrdersFirstPage.getNextPageInfo());
+		assertNull(actualOrdersFirstPage.getPreviousPageInfo());
 
-		final List<ShopifyOrder> actualOrdersSecondPage = shopifySdk.getOrders(2);
-		assertEquals(250, actualOrdersSecondPage.size());
+		String nextPageInfo = actualOrdersFirstPage.getNextPageInfo();
+		while (nextPageInfo != null) {
+			System.out.println("Getting next orders with page info: " + nextPageInfo);
+			final ShopifyPage<ShopifyOrder> orders = shopifySdk.getOrders(nextPageInfo, 250);
+			nextPageInfo = orders.getNextPageInfo();
+
+		}
+
+	}
+
+	@Test
+	public void givenSomeQueryWhenGettingCustomersFromMultiplePagesThenRetrieveCustomers() {
+		final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest.newBuilder()
+				.withCreatedAtMin(DateTime.now(DateTimeZone.UTC).minusYears(4)).withLimit(10).build();
+		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
+		assertEquals(10, actualCustomersPage.size());
+		assertNotNull(actualCustomersPage.getNextPageInfo());
+		assertNull(actualCustomersPage.getPreviousPageInfo());
+
+		String nextPageInfo = actualCustomersPage.getNextPageInfo();
+		while (nextPageInfo != null) {
+			System.out.println("Getting next customers with page info: " + nextPageInfo);
+			final ShopifyGetCustomersRequest paginatedGetRequest = ShopifyGetCustomersRequest.newBuilder()
+					.withPageInfo(nextPageInfo).withLimit(10).build();
+			final ShopifyPage<ShopifyCustomer> paginatedCustomers = shopifySdk.getCustomers(paginatedGetRequest);
+			nextPageInfo = paginatedCustomers.getNextPageInfo();
+
+		}
+
 	}
 
 	@Test
 	public void givenSomePageAndMinimumDateWhenQueryingOrdersThenReturnShopifyOrders() {
-		final List<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(new DateTime().minusDays(30), 1);
-		assertEquals(9, actualOrdersFirstPage.size());
-		assertNotNull(actualOrdersFirstPage.get(0).getFulfillments().get(0).getLineItems());
+		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(new DateTime().minusYears(4), 250);
+		assertEquals(250, actualOrdersFirstPage.size());
+
+		String nextPageInfo = actualOrdersFirstPage.getNextPageInfo();
+		while (nextPageInfo != null) {
+			System.out.println("Getting next orders with page info: " + nextPageInfo);
+			final ShopifyPage<ShopifyOrder> orders = shopifySdk.getOrders(nextPageInfo, 250);
+			nextPageInfo = orders.getNextPageInfo();
+
+		}
 
 	}
 
@@ -503,7 +614,7 @@ public class ShopifySdkDriver {
 		final ShopifyGiftCardCreationRequest giftCard = ShopifyGiftCardCreationRequest.newBuilder()
 				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZZ4CAPE").withCurrency("USD").build();
 
-		final ObjectMapper mapper = ShopifySdk.buildMapper();
+		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
 		final String dtoAsString = mapper.writeValueAsString(giftCard);
 		System.out.println(dtoAsString);
 		final ShopifyGiftCard shopifyGiftCard = shopifySdk.createGiftCard(giftCard);
@@ -520,9 +631,19 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
+	public void givenSomeUpdatedAtMinWhenRetrievingUpdatedOrdersThenExpectUpdatedOrders()
+			throws JsonProcessingException {
+		final ShopifyPage<ShopifyOrder> actualShopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(
+				DateTime.now(DateTimeZone.UTC).minusHours(24), DateTime.now(DateTimeZone.UTC),
+				DateTime.now(DateTimeZone.UTC), 250);
+		assertNotNull(actualShopifyOrders);
+		assertTrue(actualShopifyOrders.size() > 0);
+	}
+
+	@Test
 	public void givenSomeOrderWhenCreatingOrderThenCreateOrder() throws JsonProcessingException {
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setVariantId("16069122490427");
+		shopifyLineItem1.setVariantId("12262219972712");
 		shopifyLineItem1.setQuantity(44);
 
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
@@ -540,17 +661,82 @@ public class ShopifySdkDriver {
 		shopifyAddress.setProvinceCode("PA");
 		shopifyAddress.setZip("92387423");
 
+		final ShopifyShippingLine shopifyShippingLine1 = new ShopifyShippingLine();
+		shopifyShippingLine1.setId("123");
+		shopifyShippingLine1.setPrice(new BigDecimal(42.11));
+		shopifyShippingLine1.setSource("some-source");
+		shopifyShippingLine1.setTitle("some-title");
+		shopifyShippingLine1.setCode("sc");
+		final List<ShopifyShippingLine> shopifyShippingLines = Arrays.asList(shopifyShippingLine1);
+
+		final ShopifyAttribute shopifyAttribute1 = new ShopifyAttribute();
+		shopifyAttribute1.setName("some-name1");
+		shopifyAttribute1.setValue("some-value1");
+		final ShopifyAttribute shopifyAttribute2 = new ShopifyAttribute();
+		shopifyAttribute2.setName("some-name2");
+		shopifyAttribute2.setValue("some-value2");
+		final ShopifyAttribute shopifyAttribute3 = new ShopifyAttribute();
+		shopifyAttribute3.setName("some-name3");
+		shopifyAttribute3.setValue("some-value3");
+		final List<ShopifyAttribute> someNoteAttributes = Arrays.asList(shopifyAttribute1, shopifyAttribute2,
+				shopifyAttribute3);
+
 		final ShopifyOrderCreationRequest shopifyOrderCreationRequest = ShopifyOrderCreationRequest.newBuilder()
-				.withProcessedAt(new DateTime()).withName("some-cool-po-number").withCustomer(shopifyCustomer)
+				.withProcessedAt(new DateTime()).withName(UUID.randomUUID().toString()).withCustomer(shopifyCustomer)
 				.withLineItems(Arrays.asList(shopifyLineItem1)).withShippingAddress(shopifyAddress)
 				.withBillingAddress(shopifyAddress).withMetafields(Collections.emptyList())
-				.withShippingLines(Collections.emptyList()).build();
+				.withShippingLines(shopifyShippingLines).withFinancialStatus("pending").withNote("some-note123")
+				.withNoteAttributes(someNoteAttributes).build();
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		final String dtoAsString = mapper.writeValueAsString(shopifyOrderCreationRequest);
 		System.out.println(dtoAsString);
 		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderCreationRequest);
 		assertNotNull(actualShopifyOrder);
+	}
+
+	@Test
+	public void givenSomeValuesExistWhenRetrievingCustomCollectionsThenRetrieveCustomCollections() {
+		final List<ShopifyCustomCollection> retrievedCustomCollections = shopifySdk.getCustomCollections();
+		assertEquals(3, retrievedCustomCollections.size());
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
+
+		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderShippingAddressUpdateRequest
+				.newBuilder().withId("1124214472765").withAddress1("Testing From SDK Driver2").withAddress2("Suite 100")
+				.withCity("Scranton").withProvince("Pennsylvania").withProvinceCode("PA").withZip("18503")
+				.withCountry("United States").withCountryCode("US").withPhone("9829374293874").withFirstName("Ryan")
+				.withLastName("Kazokas").withCompany("ChannelApe").withLatitude(null).withLongitude(null).build();
+
+		final ShopifyOrder updateOrder = shopifySdk.updateOrderShippingAddress(shopifyOrderUpdateRequest);
+		assertEquals("Testing From SDK Driver2", updateOrder.getShippingAddress().getAddress1());
+	}
+
+	@Test
+	public void givenSomeValuesWhenUpdatingACustomerThenExpectValuesToBeUpdatedOnCustomer()
+			throws JsonProcessingException {
+
+		final ShopifyCustomerUpdateRequest shopifyOrderUpdateRequest = ShopifyCustomerUpdateRequest.newBuilder()
+				.withId("6780238412").withFirstName("RyanTest").withLastName("Kazokas123")
+				.withEmail("rkazokas@channelape.com").withPhone("5702392904").build();
+
+		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
+		assertEquals("RyanTest", updatedCustomer.getFirstName());
+	}
+
+	@Test
+	public void givenSomeErrorOccurrsWhenCreatingFulfillmentThenExpectCorrectErrors() {
+		try {
+			shopifySdk.createFulfillment(ShopifyFulfillmentCreationRequest.newBuilder().withOrderId("2854620102717")
+					.withTrackingCompany("UPS").withTrackingNumber("ABC-123").withNotifyCustomer(false)
+					.withLineItems(new LinkedList<>()).withLocationId("5523767400")
+					.withTrackingUrls(Arrays.asList("http://google.com/123")).build());
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@After

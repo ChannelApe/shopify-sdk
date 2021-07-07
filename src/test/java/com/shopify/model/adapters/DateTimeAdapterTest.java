@@ -8,8 +8,6 @@ import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shopify.model.adapters.DateTimeAdapter;
-
 public class DateTimeAdapterTest {
 
 	private DateTimeAdapter dateTimeAdapter;

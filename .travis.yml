@@ -1,6 +1,7 @@
 language: java
 sudo: false
 install: true
+dist: trusty
 addons:
   sonarcloud:
     organization: channelape-github
@@ -8,6 +9,7 @@ addons:
       secure: t/ptO2JeFG41R8Udic/Rh4wXuEi3cDPXG6KLKhikZXmr5A4PdEJ8B/J66Pq8b0TAROc8elm0xGY6AbVSB0NHC3IxiMke+3doRw9r1tzDT08RQKca7CijAZp9RJHzQ2AeWq31sTKQbc8EcN/I7sKOO8imDyQb14p75nalWE/82hlA0sCzx+/YAF5mpzZ6bjptm0zIES8qXUl3wee6+OZ9NmwvLRqz7QVZKncA0vq2tVV04TrvHXpYaBjXliJPdxSKWIkeeF7JY+fI5OJXBsPNmcBkgWyBMflEu7Jh/gjmySFvnzYe+o/nX6wcYv9RHCfFQnjH4suuU/oeo03SzC8NUgqhh6ZK9fvzeQNRkxoJdKkDWZ8+PSIkKm1gbAAZKjNXb6Z86WAGn4wz2cy5m0ppHi5FFpJSsc1W1qopMUKMBVmnG64rNw1NK7rFRfX09TEoU2t7up9osqKF71qfyGcTgYyOL1fz1EWOdZHrRhm9YyEDl++ukBlwvmyxqQOgnzo94PSnvE2AnuLq3xLHL7c9r1M3VYAo0/0vOmiLO03v8YSXxWCiq7J4PamK+eezfnwcql4Y/DWIpDSNRC4NjOQaoMnZQNgHF3nWXFR7EpfJWF3IiDQyhi79iQjFYj3YkvIuPvGOhpLOIIKWmw4cVpJ5RylsiHA//zPeGsFd/lWq4I0=
 jdk:
 - oraclejdk8
+- openjdk11
 script:
 - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then mvn clean install; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn --settings .travis/settings.xml
@@ -25,18 +27,21 @@ deploy:
   on:
     tags: true
     repo: ChannelApe/shopify-sdk
-    jdk: oraclejdk8
+    jdk: 
+    - openjdk11
 - provider: script
   script: ".travis/deploy.sh"
   skip_cleanup: true
   on:
     branch: master
     repo: ChannelApe/shopify-sdk
-    jdk: oraclejdk8
+    jdk: 
+    - openjdk11
 - provider: script
   script: ".travis/deploy.sh"
   skip_cleanup: true
   on:
     branch: develop
     repo: ChannelApe/shopify-sdk
-    jdk: oraclejdk8
+    jdk: 
+    - openjdk11

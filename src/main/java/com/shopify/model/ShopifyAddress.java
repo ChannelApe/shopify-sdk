@@ -35,7 +35,7 @@ public class ShopifyAddress {
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
+	public void setFirstName(final String firstName) {
 		this.firstName = firstName;
 	}
 
@@ -43,7 +43,7 @@ public class ShopifyAddress {
 		return lastname;
 	}
 
-	public void setLastname(String lastname) {
+	public void setLastname(final String lastname) {
 		this.lastname = lastname;
 	}
 
@@ -51,7 +51,7 @@ public class ShopifyAddress {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -59,7 +59,7 @@ public class ShopifyAddress {
 		return company;
 	}
 
-	public void setCompany(String company) {
+	public void setCompany(final String company) {
 		this.company = company;
 	}
 
@@ -67,7 +67,7 @@ public class ShopifyAddress {
 		return address1;
 	}
 
-	public void setAddress1(String address1) {
+	public void setAddress1(final String address1) {
 		this.address1 = address1;
 	}
 
@@ -75,7 +75,7 @@ public class ShopifyAddress {
 		return address2;
 	}
 
-	public void setAddress2(String address2) {
+	public void setAddress2(final String address2) {
 		this.address2 = address2;
 	}
 
@@ -83,7 +83,7 @@ public class ShopifyAddress {
 		return city;
 	}
 
-	public void setCity(String city) {
+	public void setCity(final String city) {
 		this.city = city;
 	}
 
@@ -91,7 +91,7 @@ public class ShopifyAddress {
 		return zip;
 	}
 
-	public void setZip(String zip) {
+	public void setZip(final String zip) {
 		this.zip = zip;
 	}
 
@@ -99,7 +99,7 @@ public class ShopifyAddress {
 		return province;
 	}
 
-	public void setProvince(String province) {
+	public void setProvince(final String province) {
 		this.province = province;
 	}
 
@@ -107,7 +107,7 @@ public class ShopifyAddress {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public void setCountry(final String country) {
 		this.country = country;
 	}
 
@@ -115,7 +115,7 @@ public class ShopifyAddress {
 		return provinceCode;
 	}
 
-	public void setProvinceCode(String provinceCode) {
+	public void setProvinceCode(final String provinceCode) {
 		this.provinceCode = provinceCode;
 	}
 
@@ -123,7 +123,7 @@ public class ShopifyAddress {
 		return countryCode;
 	}
 
-	public void setCountryCode(String countryCode) {
+	public void setCountryCode(final String countryCode) {
 		this.countryCode = countryCode;
 	}
 
@@ -131,7 +131,7 @@ public class ShopifyAddress {
 		return phone;
 	}
 
-	public void setPhone(String phone) {
+	public void setPhone(final String phone) {
 		this.phone = phone;
 	}
 
@@ -139,7 +139,7 @@ public class ShopifyAddress {
 		return latitude;
 	}
 
-	public void setLatitude(BigDecimal latitude) {
+	public void setLatitude(final BigDecimal latitude) {
 		this.latitude = latitude;
 	}
 
@@ -147,7 +147,7 @@ public class ShopifyAddress {
 		return longitude;
 	}
 
-	public void setLongitude(BigDecimal longitude) {
+	public void setLongitude(final BigDecimal longitude) {
 		this.longitude = longitude;
 	}
 

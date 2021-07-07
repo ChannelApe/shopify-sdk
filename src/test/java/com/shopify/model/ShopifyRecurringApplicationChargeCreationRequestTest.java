@@ -1,15 +1,12 @@
 package com.shopify.model;
 
-import org.junit.Test;
-
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-
-import java.math.BigDecimal;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+
+import org.junit.Test;
 
 public class ShopifyRecurringApplicationChargeCreationRequestTest {
 

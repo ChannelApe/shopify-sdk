@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shopify.model.adapters.EscapedStringAdapter;
-
 public class EscapedStringAdapterTest {
 
 	private static final String UNESCAPED_STRING = "& & & I love this product & & &";
