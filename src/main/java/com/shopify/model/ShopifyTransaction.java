@@ -26,6 +26,7 @@ public class ShopifyTransaction {
 	private String gateway;
 	@XmlElement(name = "parent_id")
 	private String parentId;
+	private String status;
 	private BigDecimal amount;
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
 	private Currency currency;

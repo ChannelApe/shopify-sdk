@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -32,7 +35,9 @@ public class ShopifyErrorResponseExceptionTest {
 		when(response.getStringHeaders()).thenReturn(responseHeaders);
 
 		final String expectedResponseBodyString = "{\"error\": \"something went wrong.\"}";
-		when(response.readEntity(String.class)).thenReturn(expectedResponseBodyString);
+		final InputStream expectedResponseStream = new ByteArrayInputStream(
+				expectedResponseBodyString.getBytes(StandardCharsets.UTF_8));
+		when(response.getEntity()).thenReturn(expectedResponseStream);
 
 		final ShopifyErrorResponseException actualShopifyErrorResponseException = new ShopifyErrorResponseException(
 				response);
@@ -65,7 +70,9 @@ public class ShopifyErrorResponseExceptionTest {
 		when(response.getStringHeaders()).thenReturn(responseHeaders);
 
 		final String expectedResponseBodyString = "Some unaprseable error";
-		when(response.readEntity(String.class)).thenReturn(expectedResponseBodyString);
+		final InputStream expectedResponseStream = new ByteArrayInputStream(
+				expectedResponseBodyString.getBytes(StandardCharsets.UTF_8));
+		when(response.getEntity()).thenReturn(expectedResponseStream);
 		final ShopifyErrorResponseException actualShopifyErrorResponseException = new ShopifyErrorResponseException(
 				response);
 
@@ -100,7 +107,9 @@ public class ShopifyErrorResponseExceptionTest {
 				+ "            \"address1 can't be blank, zip is not valid for united states, and city can't be blank\"\n"
 				+ "        ]\n" + "    }\n" + "}";
 
-		when(response.readEntity(String.class)).thenReturn(expectedResponseBodyString);
+		final InputStream expectedResponseStream = new ByteArrayInputStream(
+				expectedResponseBodyString.getBytes(StandardCharsets.UTF_8));
+		when(response.getEntity()).thenReturn(expectedResponseStream);
 		final ShopifyErrorResponseException actualShopifyErrorResponseException = new ShopifyErrorResponseException(
 				response);
 

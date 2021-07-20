@@ -7,10 +7,6 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 
-import com.shopify.model.ShopifyVariantCreationRequest;
-import com.shopify.model.ShopifyVariantRequest;
-import com.shopify.model.ShopifyVariantRequestOption1Comparator;
-
 public class ShopifyVariantRequestOption1ComparatorTest {
 
 	private static final int ZERO = 0;

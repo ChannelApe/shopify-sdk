@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import com.shopify.mappers.ResponseEntityToStringMapper;
+
 public class ShopifyErrorResponseException extends RuntimeException {
 
 	static final String MESSAGE = "Received unexpected Response Status Code of %d\nResponse Headers of:\n%s\nResponse Body of:\n%s";
@@ -14,15 +16,13 @@ public class ShopifyErrorResponseException extends RuntimeException {
 
 	public ShopifyErrorResponseException(final Response response) {
 		super(buildMessage(response));
-		response.bufferEntity();
-		this.responseBody = response.readEntity(String.class);
+		this.responseBody = ResponseEntityToStringMapper.map(response);
 		this.shopifyErrorCodes = ShopifyErrorCodeFactory.create(responseBody);
 		this.statusCode = response.getStatus();
 	}
 
 	private static String buildMessage(final Response response) {
-		response.bufferEntity();
-		final String readEntity = response.readEntity(String.class);
+		final String readEntity = ResponseEntityToStringMapper.map(response);
 		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(), readEntity);
 	}
 

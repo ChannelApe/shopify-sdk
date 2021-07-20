@@ -7,9 +7,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.shopify.model.Option;
-import com.shopify.model.ShopifyProduct;
-
 public class ShopifyProductTest {
 
 	@Test

@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.shopify.model.MetafieldValueType;
-import com.shopify.model.adapters.MetafieldValueTypeAdapter;
 
 public class MetafieldValueTypeAdapterTest {
 

@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.shopify.model.OrderRiskRecommendation;
-import com.shopify.model.adapters.OrderRiskRecommendationAdapter;
 
 public class OrderRiskRecommendationAdapterTest {
 
