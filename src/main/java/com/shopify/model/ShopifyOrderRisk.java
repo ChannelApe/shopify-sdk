@@ -6,9 +6,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shopify.model.adapters.OrderRiskRecommendationAdapter;
 
 @XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyOrderRisk {
 
 	private String id;

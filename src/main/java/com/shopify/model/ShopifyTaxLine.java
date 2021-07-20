@@ -1,38 +1,22 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
 import java.math.BigDecimal;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@Data
 @XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyTaxLine {
 
 	private String title;
 	private BigDecimal price;
 	private BigDecimal rate;
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	public BigDecimal getRate() {
-		return rate;
-	}
-
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
+	@XmlElement(name = "price_set")
+	private PriceSet priceSet;
 
 }

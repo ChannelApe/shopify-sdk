@@ -15,7 +15,7 @@ public class ShopifyFulfillmentCreationRequestTest {
 	private static final String SOME_LOCATION_ID = "987483724";
 	private static final String SOME_ORDER_ID = UUID.randomUUID().toString();
 	private static final String SOME_TRACKING_COMPANY = "USPS";
-	private static final String SOME_TRACKING_NUMBER = "404042AD";
+	private static final List<String> SOME_TRACKING_NUMBERS = Arrays.asList("404042AD");
 	private static final boolean SOME_NOTIFY_CUSTOMER = true;
 	private static final List<ShopifyLineItem> SOME_LINE_ITEMS = Arrays.asList(new ShopifyLineItem(),
 			new ShopifyLineItem());
@@ -24,14 +24,14 @@ public class ShopifyFulfillmentCreationRequestTest {
 	public void givenSomeOrderIdAndSomeTrackingNumberAndSomeTrackingCompanyAndSomeLineItemsWhenCreatingFulfillmentCreationRequestThenReturnCorrectRequest() {
 		final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest = ShopifyFulfillmentCreationRequest
 				.newBuilder().withOrderId(SOME_ORDER_ID).withTrackingCompany(SOME_TRACKING_COMPANY)
-				.withTrackingNumber(SOME_TRACKING_NUMBER).withNotifyCustomer(SOME_NOTIFY_CUSTOMER)
+				.withTrackingNumbers(SOME_TRACKING_NUMBERS).withNotifyCustomer(SOME_NOTIFY_CUSTOMER)
 				.withLineItems(SOME_LINE_ITEMS).withLocationId(SOME_LOCATION_ID).withTrackingUrls(SOME_TRACKING_URLS)
 				.build();
 
 		final ShopifyFulfillment actualRequest = shopifyFulfillmentCreationRequest.getRequest();
 
 		assertEquals(SOME_ORDER_ID, actualRequest.getOrderId());
-		assertEquals(SOME_TRACKING_NUMBER, actualRequest.getTrackingNumber());
+		assertEquals(SOME_TRACKING_NUMBERS, actualRequest.getTrackingNumbers());
 		assertEquals(SOME_TRACKING_COMPANY, actualRequest.getTrackingCompany());
 		assertEquals(SOME_NOTIFY_CUSTOMER, actualRequest.isNotifyCustomer());
 		assertSame(SOME_LINE_ITEMS, actualRequest.getLineItems());

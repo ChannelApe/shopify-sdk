@@ -20,8 +20,6 @@ final ShopifySdk shopifySdk = ShopifySdk.newBuilder()
 final ShopifyShop shopifyShop = shopifySdk.getShop();
 ```
 
-For private apps, `accessToken` should be the private app's Admin API password.
-
 ## Optional Configuration
 The final parameters of the SDK builder are optional and will use default values when not supplied:
 

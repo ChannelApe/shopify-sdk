@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import java.util.List;
+import java.util.Set;
 
 public class ShopifyFulfillmentCreationRequest {
 
@@ -15,7 +16,7 @@ public class ShopifyFulfillmentCreationRequest {
 	}
 
 	public static interface TrackingNumberStep {
-		NotifyCustomerStep withTrackingNumber(final String trackingNumber);
+		NotifyCustomerStep withTrackingNumbers(final List<String> trackingNumbers);
 	}
 
 	public static interface NotifyCustomerStep {
@@ -67,8 +68,8 @@ public class ShopifyFulfillmentCreationRequest {
 		}
 
 		@Override
-		public NotifyCustomerStep withTrackingNumber(final String trackingNumber) {
-			request.setTrackingNumber(trackingNumber);
+		public NotifyCustomerStep withTrackingNumbers(final List<String> trackingNumbers) {
+			request.setTrackingNumbers(trackingNumbers);
 			return this;
 		}
 

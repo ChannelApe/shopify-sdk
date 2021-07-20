@@ -31,7 +31,7 @@ public class ShopifyProductUpdateRequestTest {
 	private static final String SOME_CURRENT_PRODUCT_TYPE = "Energy";
 	private static final String SOME_CURRENT_BODY_HTML = "Some description";
 	private static final String SOME_CURRENT_VENDOR = "Clif";
-	private static final Set<String> SOME_CURRENT_TAGS = new HashSet<>(Arrays.asList("EuropaSports"));
+	private static final String SOME_CURRENT_TAGS = "EuropaSports";
 	private static final String SOME_CURRENT_FIRST_IMAGE_ID = "141414141";
 	private static final String SOME_CURRENT_SECOND_IMAGE_ID = "41414141414141";
 
@@ -45,7 +45,7 @@ public class ShopifyProductUpdateRequestTest {
 	private static final String SOME_NEW_BODY_HTML = "Some new and improved description";
 	private static final String SOME_SKU = "10004";
 	private static final String SOME_NEW_VENDOR = "Clifford";
-	private static final Set<String> SOME_NEW_TAGS = new HashSet<>(Arrays.asList("NewEuropaSports"));
+	private static final String SOME_NEW_TAGS = "NewEuropaSports";
 
 	private static final String SOME_FIRST_IMAGE_SOURCE = "image9191919";
 
@@ -103,7 +103,6 @@ public class ShopifyProductUpdateRequestTest {
 		assertEquals(SOME_CURRENT_PRODUCT_TYPE, actualShopifyProduct.getProductType());
 		final DateTime actualPublishedAt = DateTime.parse(actualShopifyProduct.getPublishedAt());
 		assertTrue(DateTime.now(DateTimeZone.UTC).compareTo(actualPublishedAt) >= 0);
-		assertTrue(actualShopifyProduct.isPublished());
 
 		final List<Option> actualOptions = actualShopifyProduct.getOptions();
 		assertEquals(3, actualOptions.size());
@@ -200,7 +199,6 @@ public class ShopifyProductUpdateRequestTest {
 		assertEquals(SOME_NEW_TAGS, actualShopifyProduct.getTags());
 		assertEquals(SOME_NEW_PRODUCT_TYPE, actualShopifyProduct.getProductType());
 		assertNull(actualShopifyProduct.getPublishedAt());
-		assertFalse(actualShopifyProduct.isPublished());
 
 		final List<Option> actualOptions = actualShopifyProduct.getOptions();
 		assertEquals(3, actualOptions.size());
