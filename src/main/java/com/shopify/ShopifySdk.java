@@ -1,10 +1,7 @@
 package com.shopify;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -73,10 +70,19 @@ public class ShopifySdk {
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
 	static final String SMART_COLLECTIONS = "smart_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
+	static final String APPLICATION_CHARGES = "application_charges";
+	static final String APPLICATION_CREDITS = "application_credits";
+	static final String USAGE_CHARGES = "usage_charges";
+	static final String SHOPIFY_PAYMENTS = "shopify_payments";
+	static final String BALANCE = "balance";
+	static final String DISPUTES = "disputes";
+	static final String PAYOUTS = "payouts";
+	static final String TRANSACTIONS = "transactions";
 	static final String ORDERS = "orders";
 	static final String TENDER_TRANSACTIONS = "tender_transactions";
 	static final String COUNTRIES = "countries";
 	static final String POLICIES = "policies";
+	static final String SHIPPING_ZONES = "shipping_zones";
 	static final String DRAFT_ORDERS = "draft_orders";
 	static final String FULFILLMENTS = "fulfillments";
 	static final String ACTIVATE = "activate";
@@ -102,6 +108,7 @@ public class ShopifySdk {
 	static final String UPDATED_AT_MAX_QUERY_PARAMETER = "updated_at_max";
 	static final String PROCESSED_AT_MIN_QUERY_PARAMETER = "processed_at_min";
 	static final String PROCESSED_AT_MAX_QUERY_PARAMETER = "processed_at_max";
+	static final String DATE_QUERY_PARAMETER = "date";
 	static final String FIELDS = "fields";
 	static final String INVENTORY_ITEM_IDS = "inventory_item_ids";
 	static final String LOCATION_IDS = "location_ids";
@@ -109,10 +116,10 @@ public class ShopifySdk {
 	static final String ATTRIBUTION_APP_ID_QUERY_PARAMETER = "attribution_app_id";
 	static final String IDS_QUERY_PARAMETER = "ids";
 	static final String SINCE_ID_QUERY_PARAMETER = "since_id";
+	static final String PAYOUT_ID_QUERY_PARAMETER = "payout_id";
 	static final String QUERY_QUERY_PARAMETER = "query";
 	static final String CALCULATE = "calculate";
 	static final String REFUNDS = "refunds";
-	static final String TRANSACTIONS = "transactions";
 	static final String GIFT_CARDS = "gift_cards";
 	static final String REFUND_KIND = "refund";
 	static final String SET = "set";
@@ -676,6 +683,79 @@ public class ShopifySdk {
 		return shopifyRecurringApplicationChargeRootResponse.getRecurringApplicationCharge();
 	}
 
+	public List<ShopifyRecurringApplicationCharge> getAllRecurringApplicationCharges(final String sinceId) {
+		WebTarget target = getWebTarget().path(RECURRING_APPLICATION_CHARGES);
+		if (sinceId != null) {
+			target = target.queryParam(SINCE_ID_QUERY_PARAMETER, sinceId);
+		}
+
+		final Response response = get(target);
+		return response.readEntity(ShopifyRecurringApplicationChargeListRoot.class).getRecurringApplicationCharges();
+	}
+
+	public List<ShopifyApplicationCharge> getApplicationCharge(final String sinceId) {
+		WebTarget target = getWebTarget().path(APPLICATION_CHARGES);
+		if (sinceId != null) {
+			target = target.queryParam(SINCE_ID_QUERY_PARAMETER, sinceId);
+		}
+
+		final Response response = get(target);
+		return response.readEntity(ShopifyApplicationChargeRoot.class).getApplicationCharges();
+
+	}
+
+	public List<ShopifyApplicationCredit> getApplicationCredits() {
+		final Response response = get(getWebTarget().path(APPLICATION_CREDITS));
+		return response.readEntity(ShopifyApplicationCreditRoot.class).getApplicationCredits();
+	}
+
+	public List<ShopifyUsageCharge> getUsageCharges(final String recurringApplicationChargeId) {
+		final Response response = get(getWebTarget().path(RECURRING_APPLICATION_CHARGES).path(recurringApplicationChargeId).path(USAGE_CHARGES));
+		return response.readEntity(ShopifyUsageChargeRoot.class).getUsageCharges();
+	}
+
+	public ShopifyPaymentsBalance getPaymentsBalance() {
+		final Response response = get(buildPaymentsEndpoint().path(BALANCE));
+		return response.readEntity(ShopifyPaymentsBalance.class);
+	}
+
+	public ShopifyPage<ShopifyPaymentsDispute> getPaymentsDisputes(final String pageInfo, final int pageSize) {
+		final Response response = get(buildPaymentsEndpoint().path(DISPUTES).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyPaymentsDisputeRoot shopifyPaymentsDisputeRoot = response.readEntity(ShopifyPaymentsDisputeRoot.class);
+		return mapPagedResponse(shopifyPaymentsDisputeRoot.getDisputes(), response);
+	}
+
+	public ShopifyPage<ShopifyPaymentsPayout> getPaymentsPayouts(final String pageInfo, final int pageSize,
+																 final Date date) {
+		WebTarget webTarget = buildPaymentsEndpoint().path(PAYOUTS)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+
+		if(Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(DATE_QUERY_PARAMETER, date);
+		}
+
+		final Response response = get(webTarget);
+		final ShopifyPaymentsPayoutRoot shopifyPaymentsPayoutRoot = response.readEntity(ShopifyPaymentsPayoutRoot.class);
+		return mapPagedResponse(shopifyPaymentsPayoutRoot.getPayouts(), response);
+	}
+
+	public ShopifyPage<ShopifyPaymentsTransaction> getPaymentsTransactions(final String pageInfo, final int pageSize,
+																		   final String payoutId) {
+		WebTarget webTarget = buildPaymentsEndpoint().path(BALANCE).path(TRANSACTIONS)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+
+		if(Strings.isNullOrEmpty(pageInfo)) {
+			webTarget = webTarget.queryParam(PAYOUT_ID_QUERY_PARAMETER, payoutId);
+		}
+
+		final Response response = get(webTarget);
+		final ShopifyPaymentsTransactionRoot shopifyPaymentsTransactionRoot = response.readEntity(ShopifyPaymentsTransactionRoot.class);
+		return mapPagedResponse(shopifyPaymentsTransactionRoot.getTransactions(), response);
+	}
+
 	public ShopifyRecurringApplicationCharge activateRecurringApplicationCharge(final String chargeId) {
 		final ShopifyRecurringApplicationCharge shopifyRecurringApplicationChargeRequest = getRecurringApplicationCharge(
 				chargeId);
@@ -1047,6 +1127,12 @@ public class ShopifySdk {
 		return shopifyPoliciesRoot.getPolicies();
 	}
 
+	public List<ShopifyShippingZone> getShippingZones() {
+		final Response response = get(buildShippingZoneEndpoint());
+		final ShopifyShippingZonesRoot shopifyShippingZonesRoot = response.readEntity(ShopifyShippingZonesRoot.class);
+		return shopifyShippingZonesRoot.getShippingZones();
+	}
+
 	public List<ShopifyLocation> getLocations() {
 		final String locationsEndpoint = new StringBuilder().append(LOCATIONS).append(JSON).toString();
 		final Response response = get(getWebTarget().path(locationsEndpoint));
@@ -1404,6 +1490,10 @@ public class ShopifySdk {
 		return getWebTarget().path(PRODUCTS);
 	}
 
+	private WebTarget buildPaymentsEndpoint() {
+		return getWebTarget().path(SHOPIFY_PAYMENTS);
+	}
+
 	private WebTarget buildInventoryLevelsEndpoint() {
 		return getWebTarget().path(INVENTORY_LEVELS);
 	}
@@ -1445,6 +1535,10 @@ public class ShopifySdk {
 
 	private WebTarget buildAbandonedCheckoutsEndpoint() {
 		return getWebTarget().path(CHECKOUTS);
+	}
+
+	private WebTarget buildShippingZoneEndpoint() {
+		return getWebTarget().path(SHIPPING_ZONES);
 	}
 
 }
