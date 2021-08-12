@@ -36,13 +36,17 @@ public class ShopifyRecurringApplicationCharge {
 	@XmlElement(name = "trial_days")
 	private int trialDays;
 	@XmlElement(name = "trial_end_on")
-	private String trialEndsOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime trialEndsOn;
 	@XmlElement(name = "activated_on")
-	private String activatedOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime activatedOn;
 	@XmlElement(name = "billing_on")
-	private String billingOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime billingOn;
 	@XmlElement(name = "cancelled_on")
-	private String cancelledOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime cancelledOn;
 	@XmlElement(name = "created_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime createdAt;
@@ -131,35 +135,35 @@ public class ShopifyRecurringApplicationCharge {
 		this.trialDays = trialDays;
 	}
 
-	public String getTrialEndsOn() {
+	public DateTime getTrialEndsOn() {
 		return trialEndsOn;
 	}
 
-	public void setTrialEndsOn(String trialEndsOn) {
+	public void setTrialEndsOn(DateTime trialEndsOn) {
 		this.trialEndsOn = trialEndsOn;
 	}
 
-	public String getActivatedOn() {
+	public DateTime getActivatedOn() {
 		return activatedOn;
 	}
 
-	public void setActivatedOn(String activatedOn) {
+	public void setActivatedOn(DateTime activatedOn) {
 		this.activatedOn = activatedOn;
 	}
 
-	public String getBillingOn() {
+	public DateTime getBillingOn() {
 		return billingOn;
 	}
 
-	public void setBillingOn(String billingOn) {
+	public void setBillingOn(DateTime billingOn) {
 		this.billingOn = billingOn;
 	}
 
-	public String getCancelledOn() {
+	public DateTime getCancelledOn() {
 		return cancelledOn;
 	}
 
-	public void setCancelledOn(String cancelledOn) {
+	public void setCancelledOn(DateTime cancelledOn) {
 		this.cancelledOn = cancelledOn;
 	}
 
