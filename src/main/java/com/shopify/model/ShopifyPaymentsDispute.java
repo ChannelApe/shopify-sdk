@@ -1,13 +1,16 @@
 package com.shopify.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shopify.model.adapters.DateTimeAdapter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Getter
 @Setter
@@ -27,12 +30,16 @@ public class ShopifyPaymentsDispute {
     @XmlElement(name = "network_reason_code")
     long network_reason_code;
     @XmlElement(name = "evidence_due_by")
-    String evidenceDueBy;
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    DateTime evidenceDueBy;
     @XmlElement(name = "evidence_sent_on")
-    String evidenceSentOn;
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    DateTime evidenceSentOn;
     @XmlElement(name = "finalized_on")
-    String finalizedOn;
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    DateTime finalizedOn;
     @XmlElement(name = "initiated_at")
-    String initiatedAt;
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    DateTime initiatedAt;
 
 }

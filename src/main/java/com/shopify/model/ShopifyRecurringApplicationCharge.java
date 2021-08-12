@@ -9,7 +9,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
+import org.joda.time.DateTime;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,9 +44,11 @@ public class ShopifyRecurringApplicationCharge {
 	@XmlElement(name = "cancelled_on")
 	private String cancelledOn;
 	@XmlElement(name = "created_at")
-	private String createdAt;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
 	@XmlElement(name = "updated_on")
-	private String updatedOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedOn;
 	private Boolean test;
 
 	public String getId() {
@@ -159,19 +163,19 @@ public class ShopifyRecurringApplicationCharge {
 		this.cancelledOn = cancelledOn;
 	}
 
-	public String getCreatedAt() {
+	public DateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public String getUpdatedOn() {
+	public DateTime getUpdatedOn() {
 		return updatedOn;
 	}
 
-	public void setUpdatedOn(String updatedOn) {
+	public void setUpdatedOn(DateTime updatedOn) {
 		this.updatedOn = updatedOn;
 	}
 

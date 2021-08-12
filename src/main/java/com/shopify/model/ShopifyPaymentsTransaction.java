@@ -1,13 +1,16 @@
 package com.shopify.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shopify.model.adapters.DateTimeAdapter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Getter
 @Setter
@@ -36,6 +39,7 @@ public class ShopifyPaymentsTransaction {
     @XmlElement(name = "source_order_id")
     String sourceOrderId;
     @XmlElement(name = "processed_at")
-    String processedAt;
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    DateTime processedAt;
 
 }
