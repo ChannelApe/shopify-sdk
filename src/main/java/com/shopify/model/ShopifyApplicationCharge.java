@@ -37,5 +37,7 @@ public class ShopifyApplicationCharge {
     String chargeType;
     @XmlElement(name = "decorated_return_url")
     String decoratedReturnUrl;
+    @XmlElement(name = "api_client_id")
+    String apiClientId;
 
 }

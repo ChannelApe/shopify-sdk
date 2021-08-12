@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Class-Path: failureaccess-1.0.1.jar jackson-annotations-2.8.4.jar slf4j-
+ api-1.7.22.jar json-20160810.jar hk2-utils-2.5.0-b32.jar activation-1.1
+ .1.jar aopalliance-repackaged-2.5.0-b32.jar lombok-1.16.16.jar jscience
+ -4.3.1.jar error_prone_annotations-2.5.1.jar j2objc-annotations-1.3.jar
+  jackson-module-jaxb-annotations-2.4.0.jar guava-30.1.1-jre.jar jersey-
+ media-jaxb-2.25.1.jar jaxb-api-2.3.0.jar javax.annotation-api-1.2.jar j
+ ackson-databind-2.4.0.jar checker-qual-3.8.0.jar commons-io-1.3.2.jar c
+ ommons-lang3-3.4.jar guava-retrying-2.0.0.jar hk2-api-2.5.0-b32.jar jer
+ sey-guava-2.25.1.jar jaxb-impl-2.3.0.jar jersey-entity-filtering-2.25.1
+ .jar jersey-client-2.25.1.jar jackson-jaxrs-json-provider-2.4.0.jar jax
+ b-core-2.3.0.jar jersey-common-2.25.1.jar jsr305-2.0.2.jar osgi-resourc
+ e-locator-1.0.1.jar log4j-over-slf4j-1.7.22.jar hk2-locator-2.5.0-b32.j
+ ar jersey-media-json-jackson-2.25.1.jar listenablefuture-9999.0-empty-t
+ o-avoid-conflict-with-guava.jar javassist-3.20.0-GA.jar javax.inject-2.
+ 5.0-b32.jar javax.ws.rs-api-2.0.1.jar jackson-core-2.4.0.jar joda-time-
+ 2.9.9.jar jackson-jaxrs-base-2.4.0.jar javolution-5.2.3.jar
+
