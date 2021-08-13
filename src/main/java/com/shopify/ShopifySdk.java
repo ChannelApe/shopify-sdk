@@ -85,6 +85,7 @@ public class ShopifySdk {
 	static final String SHIPPING_ZONES = "shipping_zones";
 	static final String DRAFT_ORDERS = "draft_orders";
 	static final String FULFILLMENTS = "fulfillments";
+	static final String CARRIER_SERVICES = "carrier_services";
 	static final String ACTIVATE = "activate";
 	static final String IMAGES = "images";
 	static final String SHOP = "shop";
@@ -1133,6 +1134,12 @@ public class ShopifySdk {
 		return shopifyShippingZonesRoot.getShippingZones();
 	}
 
+	public List<ShopifyCarrierService> getCarrierServices() {
+		final Response response = get(buildCarrierServiceEndpoint());
+		final ShopifyCarrierServiceRoot shopifyCarrierServiceRoot = response.readEntity(ShopifyCarrierServiceRoot.class);
+		return shopifyCarrierServiceRoot.getCarrierServices();
+	}
+
 	public List<ShopifyLocation> getLocations() {
 		final String locationsEndpoint = new StringBuilder().append(LOCATIONS).append(JSON).toString();
 		final Response response = get(getWebTarget().path(locationsEndpoint));
@@ -1539,6 +1546,10 @@ public class ShopifySdk {
 
 	private WebTarget buildShippingZoneEndpoint() {
 		return getWebTarget().path(SHIPPING_ZONES);
+	}
+
+	private WebTarget buildCarrierServiceEndpoint() {
+		return getWebTarget().path(CARRIER_SERVICES);
 	}
 
 }
