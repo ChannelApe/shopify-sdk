@@ -3051,10 +3051,10 @@ public class ShopifySdkTest {
 				.append(ShopifySdk.RECURRING_APPLICATION_CHARGES).toString();
 
 		final ShopifyRecurringApplicationCharge shopifyRecurringApplicationCharge = new ShopifyRecurringApplicationCharge();
-		shopifyRecurringApplicationCharge.setActivatedOn("2018-01-01");
-		shopifyRecurringApplicationCharge.setBillingOn("2019-01-01");
+		shopifyRecurringApplicationCharge.setActivatedOn(new DateTime(System.currentTimeMillis()));
+		shopifyRecurringApplicationCharge.setBillingOn(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setConfirmationUrl("https://www.google.com/1");
-		shopifyRecurringApplicationCharge.setCreatedAt("2018-01-01");
+		shopifyRecurringApplicationCharge.setCreatedAt(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setCappedAmount(BigDecimal.valueOf(41.42));
 		shopifyRecurringApplicationCharge.setReturnUrl("https://www.google.com/2");
 		shopifyRecurringApplicationCharge.setName("Some Name");
@@ -3062,7 +3062,7 @@ public class ShopifySdkTest {
 		shopifyRecurringApplicationCharge.setApiClientId("787428734234");
 		shopifyRecurringApplicationCharge.setTerms("some terms");
 		shopifyRecurringApplicationCharge.setTrialDays(720);
-		shopifyRecurringApplicationCharge.setTrialEndsOn("2020-01-01");
+		shopifyRecurringApplicationCharge.setTrialEndsOn(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setTest(true);
 		shopifyRecurringApplicationCharge.setStatus("active");
 
@@ -3140,10 +3140,10 @@ public class ShopifySdkTest {
 				.toString();
 
 		final ShopifyRecurringApplicationCharge shopifyRecurringApplicationCharge = new ShopifyRecurringApplicationCharge();
-		shopifyRecurringApplicationCharge.setActivatedOn("2018-01-01");
-		shopifyRecurringApplicationCharge.setBillingOn("2019-01-01");
+		shopifyRecurringApplicationCharge.setActivatedOn(new DateTime(System.currentTimeMillis()));
+		shopifyRecurringApplicationCharge.setBillingOn(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setConfirmationUrl("https://www.google.com/1");
-		shopifyRecurringApplicationCharge.setCreatedAt("2018-01-01");
+		shopifyRecurringApplicationCharge.setCreatedAt(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setCappedAmount(BigDecimal.valueOf(41.42));
 		shopifyRecurringApplicationCharge.setReturnUrl("https://www.google.com/2");
 		shopifyRecurringApplicationCharge.setName("Some Name");
@@ -3151,7 +3151,7 @@ public class ShopifySdkTest {
 		shopifyRecurringApplicationCharge.setApiClientId("787428734234");
 		shopifyRecurringApplicationCharge.setTerms("some terms");
 		shopifyRecurringApplicationCharge.setTrialDays(720);
-		shopifyRecurringApplicationCharge.setTrialEndsOn("2020-01-01");
+		shopifyRecurringApplicationCharge.setTrialEndsOn(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setTest(true);
 		shopifyRecurringApplicationCharge.setStatus("active");
 
@@ -3209,10 +3209,10 @@ public class ShopifySdkTest {
 				.toString();
 
 		final ShopifyRecurringApplicationCharge shopifyRecurringApplicationCharge = new ShopifyRecurringApplicationCharge();
-		shopifyRecurringApplicationCharge.setActivatedOn("2018-01-01");
-		shopifyRecurringApplicationCharge.setBillingOn("2019-01-01");
+		shopifyRecurringApplicationCharge.setActivatedOn(new DateTime(System.currentTimeMillis()));
+		shopifyRecurringApplicationCharge.setBillingOn(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setConfirmationUrl("https://www.google.com/1");
-		shopifyRecurringApplicationCharge.setCreatedAt("2018-01-01");
+		shopifyRecurringApplicationCharge.setCreatedAt(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setCappedAmount(BigDecimal.valueOf(41.42));
 		shopifyRecurringApplicationCharge.setReturnUrl("https://www.google.com/2");
 		shopifyRecurringApplicationCharge.setName("Some Name");
@@ -3220,7 +3220,7 @@ public class ShopifySdkTest {
 		shopifyRecurringApplicationCharge.setApiClientId("787428734234");
 		shopifyRecurringApplicationCharge.setTerms("some terms");
 		shopifyRecurringApplicationCharge.setTrialDays(720);
-		shopifyRecurringApplicationCharge.setTrialEndsOn("2020-01-01");
+		shopifyRecurringApplicationCharge.setTrialEndsOn(new DateTime(System.currentTimeMillis()));
 		shopifyRecurringApplicationCharge.setTest(true);
 		shopifyRecurringApplicationCharge.setStatus("active");
 

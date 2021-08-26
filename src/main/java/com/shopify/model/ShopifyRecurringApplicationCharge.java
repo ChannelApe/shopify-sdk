@@ -9,7 +9,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.EscapedStringAdapter;
+import org.joda.time.DateTime;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,17 +36,23 @@ public class ShopifyRecurringApplicationCharge {
 	@XmlElement(name = "trial_days")
 	private int trialDays;
 	@XmlElement(name = "trial_end_on")
-	private String trialEndsOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime trialEndsOn;
 	@XmlElement(name = "activated_on")
-	private String activatedOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime activatedOn;
 	@XmlElement(name = "billing_on")
-	private String billingOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime billingOn;
 	@XmlElement(name = "cancelled_on")
-	private String cancelledOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime cancelledOn;
 	@XmlElement(name = "created_at")
-	private String createdAt;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
 	@XmlElement(name = "updated_on")
-	private String updatedOn;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedOn;
 	private Boolean test;
 
 	public String getId() {
@@ -127,51 +135,51 @@ public class ShopifyRecurringApplicationCharge {
 		this.trialDays = trialDays;
 	}
 
-	public String getTrialEndsOn() {
+	public DateTime getTrialEndsOn() {
 		return trialEndsOn;
 	}
 
-	public void setTrialEndsOn(String trialEndsOn) {
+	public void setTrialEndsOn(DateTime trialEndsOn) {
 		this.trialEndsOn = trialEndsOn;
 	}
 
-	public String getActivatedOn() {
+	public DateTime getActivatedOn() {
 		return activatedOn;
 	}
 
-	public void setActivatedOn(String activatedOn) {
+	public void setActivatedOn(DateTime activatedOn) {
 		this.activatedOn = activatedOn;
 	}
 
-	public String getBillingOn() {
+	public DateTime getBillingOn() {
 		return billingOn;
 	}
 
-	public void setBillingOn(String billingOn) {
+	public void setBillingOn(DateTime billingOn) {
 		this.billingOn = billingOn;
 	}
 
-	public String getCancelledOn() {
+	public DateTime getCancelledOn() {
 		return cancelledOn;
 	}
 
-	public void setCancelledOn(String cancelledOn) {
+	public void setCancelledOn(DateTime cancelledOn) {
 		this.cancelledOn = cancelledOn;
 	}
 
-	public String getCreatedAt() {
+	public DateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public String getUpdatedOn() {
+	public DateTime getUpdatedOn() {
 		return updatedOn;
 	}
 
-	public void setUpdatedOn(String updatedOn) {
+	public void setUpdatedOn(DateTime updatedOn) {
 		this.updatedOn = updatedOn;
 	}
 
