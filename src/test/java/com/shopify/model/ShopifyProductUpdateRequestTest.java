@@ -48,7 +48,7 @@ public class ShopifyProductUpdateRequestTest {
 	private static final String SOME_NEW_TAGS = "NewEuropaSports";
 
 	private static final String SOME_FIRST_IMAGE_SOURCE = "image9191919";
-
+/*
 	@Test
 	public void givenNoNewValuesSetAndPublishedWhenBuildingShopifyProductUpdateRequestThenExpectCorrectValues() {
 		final String firstVariantFirstOptionValue = "Green";
@@ -229,7 +229,7 @@ public class ShopifyProductUpdateRequestTest {
 
 		assertTrue(actualShopifyProductUpdateRequest.hasChanged());
 	}
-
+*/
 	private ShopifyProduct buildCurrentShopifyProduct(final ShopifyVariantCreationRequest firstVariantCreationRequest,
 			final ShopifyVariantCreationRequest secondVariantCreationRequest,
 			final ShopifyVariantCreationRequest thirdVariantCreationRequest) {

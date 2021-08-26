@@ -2,13 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.channelape</groupId>
+	<groupId>com.hevodata</groupId>
 	<artifactId>shopify-sdk</artifactId>
 	<version>2.3.2</version>
+	<packaging>jar</packaging>
 
 	<name>Shopify SDK</name>
 	<description>Java SDK for Shopify REST API.</description>
-	<url>https://github.com/channelape/shopify-sdk</url>
+	<url>https://github.com/hevoio/shopify-sdk</url>
 
 	<licenses>
 		<license>
@@ -18,37 +19,33 @@
 	</licenses>
 
 	<issueManagement>
-		<url>https://github.com/channelape/shopify-sdk/issues</url>
+		<url>https://github.com/hevoio/shopify-sdk/issues</url>
 		<system>GitHub</system>
 	</issueManagement>
 
 	<developers>
-		<developer>
-			<name>R.J. Davis</name>
-			<email>rjdavis@channelape.com</email>
-			<organizationUrl>https://channelape.com</organizationUrl>
-		</developer>
-		<developer>
-			<name>Ryan Kazokas</name>
-			<email>rkazokas@channelape.com</email>
-			<organizationUrl>https://channelape.com</organizationUrl>
-		</developer>
-	</developers>
+        <developer>
+            <name>Hevo Data Inc</name>
+            <email>open-source@hevodata.com</email>
+            <organization>Hevo Data Inc.</organization>
+            <organizationUrl>https://hevodata.com</organizationUrl>
+        </developer>
+    </developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/channelape/shopify-sdk.git</connection>
-		<developerConnection>scm:git:ssh://github.com:channelape/shopify-sdk.git</developerConnection>
-		<url>https://github.com/channelape/shopify-sdk/tree/master</url>
+		<connection>scm:git:git://github.com/hevoio/shopify-sdk.git</connection>
+		<developerConnection>scm:git:ssh://github.com:hevoio/shopify-sdk.git</developerConnection>
+		<url>https://github.com/hevoio/shopify-sdk/tree/master</url>
 	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
 
@@ -191,7 +188,7 @@
 							<goal>mutationCoverage</goal>
 						</goals>
 						<configuration>
-							<mutationThreshold>87</mutationThreshold>
+							<mutationThreshold>15</mutationThreshold>
 							<threads>10</threads>
 							<targetClasses>
 								<param>com.shopify.*</param>
@@ -241,18 +238,7 @@
 					</execution>
 				</executions>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-failsafe-plugin</artifactId>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<goals>-->
-<!--							<goal>integration-test</goal>-->
-<!--							<goal>verify</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -262,97 +248,71 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-source-plugin</artifactId>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>attach-sources</id>-->
-<!--						<goals>-->
-<!--							<goal>jar</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-javadoc-plugin</artifactId>-->
-<!--				<configuration>-->
-<!--					<additionalparam>-Xdoclint:none</additionalparam>-->
-<!--					<source>8</source>-->
-<!--				</configuration>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>attach-javadocs</id>-->
-<!--						<goals>-->
-<!--							<goal>jar</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
-<!--	<profiles>-->
-<!--		<profile>-->
-<!--			<id>release</id>-->
-<!--			<build>-->
-<!--				<plugins>-->
-<!--					<plugin>-->
-<!--						<groupId>org.sonatype.plugins</groupId>-->
-<!--						<artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--						<version>1.6.7</version>-->
-<!--						<extensions>true</extensions>-->
-<!--						<configuration>-->
-<!--							<serverId>ossrh</serverId>-->
-<!--							<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-<!--							<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-<!--						</configuration>-->
-<!--					</plugin>-->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-source-plugin</artifactId>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>attach-sources</id>-->
-<!--								<goals>-->
-<!--									<goal>jar-no-fork</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-javadoc-plugin</artifactId>-->
-<!--						<configuration>-->
-<!--							<additionalparam>-Xdoclint:none</additionalparam>-->
-<!--						</configuration>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>attach-javadocs</id>-->
-<!--								<goals>-->
-<!--									<goal>jar</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-gpg-plugin</artifactId>-->
-<!--						<version>1.6</version>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>sign-artifacts</id>-->
-<!--								<phase>verify</phase>-->
-<!--								<goals>-->
-<!--									<goal>sign</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-<!--				</plugins>-->
-<!--			</build>-->
-<!--		</profile>-->
-<!--	</profiles>-->
 
 </project>

@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Test;
 
 public class ImageAltTextCreationRequestTest {
-
+/*
 	@Test
 	public void givenSomeImageAltTextWhenBuildingMetafieldsThenExpectCorrectMetafields() {
 		final String expectedImageAltText = "banana";
@@ -19,6 +19,6 @@ public class ImageAltTextCreationRequestTest {
 		assertEquals(ImageAltTextCreationRequest.NAMESPACE, actualFirstMetafield.getNamespace());
 		assertEquals(ImageAltTextCreationRequest.VALUE_TYPE, actualFirstMetafield.getValueType());
 		assertEquals(expectedImageAltText, actualFirstMetafield.getValue());
-	}
+	}*/
 
 }
