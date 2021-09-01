@@ -22,20 +22,21 @@ public class ShopifyUsageCharge {
 
     String id;
     String description;
-    String price;
+    BigDecimal price;
     @XmlElement(name = "created_at")
     @XmlJavaTypeAdapter(DateTimeAdapter.class)
     DateTime createdAt;
     @XmlElement(name = "billing_on")
-    String billingOn;
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    DateTime billingOn;
     @XmlElement(name = "balance_used")
     BigDecimal balanceUsed;
     @XmlElement(name = "balance_remaining")
     BigDecimal balanceRemaining;
     @XmlElement(name = "risk_level")
-    int riskLevel;
+    long riskLevel;
     @XmlElement(name = "updated_at")
     @XmlJavaTypeAdapter(DateTimeAdapter.class)
-    private DateTime updatedAt;
+    DateTime updatedAt;
 
 }
