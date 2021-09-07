@@ -49,4 +49,15 @@ public class ShopifyTransaction {
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime createdAt;
 	private String id;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
+	private String authorization;
+	@XmlElement(name = "currency_exchange_adjustment")
+	private String currencyExchangeAdjustment;
+	@XmlElement(name = "error_code")
+	private String errorCode;
+	private Boolean test;
+	@XmlElement(name = "user_id")
+	private String userId;
+
 }
