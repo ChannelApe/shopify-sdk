@@ -28,7 +28,7 @@ public class ShopifyPaymentsDispute {
     String reason;
     String status;
     @XmlElement(name = "network_reason_code")
-    long network_reason_code;
+    String network_reason_code;
     @XmlElement(name = "evidence_due_by")
     @XmlJavaTypeAdapter(DateTimeAdapter.class)
     DateTime evidenceDueBy;
