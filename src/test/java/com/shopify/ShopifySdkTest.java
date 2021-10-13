@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,6 +113,7 @@ import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class ShopifySdkTest {
 
 	private static final String SOME_API_VERSION = "2020-01";
