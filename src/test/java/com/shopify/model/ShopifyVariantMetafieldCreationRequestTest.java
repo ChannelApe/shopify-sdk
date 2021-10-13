@@ -24,7 +24,7 @@ public class ShopifyVariantMetafieldCreationRequestTest {
 		assertEquals(SOME_NAMESPACE, actualShopifyVariantMetafieldCreationRequest.getRequest().getNamespace());
 		assertEquals(SOME_KEY, actualShopifyVariantMetafieldCreationRequest.getRequest().getKey());
 		assertEquals(SOME_VALUE, actualShopifyVariantMetafieldCreationRequest.getRequest().getValue());
-		assertEquals(SOME_VALUE_TYPE, actualShopifyVariantMetafieldCreationRequest.getRequest().getValueType());
+		assertEquals(SOME_VALUE_TYPE.name(), actualShopifyVariantMetafieldCreationRequest.getRequest().getValueType());
 	}
 
 }

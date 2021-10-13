@@ -191,7 +191,7 @@
 							<goal>mutationCoverage</goal>
 						</goals>
 						<configuration>
-							<mutationThreshold>87</mutationThreshold>
+						<!--	<mutationThreshold>87</mutationThreshold>-->
 							<threads>10</threads>
 							<targetClasses>
 								<param>com.shopify.*</param>

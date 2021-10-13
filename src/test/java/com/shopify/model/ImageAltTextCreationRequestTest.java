@@ -17,7 +17,7 @@ public class ImageAltTextCreationRequestTest {
 		final Metafield actualFirstMetafield = actualMetafields.get(0);
 		assertEquals(ImageAltTextCreationRequest.KEY, actualFirstMetafield.getKey());
 		assertEquals(ImageAltTextCreationRequest.NAMESPACE, actualFirstMetafield.getNamespace());
-		assertEquals(ImageAltTextCreationRequest.VALUE_TYPE, actualFirstMetafield.getValueType());
+		assertEquals(ImageAltTextCreationRequest.VALUE_TYPE, MetafieldValueType.toEnum(actualFirstMetafield.getValueType()));
 		assertEquals(expectedImageAltText, actualFirstMetafield.getValue());
 	}
 

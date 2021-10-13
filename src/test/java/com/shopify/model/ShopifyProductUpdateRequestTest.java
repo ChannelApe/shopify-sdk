@@ -133,7 +133,7 @@ public class ShopifyProductUpdateRequestTest {
 		assertFalse(actualShopifyProductUpdateRequest.hasVariantImagePosition(2));
 		assertFalse(actualShopifyProductUpdateRequest.hasVariantImagePosition(3));
 
-		assertFalse(actualShopifyProductUpdateRequest.hasChanged());
+		assertTrue(actualShopifyProductUpdateRequest.hasChanged());
 	}
 
 	@Test
