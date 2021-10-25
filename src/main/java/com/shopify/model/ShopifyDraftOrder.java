@@ -72,6 +72,8 @@ public class ShopifyDraftOrder {
 	private List<ShopifyAttribute> noteAttributes = new LinkedList<>();
 	@XmlElement(name = "applied_discount")
 	private AppliedDiscountCode appliedDiscountCode;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 
 	public String getId() {
 		return id;
@@ -289,5 +291,11 @@ public class ShopifyDraftOrder {
 		this.noteAttributes = noteAttributes;
 	}
 
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
 
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

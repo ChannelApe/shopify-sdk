@@ -52,7 +52,9 @@ public class ShopifyRecurringApplicationCharge {
 	private DateTime createdAt;
 	@XmlElement(name = "updated_on")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	private DateTime updatedOn;
+	private DateTime updatedAt;
+	@XmlElement(name = "decorated_return_url")
+	private String decoratedReturnUrl;
 	private Boolean test;
 
 	public String getId() {
@@ -175,12 +177,12 @@ public class ShopifyRecurringApplicationCharge {
 		this.createdAt = createdAt;
 	}
 
-	public DateTime getUpdatedOn() {
-		return updatedOn;
+	public DateTime getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setUpdatedOn(DateTime updatedOn) {
-		this.updatedOn = updatedOn;
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Boolean isTest() {
@@ -189,5 +191,13 @@ public class ShopifyRecurringApplicationCharge {
 
 	public void setTest(Boolean test) {
 		this.test = test;
+	}
+
+	public String getDecoratedReturnUrl() {
+		return decoratedReturnUrl;
+	}
+
+	public void setDecoratedReturnUrl(String decoratedReturnUrl) {
+		this.decoratedReturnUrl = decoratedReturnUrl;
 	}
 }

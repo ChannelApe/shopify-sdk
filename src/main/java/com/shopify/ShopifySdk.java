@@ -62,11 +62,13 @@ public class ShopifySdk {
 	static final String ACCESS_TOKEN = "access_token";
 	static final String VERSION_2020_04 = "api/2020-04";
 	static final String VERSION_2020_10 = "api/2020-10";
+	static final String VERSION_2021_10 = "api/2021-10";
 	static final String PRODUCTS = "products";
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String INVENTORY_ITEMS = "inventory_items";
 	static final String COLLECTS = "collects";
 	static final String VARIANTS = "variants";
+	static final String COLLECTIONS = "collections";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
 	static final String SMART_COLLECTIONS = "smart_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
@@ -1059,10 +1061,12 @@ public class ShopifySdk {
 		return metafieldRootResponse.getMetafield();
 	}
 
-	public List<Metafield> getProductMetafields(final String productId) {
-		final Response response = get(getWebTarget().path(PRODUCTS).path(productId).path(METAFIELDS));
-		final MetafieldsRoot metafieldsRootResponse = response.readEntity(MetafieldsRoot.class);
-		return metafieldsRootResponse.getMetafields();
+	public MetafieldsRoot getResourceMetafields(final String resourceId, final String resource) {
+		if (isMetafieldResource(resource)) {
+			final Response response = get(getWebTarget().path(VERSION_2021_10).path(resource.toLowerCase()).path(resourceId).path(METAFIELDS));
+			return response.readEntity(MetafieldsRoot.class);
+		}
+		return null;
 	}
 
 	public ShopifyPage<Metafield> getShopMetafields(final DateTime minimumUpdatedAtDate,
@@ -1157,12 +1161,6 @@ public class ShopifySdk {
 		final ShopifyInventoryLevelRoot shopifyInventoryLevelRootResponse = response
 				.readEntity(ShopifyInventoryLevelRoot.class);
 		return shopifyInventoryLevelRootResponse.getInventoryLevel();
-	}
-
-	public List<Metafield> getOrderMetafields(final String orderId) {
-		final Response response = get(buildOrdersEndpoint().path(orderId).path(METAFIELDS));
-		final MetafieldsRoot metafieldsRootResponse = response.readEntity(MetafieldsRoot.class);
-		return metafieldsRootResponse.getMetafields();
 	}
 
 	public ShopifyRefund refund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
@@ -1509,7 +1507,7 @@ public class ShopifySdk {
 	}
 
 	private WebTarget buildShopMetafieldsEndpoint() {
-		return getWebTarget().path(METAFIELDS);
+		return getWebTarget().path(VERSION_2021_10).path(METAFIELDS);
 	}
 
 	private WebTarget buildPriceRulesEndpoint() {
@@ -1550,6 +1548,15 @@ public class ShopifySdk {
 
 	private WebTarget buildCarrierServiceEndpoint() {
 		return getWebTarget().path(CARRIER_SERVICES);
+	}
+
+	private boolean isMetafieldResource(final String resource) {
+		return resource.toLowerCase().equals(COLLECTIONS) ||
+				resource.toLowerCase().equals(CUSTOMERS) ||
+				resource.toLowerCase().equals(DRAFT_ORDERS) ||
+				resource.toLowerCase().equals(PRODUCTS) ||
+				resource.toLowerCase().equals(ORDERS);
+
 	}
 
 }

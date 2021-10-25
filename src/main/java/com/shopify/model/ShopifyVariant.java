@@ -76,4 +76,6 @@ public class ShopifyVariant {
 	private DateTime updatedAt;
 	@XmlElement(name = "presentment_prices")
 	private List<PresentmentPrice> presentmentPrices;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 }

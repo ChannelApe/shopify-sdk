@@ -33,5 +33,7 @@ public class ShopifyShippingZone {
     List<ShopifyWeightBasedShippingRates> weightBasedShippingRates;
     @XmlElement(name = "price_based_shipping_rates")
     List<ShopifyPriceBasedShippingRates> priceBasedShippingRates;
+    @XmlElement(name = "admin_graphql_api_id")
+    String adminGraphqlApiId;
 
 }

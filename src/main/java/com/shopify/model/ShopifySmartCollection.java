@@ -46,6 +46,8 @@ public class ShopifySmartCollection {
 
 	private List<ShopifySmartCollectionRules> rules;
 
+	private Image image;
+
 	public boolean getDisjunctive() {
 		return disjunctive;
 	}
@@ -148,5 +150,13 @@ public class ShopifySmartCollection {
 
 	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
 		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
+
+	public Image getImage() {
+		return image;
+	}
+
+	public void setImage(Image image) {
+		this.image = image;
 	}
 }

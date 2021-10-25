@@ -76,6 +76,8 @@ public class ShopifyPriceRule {
     private Object prerequisiteToEntitlementPurchase;
     @XmlElement(name = "allocation_limit")
     private int allocationLimit;
+    @XmlElement(name = "admin_graphql_api_id")
+    private String adminGraphqlApiId;
 
     public String getAllocationMethod() {
         return allocationMethod;
@@ -247,5 +249,13 @@ public class ShopifyPriceRule {
     }
     public void setAllocationLimit(final int allocationLimit) {
         this.allocationLimit = allocationLimit;
+    }
+
+    public String getAdminGraphqlApiId() {
+        return adminGraphqlApiId;
+    }
+
+    public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+        this.adminGraphqlApiId = adminGraphqlApiId;
     }
 }

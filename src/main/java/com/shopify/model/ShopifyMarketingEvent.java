@@ -19,6 +19,7 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ShopifyMarketingEvent {
+    private String id;
     @XmlElement(name = "remote_id")
     private String remoteId;
     @XmlElement(name = "event_type")

@@ -25,6 +25,7 @@ public class Image {
 	private String productId;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
 	private String name;
+	private String alt;
 	private int position;
 	@XmlElement(name = "src")
 	private String source;
@@ -41,6 +42,9 @@ public class Image {
 	@XmlElement(name = "updated_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime updatedAt;
+
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 
 	public DateTime getCreatedAt() {
 		return createdAt;
@@ -127,4 +131,19 @@ public class Image {
 		this.metafields = metafields;
 	}
 
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
+
+	public String getAlt() {
+		return alt;
+	}
+
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
 }

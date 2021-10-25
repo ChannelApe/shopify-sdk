@@ -33,6 +33,10 @@ public class Metafield {
 	@XmlElement(name = "updated_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime updatedAt;
+	private String description;
+	private String type;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 
 	public String getId() {
 		return id;
@@ -106,4 +110,27 @@ public class Metafield {
 		this.updatedAt = updatedAt;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

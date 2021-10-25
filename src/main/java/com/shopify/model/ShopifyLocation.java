@@ -47,6 +47,9 @@ public class ShopifyLocation {
 	@XmlElement(name = "province_code")
 	private String provinceCode;
 
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
+
 	public String getId() {
 		return id;
 	}
@@ -190,4 +193,11 @@ public class ShopifyLocation {
 		this.localizedProvinceName = localizedProvinceName;
 	}
 
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

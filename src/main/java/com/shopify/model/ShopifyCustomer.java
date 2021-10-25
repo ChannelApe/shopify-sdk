@@ -66,6 +66,8 @@ public class ShopifyCustomer {
 	private String lastOrderId;
 	@XmlElement(name = "last_order_name")
 	private String lastOrderName;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 
 	public DateTime getAcceptsMarketingUpdatedAt() {
 		return acceptsMarketingUpdatedAt;
@@ -266,4 +268,11 @@ public class ShopifyCustomer {
 		return addresses;
 	}
 
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

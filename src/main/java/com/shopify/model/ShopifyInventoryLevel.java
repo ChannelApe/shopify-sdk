@@ -18,6 +18,9 @@ public class ShopifyInventoryLevel {
 	@XmlElement(name = "inventory_item_id")
 	private String inventoryItemId;
 
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
+
 	@XmlElement(name = "location_id")
 	private String locationId;
 
@@ -59,4 +62,11 @@ public class ShopifyInventoryLevel {
 		this.available = available;
 	}
 
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

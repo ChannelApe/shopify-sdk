@@ -56,6 +56,8 @@ public class ShopifyProduct {
 	@XmlElement(name = "updated_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime updatedAt;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 
 	public DateTime getCreatedAt() {
 		return createdAt;
@@ -217,4 +219,11 @@ public class ShopifyProduct {
 		return options.stream().sorted(optionPositionCompartor).map(Option::getName).collect(Collectors.toList());
 	}
 
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }
