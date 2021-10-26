@@ -719,7 +719,7 @@ public class ShopifySdk {
 
 	public ShopifyPaymentsBalance getPaymentsBalance() {
 		final Response response = get(buildPaymentsEndpoint().path(BALANCE));
-		return response.readEntity(ShopifyPaymentsBalance.class);
+		return response.readEntity(ShopifyPaymentsBalanceRoot.class).getBalance().get(0);
 	}
 
 	public ShopifyPage<ShopifyPaymentsDispute> getPaymentsDisputes(final String pageInfo, final int pageSize) {
