@@ -1,20 +1,15 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.InventoryPolicyAdapter;
 
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigDecimal;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyVariant {
+public class ShopifyVariant extends AbstractModel {
 
 	private String id;
 	@XmlElement(name = "product_id")
@@ -48,12 +43,21 @@ public class ShopifyVariant {
 	@XmlElement(name = "requires_shipping")
 	private boolean requiresShipping;
 	private boolean taxable;
-
 	@XmlElement(name = "inventory_item_id")
 	private String inventoryItemId;
-
 	@XmlTransient
 	private long available;
+	@XmlElement(name = "created_at")
+	private String createdAt;
+	@XmlElement(name = "updated_at")
+	private String updatedAt;
+	private Long weight;
+	@XmlElement(name = "weight_unit")
+	private String weight_unit;
+	@XmlElement(name = "old_inventory_quantity")
+	private Long oldInventoryQuantity;
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
 
 	public String getId() {
 		return id;
@@ -224,4 +228,51 @@ public class ShopifyVariant {
 		this.available = available;
 	}
 
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(final String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(final String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public Long getWeight() {
+		return weight;
+	}
+
+	public void setWeight(final Long weight) {
+		this.weight = weight;
+	}
+
+	public String getWeight_unit() {
+		return weight_unit;
+	}
+
+	public void setWeight_unit(final String weight_unit) {
+		this.weight_unit = weight_unit;
+	}
+
+	public Long getOldInventoryQuantity() {
+		return oldInventoryQuantity;
+	}
+
+	public void setOldInventoryQuantity(final Long oldInventoryQuantity) {
+		this.oldInventoryQuantity = oldInventoryQuantity;
+	}
+
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public void setAdminGraphqlApiId(final String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

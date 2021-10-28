@@ -1,26 +1,21 @@
 package com.shopify.model;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.shopify.model.adapters.DateTimeAdapter;
+import com.shopify.model.adapters.EscapedStringAdapter;
+import com.shopify.model.adapters.TagsAdapter;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.shopify.model.adapters.EscapedStringAdapter;
-import com.shopify.model.adapters.TagsAdapter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyProduct {
+public class ShopifyProduct extends AbstractModel {
 
 	private String id;
 	@XmlJavaTypeAdapter(EscapedStringAdapter.class)
@@ -44,14 +39,27 @@ public class ShopifyProduct {
 	private Image image;
 	private List<ShopifyVariant> variants = new LinkedList<>();
 	@XmlElement(name = "published_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private String publishedAt;
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private String createdAt;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private String updatedAt;
 	private Boolean published;
+	private String handle;
+	@XmlElement(name = "template_suffix")
+	private String templateSuffix;
+	private String status;
+	@XmlElement(name = "published_scope")
+	private String publishedScope;
 
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
@@ -59,7 +67,7 @@ public class ShopifyProduct {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -67,7 +75,7 @@ public class ShopifyProduct {
 		return productType;
 	}
 
-	public void setProductType(String productType) {
+	public void setProductType(final String productType) {
 		this.productType = productType;
 	}
 
@@ -75,7 +83,7 @@ public class ShopifyProduct {
 		return bodyHtml;
 	}
 
-	public void setBodyHtml(String bodyHtml) {
+	public void setBodyHtml(final String bodyHtml) {
 		this.bodyHtml = bodyHtml;
 	}
 
@@ -83,7 +91,7 @@ public class ShopifyProduct {
 		return vendor;
 	}
 
-	public void setVendor(String vendor) {
+	public void setVendor(final String vendor) {
 		this.vendor = vendor;
 	}
 
@@ -91,7 +99,7 @@ public class ShopifyProduct {
 		return tags;
 	}
 
-	public void setTags(Set<String> tags) {
+	public void setTags(final Set<String> tags) {
 		this.tags = tags;
 	}
 
@@ -99,7 +107,7 @@ public class ShopifyProduct {
 		return options;
 	}
 
-	public void setOptions(List<Option> options) {
+	public void setOptions(final List<Option> options) {
 		this.options = options;
 	}
 
@@ -107,7 +115,7 @@ public class ShopifyProduct {
 		return metafieldsGlobalTitleTag;
 	}
 
-	public void setMetafieldsGlobalTitleTag(String metafieldsGlobalTitleTag) {
+	public void setMetafieldsGlobalTitleTag(final String metafieldsGlobalTitleTag) {
 		this.metafieldsGlobalTitleTag = metafieldsGlobalTitleTag;
 	}
 
@@ -115,7 +123,7 @@ public class ShopifyProduct {
 		return metafieldsGlobalDescriptionTag;
 	}
 
-	public void setMetafieldsGlobalDescriptionTag(String metafieldsGlobalDescriptionTag) {
+	public void setMetafieldsGlobalDescriptionTag(final String metafieldsGlobalDescriptionTag) {
 		this.metafieldsGlobalDescriptionTag = metafieldsGlobalDescriptionTag;
 	}
 
@@ -123,7 +131,7 @@ public class ShopifyProduct {
 		return images;
 	}
 
-	public void setImages(List<Image> images) {
+	public void setImages(final List<Image> images) {
 		this.images = images;
 	}
 
@@ -131,7 +139,7 @@ public class ShopifyProduct {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	public void setImage(final Image image) {
 		this.image = image;
 	}
 
@@ -139,7 +147,7 @@ public class ShopifyProduct {
 		return variants;
 	}
 
-	public void setVariants(List<ShopifyVariant> variants) {
+	public void setVariants(final List<ShopifyVariant> variants) {
 		this.variants = variants;
 	}
 
@@ -147,15 +155,31 @@ public class ShopifyProduct {
 		return publishedAt;
 	}
 
-	public void setPublishedAt(String publishedAt) {
+	public void setPublishedAt(final String publishedAt) {
 		this.publishedAt = publishedAt;
+	}
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(final String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(final String updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Boolean isPublished() {
 		return (published == null) ? StringUtils.isNotBlank(publishedAt) : published;
 	}
 
-	public void setPublished(Boolean published) {
+	public void setPublished(final Boolean published) {
 		this.published = published;
 	}
 
@@ -167,5 +191,41 @@ public class ShopifyProduct {
 			}
 		};
 		return options.stream().sorted(optionPositionCompartor).map(Option::getName).collect(Collectors.toList());
+	}
+
+	public Boolean getPublished() {
+		return published;
+	}
+
+	public String getHandle() {
+		return handle;
+	}
+
+	public void setHandle(final String handle) {
+		this.handle = handle;
+	}
+
+	public String getTemplateSuffix() {
+		return templateSuffix;
+	}
+
+	public void setTemplateSuffix(final String templateSuffix) {
+		this.templateSuffix = templateSuffix;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(final String status) {
+		this.status = status;
+	}
+
+	public String getPublishedScope() {
+		return publishedScope;
+	}
+
+	public void setPublishedScope(final String publishedScope) {
+		this.publishedScope = publishedScope;
 	}
 }
