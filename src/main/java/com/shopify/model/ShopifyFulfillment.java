@@ -1,21 +1,19 @@
 package com.shopify.model;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.joda.time.DateTime;
-
-import com.shopify.model.adapters.DateTimeAdapter;
+import java.util.LinkedList;
+import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyFulfillment {
+public class ShopifyFulfillment extends AbstractModel {
 
 	public enum Status {
 

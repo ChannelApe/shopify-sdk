@@ -1,16 +1,17 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyAddress {
 
+	private Long id;
+	private Long customer_id;
 	@XmlElement(name = "first_name")
 	private String firstName;
 	@XmlElement(name = "last_name")
@@ -27,9 +28,29 @@ public class ShopifyAddress {
 	private String provinceCode;
 	@XmlElement(name = "country_code")
 	private String countryCode;
+	@XmlElement(name = "country_name")
+	private String countryName;
 	private String phone;
 	private BigDecimal latitude;
 	private BigDecimal longitude;
+	@XmlElement(name = "default")
+	private Boolean addressDefault;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(final Long id) {
+		this.id = id;
+	}
+
+	public Long getCustomer_id() {
+		return customer_id;
+	}
+
+	public void setCustomer_id(final Long customer_id) {
+		this.customer_id = customer_id;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -127,6 +148,14 @@ public class ShopifyAddress {
 		this.countryCode = countryCode;
 	}
 
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(final String countryName) {
+		this.countryName = countryName;
+	}
+
 	public String getPhone() {
 		return phone;
 	}
@@ -151,4 +180,11 @@ public class ShopifyAddress {
 		this.longitude = longitude;
 	}
 
+	public Boolean getAddressDefault() {
+		return addressDefault;
+	}
+
+	public void setAddressDefault(final Boolean addressDefault) {
+		this.addressDefault = addressDefault;
+	}
 }
