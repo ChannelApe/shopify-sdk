@@ -810,7 +810,7 @@ public class ShopifySdkTest {
 		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(someOrderId);
 
 		assertEquals(
-				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
+				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0,\"tags\":null},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
 				actualRequestBody.getContent());
 		assertNotNull(actualShopifyOrder);
 		assertEquals(someOrderId, actualShopifyOrder.getId());

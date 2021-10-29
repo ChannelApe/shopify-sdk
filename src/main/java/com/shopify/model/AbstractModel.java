@@ -2,7 +2,7 @@ package com.shopify.model;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class AbstractModel {
+public abstract class AbstractModel {
 
     @XmlElement(name = "admin_graphql_api_id")
     private String adminGraphqlApiId;
