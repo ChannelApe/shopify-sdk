@@ -1,5 +1,6 @@
 package com.shopify.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -49,6 +50,7 @@ public class ShopifyLineItem {
 	private boolean custom;
 	@XmlElement(name = "applied_discount")
 	private AppliedDiscountCode appliedDiscountCode;
+	@JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 	private List<ShopifyProperty> properties;
 	@XmlElement(name = "tax_lines")
 	private List<ShopifyTaxLine> taxLines;
