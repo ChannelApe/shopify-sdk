@@ -1,9 +1,18 @@
 package com.shopify.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,6 +58,7 @@ public class ShopifyLineItem {
 	private boolean custom;
 	@XmlElement(name = "applied_discount")
 	private AppliedDiscountCode appliedDiscountCode;
+	@JsonDeserialize(using = ShopifyPropertyDeserializer.class)
 	private List<ShopifyProperty> properties;
 	@XmlElement(name = "tax_lines")
 	private List<ShopifyTaxLine> taxLines;
@@ -63,4 +73,31 @@ public class ShopifyLineItem {
 	private List<ShopifyDuty> duties;
 	@XmlElement(name = "product_exists")
 	private boolean productExists;
+
+	public static class ShopifyPropertyDeserializer extends JsonDeserializer<List<ShopifyProperty>> {
+
+		@Override
+		public List<ShopifyProperty> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+				throws IOException, JsonProcessingException {
+			JsonNode node = jsonParser.readValueAsTree();
+			List<ShopifyProperty> shopifyProperties = new ArrayList<>();
+			ObjectMapper mapper = new ObjectMapper();
+
+			if (node.isNull() || node.toString().isEmpty() || node.size() == 0) {
+				return null;
+			}
+
+			if (node.isArray()) {
+				for (int i = 0; i < node.size(); i++) {
+					ShopifyProperty shopifyProperty = mapper.readValue(node.get(i).toString(), ShopifyProperty.class);
+					shopifyProperties.add(shopifyProperty);
+				}
+			} else {
+				ShopifyProperty shopifyProperty = mapper.readValue(node.toString(), ShopifyProperty.class);
+				shopifyProperties.add(shopifyProperty);
+			}
+
+			return shopifyProperties;
+		}
+	}
 }
