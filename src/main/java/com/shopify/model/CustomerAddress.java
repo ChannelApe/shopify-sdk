@@ -33,6 +33,10 @@ public class CustomerAddress {
     private String company;
     private String id;
 
+    private String name;
+    @XmlElement(name = "default")
+    private boolean defaultAddress;
+
     public String getAddress1() {
         return address1;
     }

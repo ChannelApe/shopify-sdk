@@ -2,6 +2,7 @@ package com.shopify.model;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +33,7 @@ public class ShopifyTransaction {
 	private Currency currency;
 	@XmlElement(name = "maximum_refundable")
 	private BigDecimal maximumRefundable;
-	private ShopifyTransactionReceipt receipt;
+	private Map<String, Object> receipt;
 	@XmlElement(name = "location_id")
 	private String locationId;
 	@XmlElement(name = "device_id")

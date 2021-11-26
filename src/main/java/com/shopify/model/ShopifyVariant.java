@@ -78,4 +78,7 @@ public class ShopifyVariant {
 	private List<PresentmentPrice> presentmentPrices;
 	@XmlElement(name = "admin_graphql_api_id")
 	private String adminGraphqlApiId;
+
+	@XmlElement(name = "old_inventory_quantity")
+	private long oldInventoryQuantity;
 }

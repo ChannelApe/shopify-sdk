@@ -46,4 +46,10 @@ public class ShopifyRefund {
 	@XmlElement(name = "refund_duties")
 	private List<RefundDuty> refundDuties;
 
+	@XmlElement(name = "admin_graphql_api_id")
+	private String adminGraphqlApiId;
+	private Boolean restock;
+	@XmlElement(name = "total_duties_set")
+	private PriceSet totalDutiesSet;
+
 }

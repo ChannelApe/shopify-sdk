@@ -16,7 +16,7 @@ public class ShopifyOrderTest {
 	private static final int SOME_TOTAL_WEIGHT = 123;
 	private static final BigDecimal SOME_TOTAL_TAX = new BigDecimal(42.03);
 	private static final BigDecimal SOME_TOTAL_PRICE = new BigDecimal(12.00);
-	private static final BigDecimal SOME_TOTA_LINE_ITEMS_PRICE = new BigDecimal(41.00);
+	private static final BigDecimal SOME_TOTAL_LINE_ITEMS_PRICE = new BigDecimal(41.00);
 	private static final BigDecimal SOME_TOTAL_DISCOUNTS = new BigDecimal(42.00);
 	private static final String SOME_TOKEN = "token";
 	private static final List<ShopifyTaxLine> SOME_TAX_LINES = Collections.emptyList();
@@ -77,7 +77,7 @@ public class ShopifyOrderTest {
 		shopifyOrder.setTaxLines(SOME_TAX_LINES);
 		shopifyOrder.setToken(SOME_TOKEN);
 		shopifyOrder.setTotalDiscounts(SOME_TOTAL_DISCOUNTS);
-		shopifyOrder.setTotalLineItemsPrice(SOME_TOTA_LINE_ITEMS_PRICE);
+		shopifyOrder.setTotalLineItemsPrice(SOME_TOTAL_LINE_ITEMS_PRICE);
 		shopifyOrder.setTotalPrice(SOME_TOTAL_PRICE);
 		shopifyOrder.setTotalTax(SOME_TOTAL_TAX);
 		shopifyOrder.setTotalWeight(SOME_TOTAL_WEIGHT);
@@ -114,7 +114,7 @@ public class ShopifyOrderTest {
 		assertEquals(SOME_TAX_LINES, shopifyOrder.getTaxLines());
 		assertEquals(SOME_TOKEN, shopifyOrder.getToken());
 		assertEquals(SOME_TOTAL_DISCOUNTS, shopifyOrder.getTotalDiscounts());
-		assertEquals(SOME_TOTA_LINE_ITEMS_PRICE, shopifyOrder.getTotalLineItemsPrice());
+		assertEquals(SOME_TOTAL_LINE_ITEMS_PRICE, shopifyOrder.getTotalLineItemsPrice());
 		assertEquals(SOME_TOTAL_PRICE, shopifyOrder.getTotalPrice());
 		assertEquals(SOME_TOTAL_TAX, shopifyOrder.getTotalTax());
 		assertEquals(SOME_TOTAL_WEIGHT, shopifyOrder.getTotalWeight());

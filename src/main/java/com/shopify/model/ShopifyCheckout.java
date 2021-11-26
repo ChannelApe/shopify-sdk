@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,7 +79,7 @@ public class ShopifyCheckout {
 	@XmlElement(name = "total_duties")
 	private BigDecimal totalDuties;
 	@XmlElement(name = "total_line_items_price")
-	private BigDecimal totaLineItemsPrice;
+	private BigDecimal totalLineItemsPrice;
 	@XmlElement(name = "total_price")
 	private BigDecimal totalPrice;
 	@XmlElement(name = "total_tax")
@@ -91,6 +91,19 @@ public class ShopifyCheckout {
 	private DateTime updatedAt;
 	@XmlElement(name = "user_id")
 	private String userId;
+
+	@XmlElement(name = "note_attributes")
+	private List<Map<String, Object>> noteAttributes;
+	@XmlElement(name = "source_url")
+	private String sourceUrl;
+	@XmlElement(name = "source_identifier")
+	private String sourceIdentifier;
+	private String name;
+	private String source;
+	@XmlElement(name = "sms_marketing_phone")
+	private String smsMarketingPhone;
+	@XmlElement(name = "buyer_accepts_sms_marketing")
+	private Boolean buyerAcceptsSmsMarketing;
 
 	public String getId() {
 		return id;
@@ -268,12 +281,12 @@ public class ShopifyCheckout {
 		this.totalDuties = totalDuties;
 	}
 
-	public BigDecimal getTotaLineItemsPrice() {
-		return totaLineItemsPrice;
+	public BigDecimal getTotalLineItemsPrice() {
+		return totalLineItemsPrice;
 	}
 
-	public void setTotaLineItemsPrice(final BigDecimal totaLineItemsPrice) {
-		this.totaLineItemsPrice = totaLineItemsPrice;
+	public void setTotalLineItemsPrice(final BigDecimal totalLineItemsPrice) {
+		this.totalLineItemsPrice = totalLineItemsPrice;
 	}
 
 	public String getCartToken() {
@@ -376,7 +389,7 @@ public class ShopifyCheckout {
 		return shopifyDiscountCodes;
 	}
 
-	public void setShopifyDiscountCodes(final List<ShopifyDiscountCode> shippingLines) {
+	public void setShopifyDiscountCodes(List<ShopifyDiscountCode> shopifyDiscountCodes) {
 		this.shopifyDiscountCodes = shopifyDiscountCodes;
 	}
 
@@ -388,4 +401,59 @@ public class ShopifyCheckout {
 		this.taxLines = taxLines;
 	}
 
+	public List<Map<String, Object>> getNoteAttributes() {
+		return noteAttributes;
+	}
+
+	public void setNoteAttributes(List<Map<String, Object>> noteAttributes) {
+		this.noteAttributes = noteAttributes;
+	}
+
+	public String getSourceUrl() {
+		return sourceUrl;
+	}
+
+	public void setSourceUrl(String sourceUrl) {
+		this.sourceUrl = sourceUrl;
+	}
+
+	public String getSourceIdentifier() {
+		return sourceIdentifier;
+	}
+
+	public void setSourceIdentifier(String sourceIdentifier) {
+		this.sourceIdentifier = sourceIdentifier;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getSmsMarketingPhone() {
+		return smsMarketingPhone;
+	}
+
+	public void setSmsMarketingPhone(String smsMarketingPhone) {
+		this.smsMarketingPhone = smsMarketingPhone;
+	}
+
+	public Boolean getBuyerAcceptsSmsMarketing() {
+		return buyerAcceptsSmsMarketing;
+	}
+
+	public void setBuyerAcceptsSmsMarketing(Boolean buyerAcceptsSmsMarketing) {
+		this.buyerAcceptsSmsMarketing = buyerAcceptsSmsMarketing;
+	}
 }

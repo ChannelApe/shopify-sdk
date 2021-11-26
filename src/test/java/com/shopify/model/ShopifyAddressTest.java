@@ -34,7 +34,7 @@ public class ShopifyAddressTest {
 		shopifyAddress.setCountry(SOME_COUNTRY);
 		shopifyAddress.setCountryCode(SOME_COUNTRY_CODE);
 		shopifyAddress.setFirstName(SOME_FIRST_NAME);
-		shopifyAddress.setLastname(SOME_LAST_NAME);
+		shopifyAddress.setLastName(SOME_LAST_NAME);
 		shopifyAddress.setName(SOME_NAME);
 		shopifyAddress.setLatitude(SOME_LATITUDE);
 		shopifyAddress.setLongitude(SOME_LONGITUDE);
@@ -49,7 +49,7 @@ public class ShopifyAddressTest {
 		assertEquals(SOME_COUNTRY, shopifyAddress.getCountry());
 		assertEquals(SOME_COUNTRY_CODE, shopifyAddress.getCountryCode());
 		assertEquals(SOME_FIRST_NAME, shopifyAddress.getFirstName());
-		assertEquals(SOME_LAST_NAME, shopifyAddress.getLastname());
+		assertEquals(SOME_LAST_NAME, shopifyAddress.getLastName());
 		assertEquals(SOME_LATITUDE, shopifyAddress.getLatitude());
 		assertEquals(SOME_LONGITUDE, shopifyAddress.getLongitude());
 		assertEquals(SOME_PHONE, shopifyAddress.getPhone());

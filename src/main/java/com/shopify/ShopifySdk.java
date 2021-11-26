@@ -57,6 +57,8 @@ public class ShopifySdk {
 	private static final String API_TARGET = ".myshopify.com/admin";
 	static final String ACCESS_TOKEN_HEADER = "X-Shopify-Access-Token";
 	static final String DEPRECATED_REASON_HEADER = "X-Shopify-API-Deprecated-Reason";
+	static final String API_FEATURES_HEADER = "X-Shopify-Api-Features";
+	static final String INCLUDE_PRESENTMENT_PRICES = "include-presentment-prices";
 	static final String OAUTH = "oauth";
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
@@ -417,9 +419,17 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyProduct> getProducts(final String pageInfo, final int pageSize) {
-		final Response response = get(getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
-				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
-		final ShopifyProductsRoot shopifyProductsRoot = response.readEntity(ShopifyProductsRoot.class);
+		final WebTarget productWebTarget = getWebTarget().path(PRODUCTS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+
+		final Callable<Response> responseCallable = () -> productWebTarget.request(MediaType.APPLICATION_JSON)
+				.header(ACCESS_TOKEN_HEADER, accessToken)
+				.header(API_FEATURES_HEADER, INCLUDE_PRESENTMENT_PRICES)
+				.get();
+		final Response response = invokeResponseCallable(responseCallable);
+		final Response productResponse =  handleResponse(response, Status.OK);
+
+		final ShopifyProductsRoot shopifyProductsRoot = productResponse.readEntity(ShopifyProductsRoot.class);
 		return mapPagedResponse(shopifyProductsRoot.getProducts(), response);
 	}
 

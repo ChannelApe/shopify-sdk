@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigDecimal;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -26,6 +27,9 @@ public class ShopifyDiscountCode {
     @XmlElement(name = "updated_at")
     @XmlJavaTypeAdapter(DateTimeAdapter.class)
     private DateTime updatedAt;
+
+    private BigDecimal amount;
+    private String type;
 
     public DateTime getCreatedAt() {
         return createdAt;
@@ -62,5 +66,21 @@ public class ShopifyDiscountCode {
     }
     public void setUsageCount(int usageCount) {
         this.usageCount = usageCount;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

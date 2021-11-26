@@ -17,7 +17,7 @@ public class ShopifyAddress {
 	@XmlElement(name = "first_name")
 	private String firstName;
 	@XmlElement(name = "last_name")
-	private String lastname;
+	private String lastName;
 	private String name;
 	private String company;
 	private String address1;
@@ -34,6 +34,8 @@ public class ShopifyAddress {
 	private BigDecimal latitude;
 	private BigDecimal longitude;
 
+	private String id;
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -42,12 +44,12 @@ public class ShopifyAddress {
 		this.firstName = firstName;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setLastname(final String lastname) {
-		this.lastname = lastname;
+	public void setLastName(final String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getName() {
@@ -154,4 +156,11 @@ public class ShopifyAddress {
 		this.longitude = longitude;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 }

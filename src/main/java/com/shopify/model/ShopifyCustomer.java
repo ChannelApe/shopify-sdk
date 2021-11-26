@@ -3,6 +3,7 @@ package com.shopify.model;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -68,6 +69,9 @@ public class ShopifyCustomer {
 	private String lastOrderName;
 	@XmlElement(name = "admin_graphql_api_id")
 	private String adminGraphqlApiId;
+
+	@XmlElement(name = "sms_marketing_consent")
+	private Map<String, Object> smsMarketingConsent;
 
 	public DateTime getAcceptsMarketingUpdatedAt() {
 		return acceptsMarketingUpdatedAt;
@@ -274,5 +278,29 @@ public class ShopifyCustomer {
 
 	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
 		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
+
+	public List<CustomerAddress> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<CustomerAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+	public boolean isTaxExempt() {
+		return taxExempt;
+	}
+
+	public boolean isVerifiedEmail() {
+		return verifiedEmail;
+	}
+
+	public Map<String, Object> getSmsMarketingConsent() {
+		return smsMarketingConsent;
+	}
+
+	public void setSmsMarketingConsent(Map<String, Object> smsMarketingConsent) {
+		this.smsMarketingConsent = smsMarketingConsent;
 	}
 }
