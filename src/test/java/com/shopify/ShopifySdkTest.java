@@ -1333,7 +1333,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.SINGLE_LINE_TEXT_FIELD);
 		metafield.setOwnerResource("order");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
@@ -2895,7 +2895,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.SINGLE_LINE_TEXT_FIELD);
 		metafield.setId("123");
 		metafield.setKey("channelape_product_id");
 		metafield.setNamespace("channelape");
@@ -2918,7 +2918,7 @@ public class ShopifySdkTest {
 
 		final ShopifyProductMetafieldCreationRequest shopifyProductMetafieldCreationRequest = ShopifyProductMetafieldCreationRequest
 				.newBuilder().withProductId("123").withNamespace("channelape").withKey("channelape_product_id")
-				.withValue("38728743").withValueType(MetafieldValueType.STRING).build();
+				.withValue("38728743").withValueType(MetafieldValueType.SINGLE_LINE_TEXT_FIELD).build();
 		final Metafield actualMetafield = shopifySdk.createProductMetafield(shopifyProductMetafieldCreationRequest);
 
 		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getKey().toString(),
@@ -2929,7 +2929,7 @@ public class ShopifySdkTest {
 		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getNamespace(),
 				actualRequestBody.getContent().get("metafield").get("namespace").asText());
 		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getValueType().toString(),
-				actualRequestBody.getContent().get("metafield").get("value_type").asText());
+				actualRequestBody.getContent().get("metafield").get("type").asText());
 		assertNotNull(actualMetafield);
 		assertEquals(metafield.getId(), actualMetafield.getId());
 		assertEquals(0, metafield.getCreatedAt().compareTo(actualMetafield.getCreatedAt()));
@@ -2953,7 +2953,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.SINGLE_LINE_TEXT_FIELD);
 		metafield.setId("123");
 		metafield.setKey("channelape_variant_id");
 		metafield.setNamespace("channelape");
@@ -2976,7 +2976,7 @@ public class ShopifySdkTest {
 
 		final ShopifyVariantMetafieldCreationRequest shopifyVariantMetafieldCreationRequest = ShopifyVariantMetafieldCreationRequest
 				.newBuilder().withVariantId("123").withNamespace("channelape").withKey("channelape_variant_id")
-				.withValue("38728743").withValueType(MetafieldValueType.STRING).build();
+				.withValue("38728743").withValueType(MetafieldValueType.SINGLE_LINE_TEXT_FIELD).build();
 		final Metafield actualMetafield = shopifySdk.createVariantMetafield(shopifyVariantMetafieldCreationRequest);
 
 		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getKey().toString(),
@@ -2987,7 +2987,7 @@ public class ShopifySdkTest {
 		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getNamespace(),
 				actualRequestBody.getContent().get("metafield").get("namespace").asText());
 		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getValueType().toString(),
-				actualRequestBody.getContent().get("metafield").get("value_type").asText());
+				actualRequestBody.getContent().get("metafield").get("type").asText());
 		assertNotNull(actualMetafield);
 		assertEquals(metafield.getId(), actualMetafield.getId());
 		assertEquals(0, metafield.getCreatedAt().compareTo(actualMetafield.getCreatedAt()));
@@ -3009,7 +3009,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setValueType(MetafieldValueType.SINGLE_LINE_TEXT_FIELD);
 		metafield.setOwnerResource("variant");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)

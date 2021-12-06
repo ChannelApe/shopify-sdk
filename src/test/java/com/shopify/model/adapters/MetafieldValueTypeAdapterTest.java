@@ -18,15 +18,16 @@ public class MetafieldValueTypeAdapterTest {
 
 	@Test
 	public void giveSomeMetafieldValueTypeWhenMarshallingThenReturnMarshalledString() throws Exception {
-		final String actualMarshalledString = metafieldValueTypeAdapter.marshal(MetafieldValueType.STRING);
-		assertEquals(MetafieldValueType.STRING.toString(), actualMarshalledString);
+		final String actualMarshalledString = metafieldValueTypeAdapter
+				.marshal(MetafieldValueType.SINGLE_LINE_TEXT_FIELD);
+		assertEquals(MetafieldValueType.SINGLE_LINE_TEXT_FIELD.toString(), actualMarshalledString);
 	}
 
 	@Test
 	public void givenSomeStringWhenUnmarshallingThenReturnMetafieldValueType() throws Exception {
 		final MetafieldValueType actualMetafieldValueType = metafieldValueTypeAdapter
-				.unmarshal(MetafieldValueType.INTEGER.toString());
-		assertEquals(MetafieldValueType.INTEGER, actualMetafieldValueType);
+				.unmarshal(MetafieldValueType.NUMBER_INTEGER.toString());
+		assertEquals(MetafieldValueType.NUMBER_INTEGER, actualMetafieldValueType);
 	}
 
 }

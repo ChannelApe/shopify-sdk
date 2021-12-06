@@ -12,7 +12,7 @@ public class ShopifyVariantMetafieldCreationRequestTest {
 	private static final String SOME_NAMESPACE = "channelape";
 	private static final String SOME_KEY = "length";
 	private static final String SOME_VALUE = "36";
-	private static final MetafieldValueType SOME_VALUE_TYPE = MetafieldValueType.INTEGER;
+	private static final MetafieldValueType SOME_VALUE_TYPE = MetafieldValueType.NUMBER_INTEGER;
 
 	@Test
 	public void givenSomeValuesWhenCreatingShopifyVariantMetafieldCreationRequestThenReturnValues() {

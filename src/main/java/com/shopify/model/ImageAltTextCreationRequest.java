@@ -7,7 +7,7 @@ public class ImageAltTextCreationRequest {
 
 	static final String KEY = "alt";
 	static final String NAMESPACE = "tags";
-	static final MetafieldValueType VALUE_TYPE = MetafieldValueType.STRING;
+	static final MetafieldValueType VALUE_TYPE = MetafieldValueType.SINGLE_LINE_TEXT_FIELD;
 
 	public static interface ImageAltTextStep {
 		public BuildStep withImageAltText(final String imageAltText);

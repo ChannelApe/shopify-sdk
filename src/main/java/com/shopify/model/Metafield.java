@@ -18,7 +18,7 @@ public class Metafield {
 	private String id;
 	private String key;
 	private String value;
-	@XmlElement(name = "value_type")
+	@XmlElement(name = "type")
 	@XmlJavaTypeAdapter(MetafieldValueTypeAdapter.class)
 	private MetafieldValueType valueType;
 	private String namespace;
