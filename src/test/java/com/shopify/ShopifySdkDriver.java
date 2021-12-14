@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldValueType;
+import com.shopify.model.MetafieldType;
 import com.shopify.model.Shop;
 import com.shopify.model.ShopifyAddress;
 import com.shopify.model.ShopifyAttribute;
@@ -88,7 +88,7 @@ public class ShopifySdkDriver {
 	public void givenSomeShopifyVariantMetafieldCreationRequestWhenCreatingMetafieldThenReturnMetafield() {
 		final ShopifyVariantMetafieldCreationRequest shopifyVariantMetafieldCreationRequest = ShopifyVariantMetafieldCreationRequest
 				.newBuilder().withVariantId("31905723148").withNamespace("channelape").withKey("test_creation")
-				.withValue("updated").withValueType(MetafieldValueType.STRING).build();
+				.withValue("updated").withValueType(MetafieldType.SINGLE_LINE_TEXT).build();
 		final Metafield metafield = shopifySdk.createVariantMetafield(shopifyVariantMetafieldCreationRequest);
 
 		System.out.println("---------- Metafield -------------");
