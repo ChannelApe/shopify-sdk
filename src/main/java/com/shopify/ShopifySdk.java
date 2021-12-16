@@ -1,11 +1,19 @@
 package com.shopify;
 
-import java.net.URI;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.github.rholder.retry.*;
+import com.google.common.base.Strings;
+import com.shopify.exceptions.ShopifyClientException;
+import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.mappers.ResponseEntityToStringMapper;
+import com.shopify.mappers.ShopifySdkObjectMapper;
+import com.shopify.model.*;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.ClientProperties;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -15,28 +23,12 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import com.google.common.base.Strings;
-import com.shopify.model.*;
-import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.client.ClientProperties;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.github.rholder.retry.Attempt;
-import com.github.rholder.retry.RetryException;
-import com.github.rholder.retry.RetryListener;
-import com.github.rholder.retry.Retryer;
-import com.github.rholder.retry.RetryerBuilder;
-import com.github.rholder.retry.StopStrategies;
-import com.github.rholder.retry.WaitStrategies;
-import com.shopify.exceptions.ShopifyClientException;
-import com.shopify.exceptions.ShopifyErrorResponseException;
-import com.shopify.mappers.ResponseEntityToStringMapper;
-import com.shopify.mappers.ShopifySdkObjectMapper;
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ShopifySdk {
 
@@ -1071,12 +1063,16 @@ public class ShopifySdk {
 		return metafieldRootResponse.getMetafield();
 	}
 
-	public MetafieldsRoot getResourceMetafields(final String resourceId, final String resource) {
+	public ShopifyPage<Metafield> getResourceMetafields(final String resourceId, final String resource, final int pageSize, final String pageInfo) {
 		if (isMetafieldResource(resource)) {
-			final Response response = get(getWebTarget().path(VERSION_2021_10).path(resource.toLowerCase()).path(resourceId).path(METAFIELDS));
-			return response.readEntity(MetafieldsRoot.class);
+			WebTarget webTarget = getWebTarget().path(VERSION_2021_10).path(resource.toLowerCase()).path(resourceId).path(METAFIELDS).queryParam(LIMIT_QUERY_PARAMETER, pageSize);
+			if (!Strings.isNullOrEmpty(pageInfo)) {
+				webTarget = webTarget.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
+			}
+			final Response response = get(webTarget);
+			return mapPagedResponse(response.readEntity(MetafieldsRoot.class).getMetafields(), response);
 		}
-		return null;
+		return new ShopifyPage<>();
 	}
 
 	public ShopifyPage<Metafield> getShopMetafields(final DateTime minimumUpdatedAtDate,
