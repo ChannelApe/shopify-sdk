@@ -174,36 +174,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>${pitest.version}</version>
-				<executions>
-					<execution>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>mutationCoverage</goal>
-						</goals>
-						<configuration>
-							<mutationThreshold>87</mutationThreshold>
-							<threads>10</threads>
-							<targetClasses>
-								<param>com.shopify.*</param>
-							</targetClasses>
-							<targetTests>
-								<param>com.shopify.*Test</param>
-							</targetTests>
-							<outputFormats>
-								<outputFormat>HTML</outputFormat>
-								<outputFormat>XML</outputFormat>
-							</outputFormats>
-							<timeoutConstant>2000</timeoutConstant>
-							<historyInputFile>src/test/resources/pitestHistory</historyInputFile>
-							<historyOutputFile>src/test/resources/pitestHistory</historyOutputFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
