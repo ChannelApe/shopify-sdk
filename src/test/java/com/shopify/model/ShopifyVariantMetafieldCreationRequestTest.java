@@ -6,16 +6,13 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.shopify.model.MetafieldValueType;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-
 public class ShopifyVariantMetafieldCreationRequestTest {
 
 	private static final String SOME_VARIANT_ID = UUID.randomUUID().toString();
 	private static final String SOME_NAMESPACE = "channelape";
 	private static final String SOME_KEY = "length";
 	private static final String SOME_VALUE = "36";
-	private static final MetafieldValueType SOME_VALUE_TYPE = MetafieldValueType.INTEGER;
+	private static final MetafieldType SOME_VALUE_TYPE = MetafieldType.NUMBER_INTEGER;
 
 	@Test
 	public void givenSomeValuesWhenCreatingShopifyVariantMetafieldCreationRequestThenReturnValues() {
@@ -27,7 +24,7 @@ public class ShopifyVariantMetafieldCreationRequestTest {
 		assertEquals(SOME_NAMESPACE, actualShopifyVariantMetafieldCreationRequest.getRequest().getNamespace());
 		assertEquals(SOME_KEY, actualShopifyVariantMetafieldCreationRequest.getRequest().getKey());
 		assertEquals(SOME_VALUE, actualShopifyVariantMetafieldCreationRequest.getRequest().getValue());
-		assertEquals(SOME_VALUE_TYPE, actualShopifyVariantMetafieldCreationRequest.getRequest().getValueType());
+		assertEquals(SOME_VALUE_TYPE, actualShopifyVariantMetafieldCreationRequest.getRequest().getType());
 	}
 
 }

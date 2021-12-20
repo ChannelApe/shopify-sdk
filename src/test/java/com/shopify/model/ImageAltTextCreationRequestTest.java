@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.shopify.model.ImageAltTextCreationRequest;
-import com.shopify.model.Metafield;
-
 public class ImageAltTextCreationRequestTest {
 
 	@Test
@@ -20,7 +17,7 @@ public class ImageAltTextCreationRequestTest {
 		final Metafield actualFirstMetafield = actualMetafields.get(0);
 		assertEquals(ImageAltTextCreationRequest.KEY, actualFirstMetafield.getKey());
 		assertEquals(ImageAltTextCreationRequest.NAMESPACE, actualFirstMetafield.getNamespace());
-		assertEquals(ImageAltTextCreationRequest.VALUE_TYPE, actualFirstMetafield.getValueType());
+		assertEquals(ImageAltTextCreationRequest.TYPE, actualFirstMetafield.getType());
 		assertEquals(expectedImageAltText, actualFirstMetafield.getValue());
 	}
 

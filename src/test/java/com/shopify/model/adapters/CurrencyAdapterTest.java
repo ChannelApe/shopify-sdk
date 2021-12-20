@@ -8,8 +8,6 @@ import java.util.Currency;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shopify.model.adapters.CurrencyAdapter;
-
 public class CurrencyAdapterTest {
 
 	private CurrencyAdapter currencyAdapter;
