@@ -22,7 +22,7 @@ public class ShopifyVariantMetafieldCreationRequest {
 	}
 
 	public static interface ValueTypeStep {
-		BuildStep withValueType(final MetafieldValueType valueType);
+		BuildStep withValueType(final MetafieldType valueType);
 	}
 
 	public static interface BuildStep {
@@ -57,8 +57,8 @@ public class ShopifyVariantMetafieldCreationRequest {
 		}
 
 		@Override
-		public BuildStep withValueType(final MetafieldValueType valueType) {
-			this.request.setValueType(valueType);
+		public BuildStep withValueType(final MetafieldType type) {
+			this.request.setType(type);
 			return this;
 		}
 

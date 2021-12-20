@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.DateTimeAdapter;
-import com.shopify.model.adapters.MetafieldValueTypeAdapter;
+import com.shopify.model.adapters.MetafieldTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,9 +18,9 @@ public class Metafield {
 	private String id;
 	private String key;
 	private String value;
-	@XmlElement(name = "value_type")
-	@XmlJavaTypeAdapter(MetafieldValueTypeAdapter.class)
-	private MetafieldValueType valueType;
+	@XmlElement(name = "type")
+	@XmlJavaTypeAdapter(MetafieldTypeAdapter.class)
+	private MetafieldType type;
 	private String namespace;
 	@XmlElement(name = "owner_id")
 	private String ownerId;
@@ -57,12 +57,12 @@ public class Metafield {
 		this.value = value;
 	}
 
-	public MetafieldValueType getValueType() {
-		return valueType;
+	public MetafieldType getType() {
+		return type;
 	}
 
-	public void setValueType(MetafieldValueType valueType) {
-		this.valueType = valueType;
+	public void setType(MetafieldType type) {
+		this.type = type;
 	}
 
 	public String getNamespace() {
