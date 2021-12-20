@@ -19,6 +19,15 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.java }}
+        java-version: 11
+        distribution: 'adopt'
+        server-id: ossrh
+        server-username: ${{ secrets.SONATYPE_USERNAME }}
+        server-password: ${{ secrets.SONATYPE_PASSWORD }}
     - name: Build with Maven
       run: mvn clean install
+    - name: Publish package
+      run: mvn --batch-mode deploy
+      env:
+        MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
