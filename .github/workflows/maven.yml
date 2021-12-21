@@ -20,11 +20,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-        server-id: oss.sonatype.org
+        server-id: ossrh
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
-        gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
     - name: Publish package2
       run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true
       env:
