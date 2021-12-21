@@ -23,10 +23,12 @@ jobs:
         server-id: ossrh
         server-username: ${{ secrets.SONATYPE_USERNAME }}
         server-password: ${{ secrets.SONATYPE_PASSWORD }}
+        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
     - name: Publish package
       run: mvn --batch-mode deploy
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     - name: Build with Maven
       run: mvn clean install
