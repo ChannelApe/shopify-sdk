@@ -28,6 +28,7 @@ jobs:
       matrix:
         java: [ 11 ]
     steps:
+    - uses: actions/checkout@v2
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
