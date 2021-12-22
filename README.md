@@ -18,7 +18,7 @@ final ShopifySdk shopifySdk = ShopifySdk.newBuilder()
   .withSubdomain(subdomain)
   .withAccessToken(accessToken).build();
 final ShopifyShop shopifyShop = shopifySdk.getShop();
-```s
+```
 For private apps, `accessToken` should be the private app's Admin API password.
 
 ## Optional Configuration
