@@ -16,10 +16,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 11 ]
+        java: [ 8, 11 ]
 
     steps:
     - uses: actions/checkout@v2
+    - name: Build with Maven
+      run: mvn clean install
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 11 ]
+    steps:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
@@ -28,11 +36,10 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
-    - name: Publish package2
+    - name: Publish package to maven central
       run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-    - name: Build with Maven
-      run: mvn clean install
+    
