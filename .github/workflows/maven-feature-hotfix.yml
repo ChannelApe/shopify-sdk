@@ -23,6 +23,7 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
