@@ -12,7 +12,7 @@ public class ShopifyProductMetafieldCreationRequestTest {
 	private static final String SOME_NAMESPACE = "channelape";
 	private static final String SOME_KEY = "length";
 	private static final String SOME_VALUE = "36";
-	private static final MetafieldValueType SOME_VALUE_TYPE = MetafieldValueType.INTEGER;
+	private static final MetafieldType SOME_VALUE_TYPE = MetafieldType.NUMBER_INTEGER;
 
 	@Test
 	public void givenSomeValuesWhenCreatingShopifyProductMetafieldCreationRequestThenReturnValues() {
@@ -24,7 +24,7 @@ public class ShopifyProductMetafieldCreationRequestTest {
 		assertEquals(SOME_NAMESPACE, actualShopifyProductMetafieldCreationRequest.getRequest().getNamespace());
 		assertEquals(SOME_KEY, actualShopifyProductMetafieldCreationRequest.getRequest().getKey());
 		assertEquals(SOME_VALUE, actualShopifyProductMetafieldCreationRequest.getRequest().getValue());
-		assertEquals(SOME_VALUE_TYPE, actualShopifyProductMetafieldCreationRequest.getRequest().getValueType());
+		assertEquals(SOME_VALUE_TYPE, actualShopifyProductMetafieldCreationRequest.getRequest().getType());
 	}
 
 }

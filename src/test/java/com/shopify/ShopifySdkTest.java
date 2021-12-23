@@ -47,7 +47,7 @@ import com.shopify.model.Count;
 import com.shopify.model.Image;
 import com.shopify.model.Metafield;
 import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldValueType;
+import com.shopify.model.MetafieldType;
 import com.shopify.model.MetafieldsRoot;
 import com.shopify.model.OrderRiskRecommendation;
 import com.shopify.model.Shop;
@@ -1333,7 +1333,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setType(MetafieldType.SINGLE_LINE_TEXT);
 		metafield.setOwnerResource("order");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
@@ -1357,7 +1357,7 @@ public class ShopifySdkTest {
 		assertEquals(1, actualMetafields.size());
 		assertEquals(metafield.getKey(), actualMetafields.get(0).getKey());
 		assertEquals(metafield.getValue(), actualMetafields.get(0).getValue());
-		assertEquals(metafield.getValueType(), actualMetafields.get(0).getValueType());
+		assertEquals(metafield.getType(), actualMetafields.get(0).getType());
 		assertEquals(metafield.getNamespace(), actualMetafields.get(0).getNamespace());
 		assertEquals(metafield.getOwnerId(), actualMetafields.get(0).getOwnerId());
 		assertEquals(metafield.getOwnerResource(), actualMetafields.get(0).getOwnerResource());
@@ -1526,7 +1526,7 @@ public class ShopifySdkTest {
 		assertEquals(metafield1.getOwnerResource(), productMetafields.get(0).getOwnerResource());
 		assertEquals(metafield1.getUpdatedAt(), productMetafields.get(0).getUpdatedAt());
 		assertEquals(metafield1.getValue(), productMetafields.get(0).getValue());
-		assertEquals(metafield1.getValueType(), productMetafields.get(0).getValueType());
+		assertEquals(metafield1.getType(), productMetafields.get(0).getType());
 
 		assertEquals(metafield2.getId(), productMetafields.get(1).getId());
 		assertEquals(0, metafield2.getCreatedAt().compareTo(productMetafields.get(1).getCreatedAt()));
@@ -1536,7 +1536,7 @@ public class ShopifySdkTest {
 		assertEquals(metafield2.getOwnerResource(), productMetafields.get(1).getOwnerResource());
 		assertEquals(metafield2.getUpdatedAt(), productMetafields.get(1).getUpdatedAt());
 		assertEquals(metafield2.getValue(), productMetafields.get(1).getValue());
-		assertEquals(metafield2.getValueType(), productMetafields.get(1).getValueType());
+		assertEquals(metafield2.getType(), productMetafields.get(1).getType());
 	}
 
 	@Test
@@ -2895,7 +2895,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setType(MetafieldType.SINGLE_LINE_TEXT);
 		metafield.setId("123");
 		metafield.setKey("channelape_product_id");
 		metafield.setNamespace("channelape");
@@ -2918,7 +2918,7 @@ public class ShopifySdkTest {
 
 		final ShopifyProductMetafieldCreationRequest shopifyProductMetafieldCreationRequest = ShopifyProductMetafieldCreationRequest
 				.newBuilder().withProductId("123").withNamespace("channelape").withKey("channelape_product_id")
-				.withValue("38728743").withValueType(MetafieldValueType.STRING).build();
+				.withValue("38728743").withValueType(MetafieldType.SINGLE_LINE_TEXT).build();
 		final Metafield actualMetafield = shopifySdk.createProductMetafield(shopifyProductMetafieldCreationRequest);
 
 		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getKey().toString(),
@@ -2928,8 +2928,8 @@ public class ShopifySdkTest {
 
 		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getNamespace(),
 				actualRequestBody.getContent().get("metafield").get("namespace").asText());
-		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getValueType().toString(),
-				actualRequestBody.getContent().get("metafield").get("value_type").asText());
+		assertEquals(shopifyProductMetafieldCreationRequest.getRequest().getType().toString(),
+				actualRequestBody.getContent().get("metafield").get("type").asText());
 		assertNotNull(actualMetafield);
 		assertEquals(metafield.getId(), actualMetafield.getId());
 		assertEquals(0, metafield.getCreatedAt().compareTo(actualMetafield.getCreatedAt()));
@@ -2939,7 +2939,7 @@ public class ShopifySdkTest {
 		assertEquals(metafield.getOwnerResource(), actualMetafield.getOwnerResource());
 		assertEquals(0, metafield.getUpdatedAt().compareTo(actualMetafield.getUpdatedAt()));
 		assertEquals(metafield.getValue(), actualMetafield.getValue());
-		assertEquals(metafield.getValueType(), actualMetafield.getValueType());
+		assertEquals(metafield.getType(), actualMetafield.getType());
 	}
 
 	@Test
@@ -2953,7 +2953,7 @@ public class ShopifySdkTest {
 		final Metafield metafield = new Metafield();
 		metafield.setCreatedAt(new DateTime());
 		metafield.setUpdatedAt(new DateTime());
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setType(MetafieldType.SINGLE_LINE_TEXT);
 		metafield.setId("123");
 		metafield.setKey("channelape_variant_id");
 		metafield.setNamespace("channelape");
@@ -2976,7 +2976,7 @@ public class ShopifySdkTest {
 
 		final ShopifyVariantMetafieldCreationRequest shopifyVariantMetafieldCreationRequest = ShopifyVariantMetafieldCreationRequest
 				.newBuilder().withVariantId("123").withNamespace("channelape").withKey("channelape_variant_id")
-				.withValue("38728743").withValueType(MetafieldValueType.STRING).build();
+				.withValue("38728743").withValueType(MetafieldType.SINGLE_LINE_TEXT).build();
 		final Metafield actualMetafield = shopifySdk.createVariantMetafield(shopifyVariantMetafieldCreationRequest);
 
 		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getKey().toString(),
@@ -2986,8 +2986,8 @@ public class ShopifySdkTest {
 
 		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getNamespace(),
 				actualRequestBody.getContent().get("metafield").get("namespace").asText());
-		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getValueType().toString(),
-				actualRequestBody.getContent().get("metafield").get("value_type").asText());
+		assertEquals(shopifyVariantMetafieldCreationRequest.getRequest().getType().toString(),
+				actualRequestBody.getContent().get("metafield").get("type").asText());
 		assertNotNull(actualMetafield);
 		assertEquals(metafield.getId(), actualMetafield.getId());
 		assertEquals(0, metafield.getCreatedAt().compareTo(actualMetafield.getCreatedAt()));
@@ -2997,7 +2997,7 @@ public class ShopifySdkTest {
 		assertEquals(metafield.getOwnerResource(), actualMetafield.getOwnerResource());
 		assertEquals(0, metafield.getUpdatedAt().compareTo(actualMetafield.getUpdatedAt()));
 		assertEquals(metafield.getValue(), actualMetafield.getValue());
-		assertEquals(metafield.getValueType(), actualMetafield.getValueType());
+		assertEquals(metafield.getType(), actualMetafield.getType());
 	}
 
 	@Test
@@ -3009,7 +3009,7 @@ public class ShopifySdkTest {
 		metafield.setValue("8fb0fb40-ab18-439e-bc6e-394b63ff1819");
 		metafield.setNamespace("channelape");
 		metafield.setOwnerId("1234");
-		metafield.setValueType(MetafieldValueType.STRING);
+		metafield.setType(MetafieldType.SINGLE_LINE_TEXT);
 		metafield.setOwnerResource("variant");
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
@@ -3033,7 +3033,7 @@ public class ShopifySdkTest {
 		assertEquals(1, actualMetafields.size());
 		assertEquals(metafield.getKey(), actualMetafields.get(0).getKey());
 		assertEquals(metafield.getValue(), actualMetafields.get(0).getValue());
-		assertEquals(metafield.getValueType(), actualMetafields.get(0).getValueType());
+		assertEquals(metafield.getType(), actualMetafields.get(0).getType());
 		assertEquals(metafield.getNamespace(), actualMetafields.get(0).getNamespace());
 		assertEquals(metafield.getOwnerId(), actualMetafields.get(0).getOwnerId());
 		assertEquals(metafield.getOwnerResource(), actualMetafields.get(0).getOwnerResource());

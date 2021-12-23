@@ -4,7 +4,7 @@ Java SDK for Shopify REST APIs
 
 | Service   | Develop | Master |
 |-----------|---------|--------|
-| CI Status | [![Build Status](https://travis-ci.org/ChannelApe/shopify-sdk.svg?branch=develop)](https://travis-ci.org/ChannelApe/shopify-sdk) | [![Build Status](https://travis-ci.org/ChannelApe/shopify-sdk.svg?branch=master)](https://travis-ci.org/ChannelApe/shopify-sdk) |
+| CI Status | ![example branch parameter](https://github.com/ChannelApe/shopify-sdk/actions/workflows/maven-develop.yml/badge.svg?branch=develop) | ![example branch parameter](https://github.com/ChannelApe/shopify-sdk/actions/workflows/maven.yml/badge.svg?branch=master) |
 
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=com.channelape%3Ashopify-sdk&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.channelape%3Ashopify-sdk) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.channelape%3Ashopify-sdk&metric=coverage)](https://sonarcloud.io/component_measures?id=com.channelape%3Ashopify-sdk&metric=coverage)
 [![Maven Central](https://img.shields.io/maven-central/v/com.channelape/shopify-sdk.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.channelape%22%20AND%20a:%22shopify-sdk%22)
@@ -19,7 +19,6 @@ final ShopifySdk shopifySdk = ShopifySdk.newBuilder()
   .withAccessToken(accessToken).build();
 final ShopifyShop shopifyShop = shopifySdk.getShop();
 ```
-
 For private apps, `accessToken` should be the private app's Admin API password.
 
 ## Optional Configuration

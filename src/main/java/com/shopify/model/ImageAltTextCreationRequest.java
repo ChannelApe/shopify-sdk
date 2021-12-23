@@ -7,7 +7,7 @@ public class ImageAltTextCreationRequest {
 
 	static final String KEY = "alt";
 	static final String NAMESPACE = "tags";
-	static final MetafieldValueType VALUE_TYPE = MetafieldValueType.STRING;
+	static final MetafieldType TYPE = MetafieldType.SINGLE_LINE_TEXT;
 
 	public static interface ImageAltTextStep {
 		public BuildStep withImageAltText(final String imageAltText);
@@ -36,7 +36,7 @@ public class ImageAltTextCreationRequest {
 			imageAltTextMetafield.setKey(KEY);
 			imageAltTextMetafield.setValue(imageAltText);
 			imageAltTextMetafield.setNamespace(NAMESPACE);
-			imageAltTextMetafield.setValueType(VALUE_TYPE);
+			imageAltTextMetafield.setType(TYPE);
 			return this;
 		}
 
