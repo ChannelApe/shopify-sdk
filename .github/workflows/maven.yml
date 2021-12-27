@@ -35,7 +35,7 @@ jobs:
         server-password: MAVEN_PASSWORD
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
     - name: Publish package to maven central
-      run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true
+      run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true --update-snapshots -Prelease
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
