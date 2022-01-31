@@ -60,7 +60,7 @@ public class ShopifyShippingLine {
 	@XmlElement(name = "delivery_option_group")
 	private Map<String, Object> deliveryOptionGroup;
 	@XmlElement(name = "delivery_expectation_range")
-	private String deliveryExpectationRange;
+	private List<Integer> deliveryExpectationRange;
 	@XmlElement(name = "delivery_expectation_type")
 	private String deliveryExpectationType;
 	@XmlElement(name = "discount_allocations")
