@@ -1,6 +1,7 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,15 +9,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.joda.time.DateTime;
-
-import com.shopify.model.adapters.DateTimeAdapter;
-
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyCustomer {
 
-	private String id;
+	private Long id;
 	private String email;
 	@XmlElement(name = "accepts_marketing")
 	private boolean acceptsMarketing;
@@ -31,18 +28,14 @@ public class ShopifyCustomer {
 	@XmlElement(name = "last_name")
 	private String lastname;
 	private String phone;
-	@XmlElement(name = "orders_count")
-	private long ordersCount;
 	private String state;
-	@XmlElement(name = "total_spent")
-	private BigDecimal totalSpent;
 	private String note;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -102,28 +95,12 @@ public class ShopifyCustomer {
 		this.phone = phone;
 	}
 
-	public long getOrdersCount() {
-		return ordersCount;
-	}
-
-	public void setOrdersCount(long ordersCount) {
-		this.ordersCount = ordersCount;
-	}
-
 	public String getState() {
 		return state;
 	}
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public BigDecimal getTotalSpent() {
-		return totalSpent;
-	}
-
-	public void setTotalSpent(BigDecimal totalSpent) {
-		this.totalSpent = totalSpent;
 	}
 
 	public String getNote() {

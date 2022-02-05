@@ -737,8 +737,8 @@ public class ShopifySdk {
 		return shopifyCustomerRootResponse.getCustomer();
 	}
 
-	public ShopifyCustomer getCustomer(final String customerId) {
-		final Response response = get(getWebTarget().path(CUSTOMERS).path(customerId));
+	public ShopifyCustomer getCustomer(final Long customerId) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(String.valueOf(customerId)));
 		final ShopifyCustomerRoot shopifyCustomerRootResponse = response.readEntity(ShopifyCustomerRoot.class);
 		return shopifyCustomerRootResponse.getCustomer();
 	}

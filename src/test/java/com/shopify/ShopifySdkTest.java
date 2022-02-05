@@ -810,7 +810,7 @@ public class ShopifySdkTest {
 		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(someOrderId);
 
 		assertEquals(
-				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
+				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
 				actualRequestBody.getContent());
 		assertNotNull(actualShopifyOrder);
 		assertEquals(someOrderId, actualShopifyOrder.getId());
@@ -2009,7 +2009,7 @@ public class ShopifySdkTest {
 		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
 		final ShopifyOrder shopifyOrder = new ShopifyOrder();
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
-		shopifyCustomer.setId("Customer-Id");
+		shopifyCustomer.setId(123);
 		shopifyCustomer.setFirstName("Ryan");
 		shopifyCustomer.setLastname("Kazokas");
 
@@ -2248,7 +2248,7 @@ public class ShopifySdkTest {
 		final ShopifyOrder shopifyOrder = new ShopifyOrder();
 		shopifyOrder.setId(someShopifyOrderId);
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
-		shopifyCustomer.setId("Customer-Id");
+		shopifyCustomer.setId(123);
 		shopifyCustomer.setFirstName("Ryan");
 		shopifyCustomer.setLastname("Kazokas");
 
@@ -2399,10 +2399,10 @@ public class ShopifySdkTest {
 		shopifyCustomer.setLastname("Kazokas");
 		shopifyCustomer.setEmail("rkazokas@channelape.com");
 		shopifyCustomer.setNote("Some NOtes");
-		shopifyCustomer.setOrdersCount(3);
+
 		shopifyCustomer.setState("some-state");
 		shopifyCustomer.setPhone("57087482349");
-		shopifyCustomer.setTotalSpent(new BigDecimal(32.12));
+
 		shopifyCustomerRoot.setCustomer(shopifyCustomer);
 		final String expectedResponseBodyString = getJsonString(ShopifyCustomerRoot.class, shopifyCustomerRoot);
 
@@ -2420,10 +2420,9 @@ public class ShopifySdkTest {
 		assertEquals("Ryan", updatedCustomer.getFirstName());
 		assertEquals("Kazokas", updatedCustomer.getLastname());
 		assertEquals("Some NOtes", updatedCustomer.getNote());
-		assertEquals(3, updatedCustomer.getOrdersCount());
+
 		assertEquals("57087482349", updatedCustomer.getPhone());
 		assertEquals("some-state", updatedCustomer.getState());
-		assertEquals(new BigDecimal(32.12), updatedCustomer.getTotalSpent());
 
 		assertEquals("rkazokas@channelape.com", actualRequestBody.getContent().get("customer").get("email").asText());
 		assertEquals("Ryan", actualRequestBody.getContent().get("customer").get("first_name").asText());
@@ -2487,7 +2486,7 @@ public class ShopifySdkTest {
 		final ShopifyCustomer shopifyCustomer = buildShopifyCustomer();
 		final List<ShopifyCustomer> shopifyCustomers = new LinkedList<>();
 		final List<String> ids = new ArrayList<>();
-		ids.add(shopifyCustomer.getId());
+		ids.add(String.valueOf(shopifyCustomer.getId()));
 		ids.add(someOtherCustomerId);
 		shopifyCustomers.add(shopifyCustomer);
 		final ShopifyCustomersRoot shopifyCustomersRoot = new ShopifyCustomersRoot();
@@ -3663,15 +3662,13 @@ public class ShopifySdkTest {
 
 	private ShopifyCustomer buildShopifyCustomer() {
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
-		shopifyCustomer.setId("some-customer-id");
+		shopifyCustomer.setId(1234);
 		shopifyCustomer.setFirstName("Austin");
 		shopifyCustomer.setLastname("Brown");
 		shopifyCustomer.setEmail("me@austincbrown.com");
 		shopifyCustomer.setNote("A cool dude");
-		shopifyCustomer.setOrdersCount(3);
 		shopifyCustomer.setState("New York");
 		shopifyCustomer.setPhone("7188675309");
-		shopifyCustomer.setTotalSpent(new BigDecimal(32.12));
 		return shopifyCustomer;
 	}
 
@@ -3687,10 +3684,9 @@ public class ShopifySdkTest {
 		assertEquals("Brown", actualCustomer.getLastname());
 		assertEquals("me@austincbrown.com", actualCustomer.getEmail());
 		assertEquals("A cool dude", actualCustomer.getNote());
-		assertEquals(3, actualCustomer.getOrdersCount());
+
 		assertEquals("New York", actualCustomer.getState());
 		assertEquals("7188675309", actualCustomer.getPhone());
-		assertEquals(new BigDecimal(32.12), actualCustomer.getTotalSpent());
 	}
 
 	private ShopifyTaxLine buildTaxLine(final BigDecimal price, final BigDecimal rate, final String title) {
