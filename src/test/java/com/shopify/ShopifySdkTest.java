@@ -2132,7 +2132,7 @@ public class ShopifySdkTest {
 		assertEquals(someNoteAttributes.get(2).getValue(),
 				actualRequestBody.getContent().get("order").get("note_attributes").path(2).get("value").asText());
 
-		assertEquals("Customer-Id", actualRequestBody.getContent().get("order").get("customer").get("id").asText());
+		assertEquals(123L, actualRequestBody.getContent().get("order").get("customer").get("id").asLong());
 		assertEquals("Ryan", actualRequestBody.getContent().get("order").get("customer").get("first_name").asText());
 		assertEquals("Kazokas", actualRequestBody.getContent().get("order").get("customer").get("last_name").asText());
 		assertEquals("rkazokas@channelape.com",
@@ -3679,7 +3679,7 @@ public class ShopifySdkTest {
 	}
 
 	private void assertCustomer(final ShopifyCustomer actualCustomer) {
-		assertEquals("some-customer-id", actualCustomer.getId());
+		assertEquals(1234l, actualCustomer.getId().longValue());
 		assertEquals("Austin", actualCustomer.getFirstName());
 		assertEquals("Brown", actualCustomer.getLastname());
 		assertEquals("me@austincbrown.com", actualCustomer.getEmail());
