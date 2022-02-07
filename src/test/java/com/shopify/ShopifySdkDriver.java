@@ -47,6 +47,7 @@ import com.shopify.model.ShopifyLineItem;
 import com.shopify.model.ShopifyLocation;
 import com.shopify.model.ShopifyOrder;
 import com.shopify.model.ShopifyOrderCreationRequest;
+import com.shopify.model.ShopifyOrderCustomer;
 import com.shopify.model.ShopifyOrderRisk;
 import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
 import com.shopify.model.ShopifyPage;
@@ -646,7 +647,7 @@ public class ShopifySdkDriver {
 		shopifyLineItem1.setVariantId("12262219972712");
 		shopifyLineItem1.setQuantity(44);
 
-		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
+		final ShopifyOrderCustomer shopifyCustomer = new ShopifyOrderCustomer();
 		shopifyCustomer.setEmail("rkazokas@channelape.com");
 
 		final ShopifyAddress shopifyAddress = new ShopifyAddress();

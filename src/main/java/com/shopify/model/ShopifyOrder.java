@@ -94,7 +94,7 @@ public class ShopifyOrder {
 	private ShopifyAddress billingAddress = new ShopifyAddress();
 	@XmlElement(name = "shipping_address")
 	private ShopifyAddress shippingAddress = new ShopifyAddress();
-	private ShopifyCustomer customer = new ShopifyCustomer();
+	private ShopifyOrderCustomer customer = new ShopifyOrderCustomer();
 	@XmlElement(name = "shipping_lines")
 	private List<ShopifyShippingLine> shippingLines = new LinkedList<>();
 	@XmlElement(name = "tax_lines")
@@ -408,11 +408,11 @@ public class ShopifyOrder {
 		this.shippingAddress = shippingAddress;
 	}
 
-	public ShopifyCustomer getCustomer() {
+	public ShopifyOrderCustomer getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(final ShopifyCustomer customer) {
+	public void setCustomer(final ShopifyOrderCustomer customer) {
 		this.customer = customer;
 	}
 

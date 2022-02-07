@@ -17,7 +17,7 @@ public class ShopifyOrderCreationRequest {
 	}
 
 	public static interface CustomerStep {
-		LineItemsStep withCustomer(final ShopifyCustomer customer);
+		LineItemsStep withCustomer(final ShopifyOrderCustomer customer);
 
 		LineItemsStep noCustomer();
 	}
@@ -82,7 +82,7 @@ public class ShopifyOrderCreationRequest {
 		}
 
 		@Override
-		public LineItemsStep withCustomer(final ShopifyCustomer customer) {
+		public LineItemsStep withCustomer(final ShopifyOrderCustomer customer) {
 			request.setCustomer(customer);
 			return this;
 		}

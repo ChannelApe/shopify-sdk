@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import com.shopify.model.ShopifyOrderCustomer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -116,7 +117,7 @@ public class ShopifySdkTest {
 
 	private static final String SOME_API_VERSION = "2020-01";
 	private static final DateTime SOME_DATE_TIME = new DateTime();
-	private static final ShopifyCustomer SOME_CUSTOMER = new ShopifyCustomer();
+	private static final ShopifyOrderCustomer SOME_CUSTOMER = new ShopifyOrderCustomer();
 	private static final String FORWARD_SLASH = "/";
 	private final String accessToken = "09382489782734897289374829374";
 
@@ -2008,7 +2009,7 @@ public class ShopifySdkTest {
 				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append("orders").toString();
 		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
 		final ShopifyOrder shopifyOrder = new ShopifyOrder();
-		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
+		final ShopifyOrderCustomer shopifyCustomer = new ShopifyOrderCustomer();
 		shopifyCustomer.setId(123);
 		shopifyCustomer.setFirstName("Ryan");
 		shopifyCustomer.setLastname("Kazokas");
@@ -2247,7 +2248,7 @@ public class ShopifySdkTest {
 		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
 		final ShopifyOrder shopifyOrder = new ShopifyOrder();
 		shopifyOrder.setId(someShopifyOrderId);
-		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
+		final ShopifyOrderCustomer shopifyCustomer = new ShopifyOrderCustomer();
 		shopifyCustomer.setId(123);
 		shopifyCustomer.setFirstName("Ryan");
 		shopifyCustomer.setLastname("Kazokas");
