@@ -437,6 +437,14 @@ public class ShopifySdk {
 		return getProducts(response);
 	}
 
+	public int getUpdatedProductsCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(PRODUCTS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	public ShopifyPage<ShopifyInventoryLevel> getInventoryLevels(
 			final int pageSize, final String pageInfo, List<String> locationIds, List<String> inventoryItemIds) {
 		WebTarget webTarget = buildInventoryLevelsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize)
@@ -542,6 +550,14 @@ public class ShopifySdk {
 		return getCustomCollections(response);
 	}
 
+	public int getUpdatedCustomCollectionsCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(CUSTOM_COLLECTIONS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	private ShopifyPage<ShopifyCustomCollection> getCustomCollections(Response response) {
 		final ShopifyCustomCollectionsRoot shopifyCustomCollectionsRoot = response
 				.readEntity(ShopifyCustomCollectionsRoot.class);
@@ -552,6 +568,12 @@ public class ShopifySdk {
 		WebTarget webTarget = buildCollectsEndpoint().queryParam(LIMIT_QUERY_PARAMETER, pageSize).queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo);
 		final Response response = get(webTarget);
 		return getCollects(response);
+	}
+
+	public int getCollectsCount() {
+		final Response response = get(getWebTarget().path(COLLECTS).path(COUNT));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	private ShopifyPage<ShopifyCollect> getCollects(Response response) {
@@ -570,6 +592,14 @@ public class ShopifySdk {
 		}
 		final Response response = get(webTarget);
 		return getSmartCollections(response);
+	}
+
+	public int getUpdatedSmartCollectionsCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(SMART_COLLECTIONS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	private ShopifyPage<ShopifySmartCollection> getSmartCollections(Response response) {
@@ -785,6 +815,12 @@ public class ShopifySdk {
 		return shopifyTransactionsRootResponse.getTransactions();
 	}
 
+	public int getOrderTransactionsCount(final String orderId) {
+		final Response response = get(buildOrdersEndpoint().path(orderId).path(TRANSACTIONS).path(COUNT));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	public ShopifyPage<ShopifyOrder> getOrders() {
 		return getOrders(DEFAULT_REQUEST_LIMIT);
 	}
@@ -861,6 +897,15 @@ public class ShopifySdk {
 		}
 		final Response response = get(webTarget);
 		return getOrders(response);
+	}
+
+
+	public int getUpdatedOrdersCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(ORDERS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	public ShopifyPage<ShopifyTenderTransaction> getProcessedTenderTransactions(final DateTime minimumUpdatedAtDate,
@@ -966,6 +1011,12 @@ public class ShopifySdk {
 		return getCustomerSavedSearches(response);
 	}
 
+	public int getCustomerSavedSearchesCount() {
+		final Response response = get(getWebTarget().path(CUSTOMER_SAVED_SEARCHES).path(COUNT));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	public ShopifyPage<ShopifyCustomer> getUpdatedCustomers(final DateTime minimumUpdatedAtDate,
 																				 final DateTime maximumUpdatedAtDate,
 																				 final int pageSize, final String pageInfo) {
@@ -978,6 +1029,14 @@ public class ShopifySdk {
 		}
 		final Response response = get(webTarget);
 		return getCustomers(response);
+	}
+
+	public int getUpdatedCustomersCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(CUSTOMERS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	public ShopifyPage<ShopifyCheckout> getUpdatedAbandonedCheckouts(final DateTime minimumUpdatedAtDate,
@@ -994,6 +1053,14 @@ public class ShopifySdk {
 		return getAbandonedCheckouts(response);
 	}
 
+	public int getAbandonedCheckoutsCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(CHECKOUTS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	public ShopifyPage<ShopifyDraftOrder> getUpdatedDraftOrders(final DateTime minimumUpdatedAtDate,
 																	 final DateTime maximumUpdatedAtDate,
 																	 final int pageSize, final String pageInfo) {
@@ -1006,6 +1073,14 @@ public class ShopifySdk {
 		}
 		final Response response = get(webTarget);
 		return getDraftOrders(response);
+	}
+
+	public int getUpdatedDraftOrdersCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(DRAFT_ORDERS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	public ShopifyPage<ShopifyCustomer> searchCustomers(final String query) {
@@ -1088,6 +1163,14 @@ public class ShopifySdk {
 		return mapPagedResponse(metafieldsRootResponse.getMetafields(), response);
 	}
 
+	public int getShopMetafieldsCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(METAFIELDS).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	public ShopifyPage<ShopifyPriceRule> getPriceRules(final DateTime minimumUpdatedAtDate,
 													final DateTime maximumUpdatedAtDate,
 													final int pageSize, final String pageInfo) {
@@ -1099,6 +1182,14 @@ public class ShopifySdk {
 		final Response response = get(webTarget);
 		final ShopifyPriceRulesRoot shopifyPriceRulesRoot = response.readEntity(ShopifyPriceRulesRoot.class);
 		return mapPagedResponse(shopifyPriceRulesRoot.getPriceRules(), response);
+	}
+
+	public int getPriceRulesCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
+		final Response response = get(getWebTarget().path(PRICE_RULES).path(COUNT)
+				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	public ShopifyPage<ShopifyDiscountCode> getDiscountCodes(final String priceRuleId,
@@ -1120,6 +1211,12 @@ public class ShopifySdk {
 		return mapPagedResponse(shopifyMarketingEventsRoot.getMarketingEvents(), response);
 	}
 
+	public int getMarketingEventsCount() {
+		final Response response = get(getWebTarget().path(MARKETING_EVENTS).path(COUNT));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
+	}
+
 	public List<ShopifyOrderRisk> getOrderRisks(final String orderId) {
 		final Response response = get(buildOrdersEndpoint().path(orderId).path(RISKS));
 		final ShopifyOrderRisksRoot shopifyOrderRisksRootResponse = response.readEntity(ShopifyOrderRisksRoot.class);
@@ -1130,6 +1227,12 @@ public class ShopifySdk {
 		final Response response = get(buildCountriesEndpoint());
 		final ShopifyCountriesRoot shopifyCountriesRoot = response.readEntity(ShopifyCountriesRoot.class);
 		return shopifyCountriesRoot.getCountries();
+	}
+
+	public int getCountriesCount() {
+		final Response response = get(getWebTarget().path(COUNTRIES).path(COUNT));
+		final Count count = response.readEntity(Count.class);
+		return count.getCount();
 	}
 
 	public List<ShopifyPolicy> getPolicies() {
