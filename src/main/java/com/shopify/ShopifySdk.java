@@ -903,7 +903,8 @@ public class ShopifySdk {
 	public int getUpdatedOrdersCount(final DateTime minimumUpdatedAtDate, final DateTime maximumUpdatedAtDate) {
 		final Response response = get(getWebTarget().path(ORDERS).path(COUNT)
 				.queryParam(UPDATED_AT_MIN_QUERY_PARAMETER, minimumUpdatedAtDate.toString())
-				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString()));
+				.queryParam(UPDATED_AT_MAX_QUERY_PARAMETER, maximumUpdatedAtDate.toString())
+				.queryParam(STATUS_QUERY_PARAMETER, ANY_STATUSES));
 		final Count count = response.readEntity(Count.class);
 		return count.getCount();
 	}
