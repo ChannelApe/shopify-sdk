@@ -160,6 +160,13 @@ public class ShopifySdk {
 	private static final String SEARCH = "search";
 	private static final String CHECKOUTS = "checkouts";
 
+
+	private static final String EVENTS = "events";
+	private static final String VERB = "verb";
+	private static final String PRODUCT = "product";
+	private static final String DELETED_VERB = "destroy";
+
+
 	public static interface OptionalsStep {
 
 		/**
@@ -1669,4 +1676,25 @@ public class ShopifySdk {
 
 	}
 
+	public ShopifyPage<ShopifyEvent> getShopifyEvents(DateTime fromDate, DateTime toDate, Integer pageSize, String pageInfo, String shopifyObject, String verb) {
+		final WebTarget webTarget = getWebTarget().path(EVENTS + JSON)
+				.queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo)
+				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, fromDate)
+				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, toDate)
+				.queryParam(VERB, verb);
+
+		final Response response = get(webTarget);
+
+		final ShopifyEventsRoot shopifyEventsRoot = response.readEntity(ShopifyEventsRoot.class);
+		return mapPagedResponse(shopifyEventsRoot.getEvents(), response);
+	}
+
+	public ShopifyPage<ShopifyEvent> getDeletedEvents(DateTime fromDate, DateTime toDate, Integer pageSize, String pageInfo, String shopifyObject) {
+		return getShopifyEvents(fromDate, toDate, pageSize, pageInfo, shopifyObject, DELETED_VERB);
+	}
+
+	public ShopifyPage<ShopifyEvent> getDeletedProducts(DateTime fromDate, DateTime toDate, Integer pageSize, String pageInfo) {
+		return getDeletedEvents(fromDate, toDate, pageSize, pageInfo, PRODUCT);
+	}
 }
