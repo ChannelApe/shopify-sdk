@@ -165,6 +165,7 @@ public class ShopifySdk {
 	private static final String VERB = "verb";
 	private static final String PRODUCT = "product";
 	private static final String DELETED_VERB = "destroy";
+	private static final String FILTER = "filter";
 
 
 	public static interface OptionalsStep {
@@ -1682,6 +1683,7 @@ public class ShopifySdk {
 				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo)
 				.queryParam(CREATED_AT_MIN_QUERY_PARAMETER, fromDate)
 				.queryParam(CREATED_AT_MAX_QUERY_PARAMETER, toDate)
+				.queryParam(FILTER, shopifyObject)
 				.queryParam(VERB, verb);
 
 		final Response response = get(webTarget);
@@ -1695,6 +1697,14 @@ public class ShopifySdk {
 	}
 
 	public ShopifyPage<ShopifyEvent> getDeletedProducts(DateTime fromDate, DateTime toDate, Integer pageSize, String pageInfo) {
+		return getDeletedEvents(fromDate, toDate, pageSize, pageInfo, PRODUCT);
+	}
+
+	public ShopifyPage<ShopifyEvent> getDeletedCustomCollections(DateTime fromDate, DateTime toDate, Integer pageSize, String pageInfo) {
+		return getDeletedEvents(fromDate, toDate, pageSize, pageInfo, PRODUCT);
+	}
+
+	public ShopifyPage<ShopifyEvent> getDeletedSmartCollections(DateTime fromDate, DateTime toDate, Integer pageSize, String pageInfo) {
 		return getDeletedEvents(fromDate, toDate, pageSize, pageInfo, PRODUCT);
 	}
 }
