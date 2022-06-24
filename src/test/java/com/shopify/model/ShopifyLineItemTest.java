@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import org.junit.Test;
 public class ShopifyLineItemTest {
 
 	private static final LinkedList<ShopifyTaxLine> SOME_TAX_LINES = new LinkedList<>();
+	private static final LinkedList<ShopifyProperty> SOME_PROPERTIES = new LinkedList<>();
 	private static final BigDecimal SOME_PRICE = BigDecimal.valueOf(41.55);
 
 	@Test
@@ -31,6 +33,7 @@ public class ShopifyLineItemTest {
 		shopifyLineItem.setTaxable(true);
 		shopifyLineItem.setTitle("Some_Title");
 		shopifyLineItem.setTaxLines(SOME_TAX_LINES);
+		shopifyLineItem.setProperties(SOME_PROPERTIES);
 		shopifyLineItem.setTotalDiscount(SOME_PRICE);
 		shopifyLineItem.setVariantId("1234");
 		shopifyLineItem.setVariantInventoryManagement("shopify");
@@ -55,6 +58,7 @@ public class ShopifyLineItemTest {
 		assertEquals("shopify", shopifyLineItem.getVariantInventoryManagement());
 		assertEquals("some-title", shopifyLineItem.getVariantTitle());
 		assertEquals("some-vendor", shopifyLineItem.getVendor());
+		assertSame(SOME_PROPERTIES, shopifyLineItem.getProperties());
 
 	}
 
