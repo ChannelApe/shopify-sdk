@@ -1,6 +1,7 @@
 package com.shopify.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -57,6 +58,7 @@ public class ShopifyLineItemTest {
 		assertEquals("shopify", shopifyLineItem.getVariantInventoryManagement());
 		assertEquals("some-title", shopifyLineItem.getVariantTitle());
 		assertEquals("some-vendor", shopifyLineItem.getVendor());
+		assertSame(SOME_PROPERTIES, shopifyLineItem.getProperties());
 
 	}
 

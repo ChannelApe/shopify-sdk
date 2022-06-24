@@ -20,7 +20,6 @@ public class ShopifyOrderTest {
 	private static final BigDecimal SOME_TOTAL_DISCOUNTS = new BigDecimal(42.00);
 	private static final String SOME_TOKEN = "token";
 	private static final List<ShopifyTaxLine> SOME_TAX_LINES = Collections.emptyList();
-	private static final List<ShopifyProperty> SOME_PROPERTIES = Collections.emptyList();
 	private static final String SOME_TAGS = "some Tags";
 	private static final String HTTP_REFERRED_SITE = "http://referred-site";
 	private static final String SOME_PROCESSING_METHOD = "SomeProcessingMethod";
@@ -76,7 +75,6 @@ public class ShopifyOrderTest {
 		shopifyOrder.setTags(SOME_TAGS);
 		shopifyOrder.setTaxesIncluded(true);
 		shopifyOrder.setTaxLines(SOME_TAX_LINES);
-		shopifyOrder.setProperties(SOME_PROPERTIES);
 		shopifyOrder.setToken(SOME_TOKEN);
 		shopifyOrder.setTotalDiscounts(SOME_TOTAL_DISCOUNTS);
 		shopifyOrder.setTotaLineItemsPrice(SOME_TOTA_LINE_ITEMS_PRICE);
@@ -114,7 +112,6 @@ public class ShopifyOrderTest {
 		assertEquals(SOME_TAGS, shopifyOrder.getTags());
 		assertEquals(true, shopifyOrder.isTaxesIncluded());
 		assertEquals(SOME_TAX_LINES, shopifyOrder.getTaxLines());
-		assertEquals(SOME_PROPERTIES, shopifyOrder.getProperties());
 		assertEquals(SOME_TOKEN, shopifyOrder.getToken());
 		assertEquals(SOME_TOTAL_DISCOUNTS, shopifyOrder.getTotalDiscounts());
 		assertEquals(SOME_TOTA_LINE_ITEMS_PRICE, shopifyOrder.getTotaLineItemsPrice());

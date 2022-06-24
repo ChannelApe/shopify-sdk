@@ -396,7 +396,7 @@ public class ShopifySdkTest {
 				"Some Tax Line2");
 		shopifyLineItem1
 				.setTaxLines(new LinkedList<>(Arrays.asList(shopifyTaxLine1LineItem1, shopifyTaxLine1LineItem2)));
-		
+
 		final ShopifyProperty shopifyProperty1 = buildShopifyProperty("message", "Some new message");
 		final ShopifyProperty shopifyProperty2 = buildShopifyProperty("from", "From family");
 		final ShopifyProperty shopifyProperty3 = buildShopifyProperty("to", "To family member");
@@ -517,7 +517,7 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(2).getName());
 		assertEquals(shopifyProperty3.getValue(),
 				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(2).getValue());
-		
+
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
 				shopifyOrders.get(0).getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
@@ -830,7 +830,7 @@ public class ShopifySdkTest {
 		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(someOrderId);
 
 		assertEquals(
-				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"shipping_lines\":[],\"tax_lines\":[],\"properties\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
+				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
 				actualRequestBody.getContent());
 		assertNotNull(actualShopifyOrder);
 		assertEquals(someOrderId, actualShopifyOrder.getId());
@@ -3720,7 +3720,7 @@ public class ShopifySdkTest {
 		shopifyTaxLine1LineItem1.setTitle(title);
 		return shopifyTaxLine1LineItem1;
 	}
-	
+
 	private ShopifyProperty buildShopifyProperty(final String name, final String value) {
 		final ShopifyProperty shopifyProperty = new ShopifyProperty();
 		shopifyProperty.setName(name);
