@@ -91,6 +91,7 @@ import com.shopify.model.ShopifyProductRoot;
 import com.shopify.model.ShopifyProductUpdateRequest;
 import com.shopify.model.ShopifyProducts;
 import com.shopify.model.ShopifyProductsRoot;
+import com.shopify.model.ShopifyProperty;
 import com.shopify.model.ShopifyRecurringApplicationCharge;
 import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
 import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
@@ -395,6 +396,12 @@ public class ShopifySdkTest {
 				"Some Tax Line2");
 		shopifyLineItem1
 				.setTaxLines(new LinkedList<>(Arrays.asList(shopifyTaxLine1LineItem1, shopifyTaxLine1LineItem2)));
+
+		final ShopifyProperty shopifyProperty1 = buildShopifyProperty("message", "Some new message");
+		final ShopifyProperty shopifyProperty2 = buildShopifyProperty("from", "From family");
+		final ShopifyProperty shopifyProperty3 = buildShopifyProperty("to", "To family member");
+		shopifyLineItem1
+				.setProperties(new LinkedList<>(Arrays.asList(shopifyProperty1, shopifyProperty2, shopifyProperty3)));
 		shopifyOrder1.setLineItems(Arrays.asList(shopifyLineItem1));
 
 		final ShopifyFulfillment shopifyFulfillment = new ShopifyFulfillment();
@@ -498,6 +505,19 @@ public class ShopifySdkTest {
 				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(1).getPrice());
 		assertEquals(shopifyTaxLine1LineItem2.getTitle(),
 				shopifyOrders.get(0).getLineItems().get(0).getTaxLines().get(1).getTitle());
+		assertEquals(shopifyProperty1.getName(),
+				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(0).getName());
+		assertEquals(shopifyProperty1.getValue(),
+				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(0).getValue());
+		assertEquals(shopifyProperty2.getName(),
+				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(1).getName());
+		assertEquals(shopifyProperty2.getValue(),
+				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(1).getValue());
+		assertEquals(shopifyProperty3.getName(),
+				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(2).getName());
+		assertEquals(shopifyProperty3.getValue(),
+				shopifyOrders.get(0).getLineItems().get(0).getProperties().get(2).getValue());
+
 		assertEquals(shopifyOrder1.getFulfillments().get(0).getId(),
 				shopifyOrders.get(0).getFulfillments().get(0).getId());
 		assertTrue(shopifyOrder1.getFulfillments().get(0).getCreatedAt()
@@ -3699,5 +3719,12 @@ public class ShopifySdkTest {
 		shopifyTaxLine1LineItem1.setRate(rate);
 		shopifyTaxLine1LineItem1.setTitle(title);
 		return shopifyTaxLine1LineItem1;
+	}
+
+	private ShopifyProperty buildShopifyProperty(final String name, final String value) {
+		final ShopifyProperty shopifyProperty = new ShopifyProperty();
+		shopifyProperty.setName(name);
+		shopifyProperty.setValue(value);
+		return shopifyProperty;
 	}
 }

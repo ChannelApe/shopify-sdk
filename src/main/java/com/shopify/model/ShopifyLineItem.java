@@ -44,6 +44,8 @@ public class ShopifyLineItem {
 	private String fulfillmentService;
 	@XmlElement(name = "tax_lines")
 	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
+	@XmlElement(name = "properties")
+	private List<ShopifyProperty> properties = new LinkedList<>();
 
 	public String getId() {
 		return id;
@@ -203,6 +205,14 @@ public class ShopifyLineItem {
 
 	public void setTaxLines(final List<ShopifyTaxLine> taxLines) {
 		this.taxLines = taxLines;
+	}
+
+	public List<ShopifyProperty> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(final List<ShopifyProperty> properties) {
+		this.properties = properties;
 	}
 
 }

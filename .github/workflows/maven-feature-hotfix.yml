@@ -4,7 +4,8 @@
 name: Shopify SDK Build Feature/Hotfix Branch
 
 on:
-  push:
+  pull_request:
+  push: 
     branches:
     - '**'
     - '!master'

@@ -99,6 +99,7 @@ public class ShopifyOrder {
 	private List<ShopifyShippingLine> shippingLines = new LinkedList<>();
 	@XmlElement(name = "tax_lines")
 	private List<ShopifyTaxLine> taxLines = new LinkedList<>();
+
 	@XmlElement(name = "note_attributes")
 	private List<ShopifyAttribute> noteAttributes = new LinkedList<>();
 	private List<ShopifyRefund> refunds = new LinkedList<>();
