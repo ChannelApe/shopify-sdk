@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.shopify.model.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -27,45 +28,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Image;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldType;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAddress;
-import com.shopify.model.ShopifyAttribute;
-import com.shopify.model.ShopifyCustomCollection;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGetCustomersRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyLineItem;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyPage;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundLineItem;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyRefundShippingDetails;
-import com.shopify.model.ShopifyShippingLine;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRequest;
-import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdkDriver {
 
@@ -93,6 +55,30 @@ public class ShopifySdkDriver {
 
 		System.out.println("---------- Metafield -------------");
 		System.out.println("ID " + metafield.getId());
+	}
+
+	@Test
+	public void givenSomeCustomerMetafieldCreationRequestWhenCreatingMetafieldThenReturnMetafield() {
+		final ShopifyCustomerMetafieldCreationRequest shopifyCustomerMetafieldCreationRequest = ShopifyCustomerMetafieldCreationRequest
+				.newBuilder().withCustomerId("6780238412").withNamespace("channelape").withKey("test_creation")
+				.withValue("test_value").withValueType(MetafieldType.SINGLE_LINE_TEXT).build();
+		final Metafield metafield = shopifySdk.createCustomerMetafield(shopifyCustomerMetafieldCreationRequest);
+
+		System.out.println("---------- Metafield -------------");
+		System.out.println("ID " + metafield.getId());
+	}
+
+	@Test
+	public void givenSomeShopifyCustomerIdWhenRetrievingMetafieldsThenReturnMetafields() {
+		final List<Metafield> actualMetafields = shopifySdk.getCustomerMetafields("6780238412");
+
+		assertFalse(actualMetafields.isEmpty());
+	}
+
+	@Test
+	public void givenSomeShopifyCustomerIdAndMetafieldIdWhenUpdatingMetafieldThenReturnMetafield() {
+		final ShopifyCustomerMetafieldUpdateRequest shopifyCustomerMetafieldUpdateRequest = ShopifyCustomerMetafieldUpdateRequest
+				.newBuilder().withCustomerId("6780238412")
 	}
 
 	@Test
