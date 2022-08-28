@@ -78,7 +78,11 @@ public class ShopifySdkDriver {
 	@Test
 	public void givenSomeShopifyCustomerIdAndMetafieldIdWhenUpdatingMetafieldThenReturnMetafield() {
 		final ShopifyCustomerMetafieldUpdateRequest shopifyCustomerMetafieldUpdateRequest = ShopifyCustomerMetafieldUpdateRequest
-				.newBuilder().withCustomerId("6780238412")
+				.newBuilder().withCustomerId("6780238412").withMetafieldId("").withNamespace("channelape")
+				.withKey("test_update").withValue("test_update").withValueType(MetafieldType.SINGLE_LINE_TEXT).build();
+
+		final Metafield metafield = shopifySdk.updateCustomerMetafield(shopifyCustomerMetafieldUpdateRequest);
+
 	}
 
 	@Test

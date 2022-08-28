@@ -8,12 +8,12 @@ public class ShopifyCustomerMetafieldUpdateRequest {
     private final String metafieldId;
     private final Metafield request;
 
-    public static interface MetafieldIdStep {
-        CustomerIdStep withMetafieldId(final String metafieldId);
+    public static interface CustomerIdStep {
+        MetafieldIdStep withCustomerId(final String customerId);
     }
 
-    public static interface CustomerIdStep {
-        NamespaceStep withCustomerId(final String customerId);
+    public static interface MetafieldIdStep {
+        NamespaceStep withMetafieldId(final String metafieldId);
     }
 
     public static interface NamespaceStep {
@@ -58,7 +58,7 @@ public class ShopifyCustomerMetafieldUpdateRequest {
         this.request = steps.request;
     }
 
-    private static class Steps implements MetafieldIdStep, CustomerIdStep, NamespaceStep, KeyStep, ValueStep, ValueTypeStep, BuildStep {
+    private static class Steps implements CustomerIdStep, MetafieldIdStep, NamespaceStep, KeyStep, ValueStep, ValueTypeStep, BuildStep {
 
         private String customerId;
 
@@ -95,13 +95,13 @@ public class ShopifyCustomerMetafieldUpdateRequest {
         }
 
         @Override
-        public NamespaceStep withCustomerId(final String customerId) {
+        public MetafieldIdStep withCustomerId(final String customerId) {
             this.customerId = customerId;
             return this;
         }
 
         @Override
-        public CustomerIdStep withMetafieldId(String metafieldId) {
+        public NamespaceStep withMetafieldId(String metafieldId) {
             this.metafieldId = metafieldId;
             return this;
         }
