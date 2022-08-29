@@ -1,7 +1,5 @@
 package com.shopify.model;
 
-import org.glassfish.jersey.internal.inject.Custom;
-
 public class ShopifyCustomerMetafieldUpdateRequest {
 
     private final String customerId;
@@ -64,8 +62,15 @@ public class ShopifyCustomerMetafieldUpdateRequest {
         }
 
         @Override
-        public BuildStep withValueType(final MetafieldType type) {
-            this.request.setType(type);
+        public MetafieldIdStep withCustomerId(final String customerId) {
+            this.customerId = customerId;
+            return this;
+        }
+
+
+        @Override
+        public ValueStep withMetafieldId(String metafieldId) {
+            this.metafieldId = metafieldId;
             return this;
         }
 
@@ -76,14 +81,8 @@ public class ShopifyCustomerMetafieldUpdateRequest {
         }
 
         @Override
-        public MetafieldIdStep withCustomerId(final String customerId) {
-            this.customerId = customerId;
-            return this;
-        }
-
-        @Override
-        public ValueStep withMetafieldId(String metafieldId) {
-            this.metafieldId = metafieldId;
+        public BuildStep withValueType(final MetafieldType type) {
+            this.request.setType(type);
             return this;
         }
     }

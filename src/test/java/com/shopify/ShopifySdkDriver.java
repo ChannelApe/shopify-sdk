@@ -86,7 +86,7 @@ public class ShopifySdkDriver {
 				.build();
 
 		final Metafield metafield = shopifySdk.updateCustomerMetafield(shopifyCustomerMetafieldUpdateRequest);
-
+		assertNotNull(metafield);
 	}
 
 	@Test
