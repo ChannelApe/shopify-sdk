@@ -17,10 +17,14 @@ public class ShopifyCustomerMetafieldUpdateRequest {
 
     public static interface ValueStep {
         ValueTypeStep withValue(final String value);
+
+        ValueTypeStep withSameValue();
     }
 
     public static interface ValueTypeStep {
         BuildStep withValueType(final MetafieldType valueType);
+
+        BuildStep withSameValueType();
     }
 
     public static interface BuildStep {
@@ -67,7 +71,6 @@ public class ShopifyCustomerMetafieldUpdateRequest {
             return this;
         }
 
-
         @Override
         public ValueStep withMetafieldId(String metafieldId) {
             this.metafieldId = metafieldId;
@@ -81,8 +84,18 @@ public class ShopifyCustomerMetafieldUpdateRequest {
         }
 
         @Override
+        public ValueTypeStep withSameValue() {
+            return this;
+        }
+
+        @Override
         public BuildStep withValueType(final MetafieldType type) {
             this.request.setType(type);
+            return this;
+        }
+
+        @Override
+        public BuildStep withSameValueType() {
             return this;
         }
     }
