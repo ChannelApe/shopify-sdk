@@ -64,6 +64,9 @@ public class ShopifySdk {
     static final String REVOKE = "revoke";
     static final String ACCESS_TOKEN = "access_token";
     static final String PRODUCTS = "products";
+
+    static final String CUSTOMERS = "customers";
+
     static final String VARIANTS = "variants";
     static final String CUSTOM_COLLECTIONS = "custom_collections";
     static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
@@ -133,7 +136,6 @@ public class ShopifySdk {
 
     private static final Client CLIENT = buildClient();
 
-    private static final String CUSTOMERS = "customers";
     private static final String SEARCH = "search";
 
     public static interface OptionalsStep {
@@ -712,6 +714,11 @@ public class ShopifySdk {
         return metafieldRootResponse.getMetafield();
     }
 
+    public boolean deleteVariantMetafield(final String variantId, final String metafieldId) {
+        final Response response = delete(getWebTarget().path(VARIANTS).path(variantId).path(METAFIELDS).path(metafieldId));
+        return Status.OK.getStatusCode() == response.getStatus();
+    }
+
     public Metafield createProductMetafield(final ShopifyProductMetafieldCreationRequest shopifyProductMetafieldCreationRequest) {
         final MetafieldRoot metafieldRoot = new MetafieldRoot();
         metafieldRoot.setMetafield(shopifyProductMetafieldCreationRequest.getRequest());
@@ -730,6 +737,11 @@ public class ShopifySdk {
                 metafieldRoot);
         final MetafieldRoot metafieldRootResponse = response.readEntity(MetafieldRoot.class);
         return metafieldRootResponse.getMetafield();
+    }
+
+    public boolean deleteProductMetafield(final String productId, final String metafieldId) {
+        final Response response = delete(getWebTarget().path(PRODUCTS).path(productId).path(METAFIELDS).path(metafieldId));
+        return Status.OK.getStatusCode() == response.getStatus();
     }
 
     public List<Metafield> getProductMetafields(final String productId) {
@@ -823,6 +835,11 @@ public class ShopifySdk {
         final Response response = post(getWebTarget().path(CUSTOMERS).path(shopifyCustomerMetafieldCreationRequest.getCustomerId()).path(METAFIELDS), metafieldRoot);
         final MetafieldRoot metafieldRootResponse = response.readEntity(MetafieldRoot.class);
         return metafieldRootResponse.getMetafield();
+    }
+
+    public boolean deleteCustomerMetafield(final String customerId, final String metafieldId) {
+        final Response response = delete(getWebTarget().path(CUSTOMERS).path(customerId).path(METAFIELDS).path(metafieldId));
+        return Status.OK.getStatusCode() == response.getStatus();
     }
 
     private ShopifyRefund calculateRefund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
