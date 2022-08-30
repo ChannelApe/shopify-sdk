@@ -700,10 +700,34 @@ public class ShopifySdk {
         return metafieldsRootResponse.getMetafields();
     }
 
+    public Metafield updateVariantMetafield(final ShopifyVariantMetafieldUpdateRequest shopifyVariantMetafieldUpdateRequest) {
+        final MetafieldRoot metafieldRoot = new MetafieldRoot();
+        final String variantId = shopifyVariantMetafieldUpdateRequest.getVariantId();
+        final String metafieldId = shopifyVariantMetafieldUpdateRequest.getMetafieldId();
+        metafieldRoot.setMetafield(shopifyVariantMetafieldUpdateRequest.getRequest());
+
+        final Response response = put(getWebTarget().path(VARIANTS).path(variantId).path(METAFIELDS).path(metafieldId),
+                metafieldRoot);
+        final MetafieldRoot metafieldRootResponse = response.readEntity(MetafieldRoot.class);
+        return metafieldRootResponse.getMetafield();
+    }
+
     public Metafield createProductMetafield(final ShopifyProductMetafieldCreationRequest shopifyProductMetafieldCreationRequest) {
         final MetafieldRoot metafieldRoot = new MetafieldRoot();
         metafieldRoot.setMetafield(shopifyProductMetafieldCreationRequest.getRequest());
         final Response response = post(getWebTarget().path(PRODUCTS).path(shopifyProductMetafieldCreationRequest.getProductId()).path(METAFIELDS), metafieldRoot);
+        final MetafieldRoot metafieldRootResponse = response.readEntity(MetafieldRoot.class);
+        return metafieldRootResponse.getMetafield();
+    }
+    
+    public Metafield updateProductMetafield(final ShopifyProductMetafieldUpdateRequest shopifyProductMetafieldUpdateRequest) {
+        final MetafieldRoot metafieldRoot = new MetafieldRoot();
+        final String productId = shopifyProductMetafieldUpdateRequest.getProductId();
+        final String metafieldId = shopifyProductMetafieldUpdateRequest.getMetafieldId();
+        metafieldRoot.setMetafield(shopifyProductMetafieldUpdateRequest.getRequest());
+
+        final Response response = put(getWebTarget().path(PRODUCTS).path(productId).path(METAFIELDS).path(metafieldId),
+                metafieldRoot);
         final MetafieldRoot metafieldRootResponse = response.readEntity(MetafieldRoot.class);
         return metafieldRootResponse.getMetafield();
     }
