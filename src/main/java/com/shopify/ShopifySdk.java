@@ -474,6 +474,34 @@ public class ShopifySdk {
         return updateProductImages(shopifyProductUpdateRequest, updatedShopifyProduct);
     }
 
+    public ShopifyVariant createVariant(final ShopifyVariantCreationRequest shopifyVariantCreationRequest) {
+        final ShopifyVariant shopifyVariant = shopifyVariantCreationRequest.getRequest();
+        final String shopifyProductId = shopifyVariant.getProductId();
+
+        final ShopifyVariantRoot shopifyVariantRootRequest = new ShopifyVariantRoot();
+        shopifyVariantRootRequest.setVariant(shopifyVariant);
+
+        final Response shopifyVariantCreationResponse = post(getWebTarget().path(PRODUCTS).path(shopifyProductId).path(VARIANTS), shopifyVariantRootRequest);
+        final ShopifyVariantRoot shopifyVariantRootResponse = shopifyVariantCreationResponse.readEntity(ShopifyVariantRoot.class);
+        final ShopifyVariant shopifyVariantResponse = shopifyVariantRootResponse.getVariant();
+
+        if (shopifyVariantResponse != null && StringUtils.isNotBlank(shopifyVariantCreationRequest.getImageSource())) {
+            final ShopifyImageRoot shopifyImageRootRequest = new ShopifyImageRoot();
+            final Image imageRequest = new Image();
+            imageRequest.setSource(shopifyVariantCreationRequest.getImageSource());
+            final List<Metafield> metafields = ImageAltTextCreationRequest.newBuilder().withImageAltText(shopifyVariant.getTitle()).build();
+            imageRequest.setMetafields(metafields);
+            imageRequest.setVariantIds(Arrays.asList(shopifyVariantResponse.getId()));
+            shopifyImageRootRequest.setImage(imageRequest);
+            final Response response = post(getWebTarget().path(PRODUCTS).path(shopifyProductId).path(IMAGES), shopifyImageRootRequest);
+            final ShopifyImageRoot shopifyImageRootResponse = response.readEntity(ShopifyImageRoot.class);
+            final Image createdImage = shopifyImageRootResponse.getImage();
+            shopifyVariant.setImageId(createdImage.getId());
+        }
+
+        return shopifyVariantResponse;
+    }
+
     public ShopifyVariant updateVariant(final ShopifyVariantUpdateRequest shopifyVariantUpdateRequest) {
         final ShopifyVariant shopifyVariant = shopifyVariantUpdateRequest.getRequest();
         final String shopifyVariantId = shopifyVariant.getId();

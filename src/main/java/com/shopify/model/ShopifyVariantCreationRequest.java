@@ -8,6 +8,11 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 	private final ShopifyVariant request;
 	private final String imageSource;
 
+	public static interface ProductIdStep {
+		public PriceStep withProductId(final String productId);
+		public PriceStep withNoProductId();
+	}
+
 	public static interface PriceStep {
 		public CompareAtPriceStep withPrice(final BigDecimal price);
 	}
@@ -92,7 +97,7 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 		public ShopifyVariantCreationRequest build();
 	}
 
-	public static PriceStep newBuilder() {
+	public static ProductIdStep newBuilder() {
 		return new Steps();
 	}
 
@@ -121,7 +126,7 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 		this.imageSource = imageSource;
 	}
 
-	private static class Steps implements PriceStep, CompareAtPriceStep, SkuStep, BarcodeStep, WeightStep,
+	private static class Steps implements ProductIdStep, PriceStep, CompareAtPriceStep, SkuStep, BarcodeStep, WeightStep,
 			AvailableStep, FirstOptionStep, SecondOptionStep, ThirdOptionStep, ImageSourceStep, InventoryManagementStep,
 			InventoryPolicyStep, FulfillmentServiceStep, RequiresShippingStep, TaxableStep, BuildStep {
 		private static final String DEFAULT_INVENTORY_MANAGEMENT = "shopify";
@@ -282,6 +287,17 @@ public class ShopifyVariantCreationRequest implements ShopifyVariantRequest {
 		@Override
 		public InventoryPolicyStep withDefaultInventoryManagement() {
 			shopifyVariant.setInventoryManagement(DEFAULT_INVENTORY_MANAGEMENT);
+			return this;
+		}
+
+		@Override
+		public PriceStep withProductId(String productId) {
+			shopifyVariant.setProductId(productId);
+			return this;
+		}
+
+		@Override
+		public PriceStep withNoProductId() {
 			return this;
 		}
 	}

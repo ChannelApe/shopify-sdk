@@ -56,7 +56,6 @@ public class ShopifyCustomerMetafieldUpdateRequest {
     private static class Steps implements CustomerIdStep, MetafieldIdStep, ValueStep, ValueTypeStep, BuildStep {
 
         private String customerId;
-
         private String metafieldId;
         private Metafield request = new Metafield();
 
