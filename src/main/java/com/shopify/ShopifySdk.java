@@ -533,12 +533,13 @@ public class ShopifySdk {
         return shopifyOrderRootResponse.getOrder();
     }
 
-    public ShopifyTransaction createOrderTransaction(ShopifyOrderTransactionCreationRequest shopifyOrderTransactionCreationRequest) {
+    public ShopifyTransaction createOrderTransaction(ShopifyTransactionCreationRequest shopifyOrderTransactionCreationRequest) {
         final ShopifyTransactionRoot shopifyTransactionRoot = new ShopifyTransactionRoot();
         final ShopifyTransaction shopifyTransaction = shopifyOrderTransactionCreationRequest.getRequest();
+        final String shopifyOrderId = shopifyTransaction.getOrderId();
         shopifyTransactionRoot.setTransaction(shopifyTransaction);
 
-        final Response response = post(getWebTarget().path(ORDERS).path(shopifyTransaction.getOrderId()), shopifyTransactionRoot);
+        final Response response = post(buildOrdersEndpoint().path(shopifyOrderId).path(TRANSACTIONS), shopifyTransactionRoot);
         final ShopifyTransactionRoot shopifyTransactionRootResponse = response.readEntity(ShopifyTransactionRoot.class);
         return shopifyTransactionRootResponse.getTransaction();
     }

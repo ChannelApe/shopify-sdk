@@ -3,52 +3,52 @@ package com.shopify.model;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-public class ShopifyOrderTransactionCreationRequest {
+public class ShopifyTransactionCreationRequest {
     private final ShopifyTransaction request;
 
-    public static ShopifyOrderTransactionCreationRequest.SetIdStep newBuilder() {
-        return new ShopifyOrderTransactionCreationRequest.Steps();
+    public static ShopifyTransactionCreationRequest.SetOrderIdStep newBuilder() {
+        return new ShopifyTransactionCreationRequest.Steps();
     }
 
     public ShopifyTransaction getRequest() {
         return request;
     }
 
-    public static interface SetOrderIdStep {
+    public interface SetOrderIdStep {
         SetIdStep withOrderId(final String orderId);
     }
 
-    public static interface SetIdStep {
+    public interface SetIdStep {
         SetAmountStep withId(final String id);
     }
 
-    public static interface SetAmountStep {
+    public interface SetAmountStep {
         SetStatusStep withAmount(final BigDecimal amount);
     }
 
-    public static interface SetStatusStep {
+    public interface SetStatusStep {
         SetKindStep withStatus(final String status);
     }
 
-    public static interface SetKindStep {
+    public interface SetKindStep {
         SetGatewayStep withKind(final String kind);
     }
 
-    public static interface SetGatewayStep {
+    public interface SetGatewayStep {
         SetCurrencyStep withGateway(final String gateway);
     }
 
-    public static interface SetCurrencyStep {
+    public interface SetCurrencyStep {
         SetMaximumRefundableStep withCurrency(final Currency currency);
     }
 
-    public static interface SetMaximumRefundableStep {
+    public interface SetMaximumRefundableStep {
         SetMaximumRefundableStep withMaximumRefundable(final BigDecimal maximumRefundable);
 
-        ShopifyOrderTransactionCreationRequest build();
+        ShopifyTransactionCreationRequest build();
     }
 
-    private ShopifyOrderTransactionCreationRequest(final ShopifyTransaction request) {
+    private ShopifyTransactionCreationRequest(final ShopifyTransaction request) {
         this.request = request;
     }
 
@@ -105,8 +105,8 @@ public class ShopifyOrderTransactionCreationRequest {
         }
 
         @Override
-        public ShopifyOrderTransactionCreationRequest build() {
-            return new ShopifyOrderTransactionCreationRequest(request);
+        public ShopifyTransactionCreationRequest build() {
+            return new ShopifyTransactionCreationRequest(request);
         }
     }
 }

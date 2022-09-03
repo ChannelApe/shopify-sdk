@@ -1804,6 +1804,61 @@ public class ShopifySdkTest {
 
 	}
 
+	@Test public void givenSomeValidAccessTokenAndSubdomainAndOrderTransactionRequestWhenCreatingTransactionThenGetTransaction()
+		throws JsonProcessingException {
+		final ShopifyTransactionRoot shopifyTransactionRoot = new ShopifyTransactionRoot();
+
+		final ShopifyTransactionCreationRequest shopifyTransactionCreationRequest = ShopifyTransactionCreationRequest
+				.newBuilder()
+				.withOrderId("1234")
+				.withId("MY_ID")
+				.withAmount(BigDecimal.ONE)
+				.withStatus("APPROVED")
+				.withKind("manual")
+				.withGateway("shopify")
+				.withCurrency(Currency.getInstance("USD"))
+				.withMaximumRefundable(BigDecimal.ZERO)
+				.build();
+
+
+		final ShopifyTransaction request = shopifyTransactionCreationRequest.getRequest();
+		shopifyTransactionRoot.setTransaction(request);
+
+		final String expectedPath = new StringBuilder()
+				.append(FORWARD_SLASH)
+				.append(ShopifySdk.API_VERSION_PREFIX)
+				.append(FORWARD_SLASH)
+				.append(SOME_API_VERSION)
+				.append(FORWARD_SLASH)
+				.append(ShopifySdk.ORDERS)
+				.append(FORWARD_SLASH)
+				.append("1234")
+				.append(FORWARD_SLASH)
+				.append(ShopifySdk.TRANSACTIONS)
+				.toString();
+
+		final String expectedResponseBody = getJsonString(ShopifyTransactionRoot.class, shopifyTransactionRoot);
+		final Status expectedStatus = Status.CREATED;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.POST),
+				giveResponse(expectedResponseBody, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
+		);
+
+		final ShopifyTransaction shopifyTransaction = shopifySdk.createOrderTransaction(shopifyTransactionCreationRequest);
+
+		assertNotNull(shopifyTransaction);
+		assertEquals(request.getOrderId(), shopifyTransaction.getOrderId());
+		assertEquals(request.getId(), shopifyTransaction.getId());
+		assertEquals(request.getAmount(), shopifyTransaction.getAmount());
+		assertEquals(request.getStatus(), shopifyTransaction.getStatus());
+		assertEquals(request.getKind(), shopifyTransaction.getKind());
+		assertEquals(request.getGateway(), shopifyTransaction.getGateway());
+		assertEquals(request.getCurrency(), shopifyTransaction.getCurrency());
+		assertEquals(request.getMaximumRefundable(), shopifyTransaction.getMaximumRefundable());
+	}
+
 	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndVariantIdWhenGettinVariantThenGetVariant()
 			throws JsonProcessingException {
