@@ -2,12 +2,15 @@ package com.shopify.model;
 
 import com.shopify.mappers.TransactionStatusAdapter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
-public class PaymentRefundAttributes {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class PaymentsRefundAttributes {
 
     @XmlJavaTypeAdapter(TransactionStatusAdapter.class)
     private TransactionStatus status;

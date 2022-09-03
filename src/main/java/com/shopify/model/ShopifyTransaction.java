@@ -7,7 +7,6 @@ import com.shopify.model.adapters.CurrencyAdapter;
 import com.shopify.model.adapters.DateTimeAdapter;
 import org.joda.time.DateTime;
 
-import javax.swing.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -43,7 +42,7 @@ public class ShopifyTransaction {
 	private PaymentDetails paymentDetails;
 
 	@XmlElement(name = "payments_refund_attributes")
-	private PaymentRefundAttributes paymentRefundAttributes;
+	private PaymentsRefundAttributes paymentsRefundAttributes;
 	@XmlElement(name = "processed_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime processedAt;
@@ -208,8 +207,8 @@ public class ShopifyTransaction {
 		return paymentDetails;
 	}
 
-	public PaymentRefundAttributes getPaymentRefundAttributes() {
-		return paymentRefundAttributes;
+	public PaymentsRefundAttributes getPaymentsRefundAttributes() {
+		return paymentsRefundAttributes;
 	}
 
 	public DateTime getProcessedAt() {
