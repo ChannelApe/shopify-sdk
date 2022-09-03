@@ -1820,7 +1820,6 @@ public class ShopifySdkTest {
 				.withMaximumRefundable(BigDecimal.ZERO)
 				.build();
 
-
 		final ShopifyTransaction request = shopifyTransactionCreationRequest.getRequest();
 		shopifyTransactionRoot.setTransaction(request);
 

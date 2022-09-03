@@ -4,7 +4,10 @@ import com.shopify.mappers.TransactionErrorCodeAdapter;
 import com.shopify.mappers.TransactionKindAdapter;
 import com.shopify.mappers.TransactionStatusAdapter;
 import com.shopify.model.adapters.CurrencyAdapter;
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
 
+import javax.swing.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -16,15 +19,46 @@ import java.util.Currency;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyTransaction {
-
 	private String id;
 	@XmlElement(name = "order_id")
 	private String orderId;
 	@XmlJavaTypeAdapter(TransactionKindAdapter.class)
 	private TransactionKind kind;
 	private String gateway;
+	private String authorization;
+	@XmlElement(name = "authorization_expires_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private String authorizationExpiresAt;
+	@XmlElement(name = "extended_authorization_attributes")
+	private ExtendedAuthorizationAttributes extendedAuthorizationAttributes;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+	@XmlElement(name = "location_id")
+	private String locationId;
+	@XmlElement(name = "payment_details")
+	private PaymentDetails paymentDetails;
+
+	@XmlElement(name = "payments_refund_attributes")
+	private PaymentRefundAttributes paymentRefundAttributes;
+	@XmlElement(name = "processed_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime processedAt;
+
+	@XmlElement(name = "source_name")
+	private String sourceName;
+
+	@XmlElement(name = "user_id")
+	private String userId;
+	@XmlElement(name = "currency_exchange_adjustment")
+	private CurrencyExchangeAdjustment currencyExchangeAdjustment;
 	@XmlElement(name = "parent_id")
 	private String parentId;
+	@XmlElement(name = "device_id")
+	private String deviceId;
 	@XmlJavaTypeAdapter(TransactionStatusAdapter.class)
 	private TransactionStatus status;
 	@XmlElement(name = "error_code")
@@ -128,5 +162,69 @@ public class ShopifyTransaction {
 
 	public TransactionErrorCode getErrorCode() {
 		return errorCode;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public String getAuthorizationExpiresAt() {
+		return authorizationExpiresAt;
+	}
+
+	public void setAuthorizationExpiresAt(String authorizationExpiresAt) {
+		this.authorizationExpiresAt = authorizationExpiresAt;
+	}
+
+	public String getAuthorization() {
+		return authorization;
+	}
+
+	public void setAuthorization(String authorization) {
+		this.authorization = authorization;
+	}
+
+	public ExtendedAuthorizationAttributes getExtendedAuthorizationAttributes() {
+		return extendedAuthorizationAttributes;
+	}
+
+	public void setExtendedAuthorizationAttributes(ExtendedAuthorizationAttributes extendedAuthorizationAttributes) {
+		this.extendedAuthorizationAttributes = extendedAuthorizationAttributes;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public PaymentDetails getPaymentDetails() {
+		return paymentDetails;
+	}
+
+	public PaymentRefundAttributes getPaymentRefundAttributes() {
+		return paymentRefundAttributes;
+	}
+
+	public DateTime getProcessedAt() {
+		return processedAt;
+	}
+
+	public String getSourceName() {
+		return sourceName;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public CurrencyExchangeAdjustment getCurrencyExchangeAdjustment() {
+		return currencyExchangeAdjustment;
 	}
 }
