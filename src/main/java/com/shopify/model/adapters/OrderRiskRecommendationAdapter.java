@@ -1,8 +1,8 @@
 package com.shopify.model.adapters;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import com.shopify.model.OrderRiskRecommendation;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class OrderRiskRecommendationAdapter extends XmlAdapter<String, OrderRiskRecommendation> {
 

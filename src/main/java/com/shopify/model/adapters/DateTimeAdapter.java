@@ -1,9 +1,9 @@
 package com.shopify.model.adapters;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class DateTimeAdapter extends XmlAdapter<String, DateTime> {
 

@@ -821,7 +821,7 @@ public class ShopifySdk {
     public ShopifyRefund refund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
 
         final ShopifyRefund calculatedShopifyRefund = calculateRefund(shopifyRefundCreationRequest);
-        calculatedShopifyRefund.getTransactions().forEach(transaction -> transaction.setKind(REFUND_KIND));
+        calculatedShopifyRefund.getTransactions().forEach(transaction -> transaction.setKind(TransactionKind.REFUND));
 
         final WebTarget path = buildOrdersEndpoint().path(shopifyRefundCreationRequest.getRequest().getOrderId()).path(REFUNDS);
         final ShopifyRefundRoot shopifyRefundRoot = new ShopifyRefundRoot();

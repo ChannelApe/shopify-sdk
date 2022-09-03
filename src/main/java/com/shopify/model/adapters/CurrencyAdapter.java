@@ -1,10 +1,9 @@
 package com.shopify.model.adapters;
 
-import java.util.Currency;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Currency;
 
 public class CurrencyAdapter extends XmlAdapter<String, Currency> {
 

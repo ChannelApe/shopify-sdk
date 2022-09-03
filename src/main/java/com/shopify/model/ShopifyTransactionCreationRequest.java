@@ -20,6 +20,7 @@ public class ShopifyTransactionCreationRequest {
 
     public interface SetIdStep {
         SetAmountStep withId(final String id);
+        SetAmountStep withNoId();
     }
 
     public interface SetAmountStep {
@@ -27,11 +28,12 @@ public class ShopifyTransactionCreationRequest {
     }
 
     public interface SetStatusStep {
-        SetKindStep withStatus(final String status);
+        SetKindStep withStatus(final TransactionStatus status);
+        SetKindStep withNoStatus();
     }
 
     public interface SetKindStep {
-        SetGatewayStep withKind(final String kind);
+        SetGatewayStep withKind(final TransactionKind kind);
     }
 
     public interface SetGatewayStep {
@@ -44,6 +46,7 @@ public class ShopifyTransactionCreationRequest {
 
     public interface SetMaximumRefundableStep {
         SetMaximumRefundableStep withMaximumRefundable(final BigDecimal maximumRefundable);
+        SetMaximumRefundableStep withNoMaximumRefundable();
 
         ShopifyTransactionCreationRequest build();
     }
@@ -52,8 +55,7 @@ public class ShopifyTransactionCreationRequest {
         this.request = request;
     }
 
-    private static class Steps implements SetOrderIdStep, SetIdStep, SetAmountStep, SetStatusStep, SetKindStep,
-            SetGatewayStep, SetCurrencyStep, SetMaximumRefundableStep {
+    private static class Steps implements SetOrderIdStep, SetIdStep, SetAmountStep, SetStatusStep, SetKindStep, SetGatewayStep, SetCurrencyStep, SetMaximumRefundableStep {
         private final ShopifyTransaction request = new ShopifyTransaction();
 
         @Override
@@ -69,19 +71,29 @@ public class ShopifyTransactionCreationRequest {
         }
 
         @Override
+        public SetAmountStep withNoId() {
+            return this;
+        }
+
+        @Override
         public SetStatusStep withAmount(BigDecimal amount) {
             request.setAmount(amount);
             return this;
         }
 
         @Override
-        public SetKindStep withStatus(String status) {
+        public SetKindStep withStatus(TransactionStatus status) {
             request.setStatus(status);
             return this;
         }
 
         @Override
-        public SetGatewayStep withKind(String kind) {
+        public SetKindStep withNoStatus() {
+            return this;
+        }
+
+        @Override
+        public SetGatewayStep withKind(TransactionKind kind) {
             request.setKind(kind);
             return this;
         }
@@ -101,6 +113,11 @@ public class ShopifyTransactionCreationRequest {
         @Override
         public SetMaximumRefundableStep withMaximumRefundable(BigDecimal maximumRefundable) {
             request.setMaximumRefundable(maximumRefundable);
+            return this;
+        }
+
+        @Override
+        public SetMaximumRefundableStep withNoMaximumRefundable() {
             return this;
         }
 

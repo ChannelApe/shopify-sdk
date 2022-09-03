@@ -1,8 +1,7 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
 
 @XmlRootElement
 public class ShopifyTaxLine {

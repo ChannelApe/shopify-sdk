@@ -1,15 +1,17 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-import java.util.Currency;
+import com.shopify.mappers.TransactionErrorCodeAdapter;
+import com.shopify.mappers.TransactionKindAdapter;
+import com.shopify.mappers.TransactionStatusAdapter;
+import com.shopify.model.adapters.CurrencyAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.CurrencyAdapter;
+import java.math.BigDecimal;
+import java.util.Currency;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,11 +20,16 @@ public class ShopifyTransaction {
 	private String id;
 	@XmlElement(name = "order_id")
 	private String orderId;
-	private String kind;
+	@XmlJavaTypeAdapter(TransactionKindAdapter.class)
+	private TransactionKind kind;
 	private String gateway;
 	@XmlElement(name = "parent_id")
 	private String parentId;
-	private String status;
+	@XmlJavaTypeAdapter(TransactionStatusAdapter.class)
+	private TransactionStatus status;
+	@XmlElement(name = "error_code")
+	@XmlJavaTypeAdapter(TransactionErrorCodeAdapter.class)
+	private TransactionErrorCode errorCode;
 	private String message;
 	private BigDecimal amount;
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
@@ -47,11 +54,11 @@ public class ShopifyTransaction {
 		this.orderId = orderId;
 	}
 
-	public String getKind() {
+	public TransactionKind getKind() {
 		return kind;
 	}
 
-	public void setKind(final String kind) {
+	public void setKind(final TransactionKind kind) {
 		this.kind = kind;
 	}
 
@@ -71,11 +78,11 @@ public class ShopifyTransaction {
 		this.parentId = parentId;
 	}
 
-	public String getStatus() {
+	public TransactionStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(final String status) {
+	public void setStatus(final TransactionStatus status) {
 		this.status = status;
 	}
 
@@ -119,4 +126,7 @@ public class ShopifyTransaction {
 		this.receipt = receipt;
 	}
 
+	public TransactionErrorCode getErrorCode() {
+		return errorCode;
+	}
 }

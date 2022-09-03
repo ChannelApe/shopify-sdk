@@ -1,11 +1,10 @@
 package com.shopify.model.adapters;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.apache.commons.lang3.StringEscapeUtils;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class EscapedStringsAdapter extends XmlAdapter<Collection<String>, Collection<String>> {
 
