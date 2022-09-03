@@ -1,5 +1,7 @@
 package com.shopify.model;
 
+import org.joda.time.DateTime;
+
 import java.math.BigDecimal;
 import java.util.Currency;
 
@@ -24,7 +26,23 @@ public class ShopifyTransactionCreationRequest {
     }
 
     public interface SetAmountStep {
-        SetStatusStep withAmount(final BigDecimal amount);
+        SetAuthorizationStep withAmount(final BigDecimal amount);
+        SetAuthorizationStep withDefaultOrderAmount();
+    }
+
+    public interface SetAuthorizationStep {
+        SetAuthorizationExpiresAtStep withAuthorization(final String authorization);
+        SetAuthorizationExpiresAtStep withNoAuthorization();
+    }
+
+    public interface SetAuthorizationExpiresAtStep {
+        SetExtendedAuthorizationAttributesStep withAuthorizationExpiresAt(final DateTime authorizationExpiresAt);
+        SetExtendedAuthorizationAttributesStep withNoAuthorizationExpiresAt();
+    }
+
+    public interface SetExtendedAuthorizationAttributesStep {
+        SetStatusStep withExtendedAuthorizationAttributes(final ExtendedAuthorizationAttributes extendedAuthorizationAttributes);
+        SetStatusStep withNoExtendedAuthorizationAttributes();
     }
 
     public interface SetStatusStep {
@@ -55,7 +73,8 @@ public class ShopifyTransactionCreationRequest {
         this.request = request;
     }
 
-    private static class Steps implements SetOrderIdStep, SetIdStep, SetAmountStep, SetStatusStep, SetKindStep, SetGatewayStep, SetCurrencyStep, SetMaximumRefundableStep {
+    private static class Steps implements SetOrderIdStep, SetIdStep, SetAmountStep, SetAuthorizationStep, SetAuthorizationExpiresAtStep,
+            SetExtendedAuthorizationAttributesStep, SetStatusStep, SetKindStep, SetGatewayStep, SetCurrencyStep, SetMaximumRefundableStep {
         private final ShopifyTransaction request = new ShopifyTransaction();
 
         @Override
@@ -76,8 +95,13 @@ public class ShopifyTransactionCreationRequest {
         }
 
         @Override
-        public SetStatusStep withAmount(BigDecimal amount) {
+        public SetAuthorizationStep withAmount(BigDecimal amount) {
             request.setAmount(amount);
+            return this;
+        }
+
+        @Override
+        public SetAuthorizationStep withDefaultOrderAmount() {
             return this;
         }
 
@@ -124,6 +148,39 @@ public class ShopifyTransactionCreationRequest {
         @Override
         public ShopifyTransactionCreationRequest build() {
             return new ShopifyTransactionCreationRequest(request);
+        }
+
+        @Override
+        public SetAuthorizationExpiresAtStep withAuthorization(String authorization) {
+            request.setAuthorization(authorization);
+            return this;
+        }
+
+        @Override
+        public SetAuthorizationExpiresAtStep withNoAuthorization() {
+            return this;
+        }
+
+        @Override
+        public SetExtendedAuthorizationAttributesStep withAuthorizationExpiresAt(DateTime authorizationExpiresAt) {
+            request.setAuthorizationExpiresAt(authorizationExpiresAt);
+            return this;
+        }
+
+        @Override
+        public SetExtendedAuthorizationAttributesStep withNoAuthorizationExpiresAt() {
+            return this;
+        }
+
+        @Override
+        public SetStatusStep withExtendedAuthorizationAttributes(ExtendedAuthorizationAttributes extendedAuthorizationAttributes) {
+            request.setExtendedAuthorizationAttributes(extendedAuthorizationAttributes);
+            return this;
+        }
+
+        @Override
+        public SetStatusStep withNoExtendedAuthorizationAttributes() {
+            return this;
         }
     }
 }

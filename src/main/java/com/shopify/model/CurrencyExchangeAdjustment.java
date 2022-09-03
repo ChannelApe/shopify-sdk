@@ -1,6 +1,5 @@
 package com.shopify.model;
 
-import com.shopify.mappers.TransactionStatusAdapter;
 import com.shopify.model.adapters.CurrencyAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;

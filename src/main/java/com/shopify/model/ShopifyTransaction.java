@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,7 +28,7 @@ public class ShopifyTransaction {
 	private String authorization;
 	@XmlElement(name = "authorization_expires_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	private String authorizationExpiresAt;
+	private DateTime authorizationExpiresAt;
 	@XmlElement(name = "extended_authorization_attributes")
 	private ExtendedAuthorizationAttributes extendedAuthorizationAttributes;
 	@XmlElement(name = "updated_at")
@@ -175,11 +176,11 @@ public class ShopifyTransaction {
 		return createdAt;
 	}
 
-	public String getAuthorizationExpiresAt() {
+	public DateTime getAuthorizationExpiresAt() {
 		return authorizationExpiresAt;
 	}
 
-	public void setAuthorizationExpiresAt(String authorizationExpiresAt) {
+	public void setAuthorizationExpiresAt(DateTime authorizationExpiresAt) {
 		this.authorizationExpiresAt = authorizationExpiresAt;
 	}
 
