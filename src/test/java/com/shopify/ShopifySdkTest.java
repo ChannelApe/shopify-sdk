@@ -1064,7 +1064,7 @@ public class ShopifySdkTest {
 
 		final BigDecimal somePrice = BigDecimal.valueOf(42.11);
 		final ShopifyVariantCreationRequest shopifyVariantCreationRequest = ShopifyVariantCreationRequest.newBuilder()
-				.withPrice(somePrice).withCompareAtPrice(somePrice).withSku("ABC-123").withBarcode("XYZ-123")
+				.withNoProductId().withPrice(somePrice).withCompareAtPrice(somePrice).withSku("ABC-123").withBarcode("XYZ-123")
 				.withWeight(somePrice).withAvailable(13).withFirstOption("Shoes").withSecondOption("Red")
 				.withThirdOption("Green").withImageSource("http://channelape.com/1.png")
 				.withDefaultInventoryManagement().withDefaultInventoryPolicy().withDefaultFulfillmentService()
@@ -1938,6 +1938,71 @@ public class ShopifySdkTest {
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		shopifySdk.updateInventoryLevel("123123", "736472634", 123L);
+	}
+
+	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWhenCreatingVariantThenCreateAndReturnVariant()
+			throws JsonProcessingException, IllegalAccessException {
+
+		final ShopifyVariantCreationRequest shopifyVariantCreationRequest = ShopifyVariantCreationRequest
+				.newBuilder()
+				.withProductId("2180984635510")
+				.withPrice(new BigDecimal("10.00"))
+				.withCompareAtPrice(null)
+				.withSku("TL1MKCC090")
+				.withBarcode("897563254789")
+				.withWeight(BigDecimal.ZERO)
+				.withAvailable(1337)
+				.noFirstOption()
+				.noSecondOption()
+				.noThirdOption()
+				.noImageSource()
+				.withInventoryManagement("shopify")
+				.withDefaultInventoryPolicy()
+				.withDefaultFulfillmentService()
+				.withRequiresShipping(true)
+				.withTaxable(true)
+				.build();
+
+		final String expectedResponseBodyString = "{\"variant\":" +
+				"{\"product_id\":\"2180984635510\"," +
+				"\"price\":10.00," +
+				"\"sku\":\"TL1MKCC090\"," +
+				"\"barcode\":\"897563254789\"," +
+				"\"position\":0," +
+				"\"grams\":0," +
+				"\"inventory_policy\":\"deny\"," +
+				"\"inventory_management\":\"shopify\"," +
+				"\"fulfillment_service\":\"manual\"," +
+				"\"requires_shipping\":true," +
+				"\"taxable\":true}}";
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
+				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append(ShopifySdk.PRODUCTS).append(FORWARD_SLASH)
+				.append("2180984635510").append(FORWARD_SLASH).append(ShopifySdk.VARIANTS).toString();
+		final Status expectedStatus = Status.CREATED;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final StringBodyCapture stringBodyCapture = new StringBodyCapture();
+
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.POST)
+						.capturingBodyIn(stringBodyCapture),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withHeader("Location",
+								new StringBuilder().append("https://test.myshopify.com/admin/products/2180984635510")
+										.append(expectedPath).toString())
+						.withStatus(expectedStatusCode));
+
+
+		final ShopifyVariant actualShopifyVariant = shopifySdk.createVariant(shopifyVariantCreationRequest);
+
+		final String expectedRequestBodyString = "{\"variant\":{\"product_id\":\"2180984635510\",\"price\":10.00,\"sku\":\"TL1MKCC090\",\"barcode\":\"897563254789\",\"position\":0,\"grams\":0,\"inventory_policy\":\"deny\",\"inventory_management\":\"shopify\",\"fulfillment_service\":\"manual\",\"requires_shipping\":true,\"taxable\":true}}";
+		assertEquals(expectedRequestBodyString, stringBodyCapture.getContent());
+
+		assertEquals(shopifyVariantCreationRequest.getRequest().getId(), actualShopifyVariant.getId());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getTitle(), actualShopifyVariant.getTitle());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getPrice(), actualShopifyVariant.getPrice());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getInventoryQuantity(), actualShopifyVariant.getInventoryQuantity());
+		assertEquals(shopifyVariantCreationRequest.getRequest().getBarcode(), actualShopifyVariant.getBarcode());
 	}
 
 	@Test

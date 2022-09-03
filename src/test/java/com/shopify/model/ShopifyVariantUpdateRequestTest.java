@@ -144,7 +144,7 @@ public class ShopifyVariantUpdateRequestTest {
 
 	private ShopifyVariant buildCurrentShopifyVariant() {
 		final ShopifyVariant currentShopifyVariant = ShopifyVariantCreationRequest.newBuilder()
-				.withPrice(SOME_CURRENT_PRICE_AMOUNT).withCompareAtPrice(SOME_CURRENT_COMPARE_AT_PRICE_AMOUNT)
+				.withNoProductId().withPrice(SOME_CURRENT_PRICE_AMOUNT).withCompareAtPrice(SOME_CURRENT_COMPARE_AT_PRICE_AMOUNT)
 				.withSku(SOME_CURRENT_SKU).withBarcode(SOME_CURRENT_BARCODE).withWeight(SOME_CURRENT_GRAMS_AMOUNT)
 				.withAvailable(SOME_CURRENT_QUANTITY).withFirstOption(SOME_CURRENT_FIRST_OPTION)
 				.withSecondOption(SOME_CURRENT_SECOND_OPTION).withThirdOption(SOME_CURRENT_THIRD_OPTION)
