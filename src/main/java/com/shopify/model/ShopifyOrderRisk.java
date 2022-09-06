@@ -1,12 +1,11 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
+import com.shopify.model.adapters.OrderRiskRecommendationAdapter;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.OrderRiskRecommendationAdapter;
+import java.math.BigDecimal;
 
 @XmlRootElement
 public class ShopifyOrderRisk {

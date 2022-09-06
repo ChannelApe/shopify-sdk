@@ -1,8 +1,8 @@
 package com.shopify.model;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 public class ShopifyOrderCreationRequest {
 

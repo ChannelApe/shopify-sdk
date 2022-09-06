@@ -1,14 +1,9 @@
 package com.shopify.model.adapters;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.*;
 
 public class TagsAdapter extends XmlAdapter<String, Set<String>> {
 

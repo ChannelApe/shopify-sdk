@@ -1,8 +1,8 @@
 package com.shopify.model.adapters;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.apache.commons.lang3.StringEscapeUtils;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class EscapedStringAdapter extends XmlAdapter<String, String> {
 

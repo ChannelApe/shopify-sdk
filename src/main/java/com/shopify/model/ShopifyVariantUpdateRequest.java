@@ -1,10 +1,10 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ShopifyVariantUpdateRequest implements ShopifyVariantRequest {
 

@@ -28,7 +28,7 @@ public class ShopifyVariantCreationRequestTest {
 	@Test
 	public void givenValuesSetAndNoCompareAtPriceAndNoImageSourceAndDefaultInventoryPolicyAndDefaultFulfillmentSErviceAndDefaultInventoryManagementAndDefaultRequiresShippingAndDefaultTaxableWhenBuildingShopifyVariantCreationRequestThenExpectCorrectValues() {
 		final ShopifyVariantCreationRequest actualShopifyVariantCreationRequest = ShopifyVariantCreationRequest
-				.newBuilder().withPrice(SOME_PRICE_AMOUNT).noCompareAtPrice().withSku(SOME_SKU)
+				.newBuilder().withNoProductId().withPrice(SOME_PRICE_AMOUNT).noCompareAtPrice().withSku(SOME_SKU)
 				.withBarcode(SOME_BARCODE).withWeight(SOME_GRAMS_AMOUNT).withAvailable(SOME_QUANTITY)
 				.withFirstOption(SOME_FIRST_OPTION).withSecondOption(SOME_SECOND_OPTION)
 				.withThirdOption(SOME_THIRD_OPTION).noImageSource().withDefaultInventoryManagement()
@@ -57,7 +57,7 @@ public class ShopifyVariantCreationRequestTest {
 	@Test
 	public void givenValuesSetWhenBuildingShopifyVariantCreationRequestThenExpectCorrectValues() {
 		final ShopifyVariantCreationRequest actualShopifyVariantCreationRequest = ShopifyVariantCreationRequest
-				.newBuilder().withPrice(SOME_PRICE_AMOUNT).withCompareAtPrice(SOME_COMPARE_AT_PRICE_AMOUNT)
+				.newBuilder().withNoProductId().withPrice(SOME_PRICE_AMOUNT).withCompareAtPrice(SOME_COMPARE_AT_PRICE_AMOUNT)
 				.withSku(SOME_SKU).withBarcode(SOME_BARCODE).withWeight(SOME_GRAMS_AMOUNT).withAvailable(SOME_QUANTITY)
 				.withFirstOption(SOME_FIRST_OPTION).withSecondOption(SOME_SECOND_OPTION)
 				.withThirdOption(SOME_THIRD_OPTION).withImageSource(SOME_IMAGE_SOURCE)

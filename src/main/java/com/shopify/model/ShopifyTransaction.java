@@ -1,28 +1,69 @@
 package com.shopify.model;
 
-import java.math.BigDecimal;
-import java.util.Currency;
+import com.shopify.mappers.TransactionErrorCodeAdapter;
+import com.shopify.mappers.TransactionKindAdapter;
+import com.shopify.mappers.TransactionStatusAdapter;
+import com.shopify.model.adapters.CurrencyAdapter;
+import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.shopify.model.adapters.CurrencyAdapter;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyTransaction {
-
 	private String id;
 	@XmlElement(name = "order_id")
 	private String orderId;
-	private String kind;
+	@XmlJavaTypeAdapter(TransactionKindAdapter.class)
+	private TransactionKind kind;
 	private String gateway;
+	private String authorization;
+	@XmlElement(name = "authorization_expires_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime authorizationExpiresAt;
+	@XmlElement(name = "extended_authorization_attributes")
+	private ExtendedAuthorizationAttributes extendedAuthorizationAttributes;
+	@XmlElement(name = "updated_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime updatedAt;
+	@XmlElement(name = "created_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime createdAt;
+	@XmlElement(name = "location_id")
+	private String locationId;
+	@XmlElement(name = "payment_details")
+	private PaymentDetails paymentDetails;
+
+	@XmlElement(name = "payments_refund_attributes")
+	private PaymentsRefundAttributes paymentsRefundAttributes;
+	@XmlElement(name = "processed_at")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	private DateTime processedAt;
+
+	@XmlElement(name = "source_name")
+	private String sourceName;
+
+	@XmlElement(name = "user_id")
+	private String userId;
+	@XmlElement(name = "currency_exchange_adjustment")
+	private CurrencyExchangeAdjustment currencyExchangeAdjustment;
 	@XmlElement(name = "parent_id")
 	private String parentId;
-	private String status;
+	@XmlElement(name = "device_id")
+	private String deviceId;
+	@XmlJavaTypeAdapter(TransactionStatusAdapter.class)
+	private TransactionStatus status;
+	@XmlElement(name = "error_code")
+	@XmlJavaTypeAdapter(TransactionErrorCodeAdapter.class)
+	private TransactionErrorCode errorCode;
 	private String message;
 	private BigDecimal amount;
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
@@ -47,11 +88,11 @@ public class ShopifyTransaction {
 		this.orderId = orderId;
 	}
 
-	public String getKind() {
+	public TransactionKind getKind() {
 		return kind;
 	}
 
-	public void setKind(final String kind) {
+	public void setKind(final TransactionKind kind) {
 		this.kind = kind;
 	}
 
@@ -71,11 +112,11 @@ public class ShopifyTransaction {
 		this.parentId = parentId;
 	}
 
-	public String getStatus() {
+	public TransactionStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(final String status) {
+	public void setStatus(final TransactionStatus status) {
 		this.status = status;
 	}
 
@@ -119,4 +160,71 @@ public class ShopifyTransaction {
 		this.receipt = receipt;
 	}
 
+	public TransactionErrorCode getErrorCode() {
+		return errorCode;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public DateTime getAuthorizationExpiresAt() {
+		return authorizationExpiresAt;
+	}
+
+	public void setAuthorizationExpiresAt(DateTime authorizationExpiresAt) {
+		this.authorizationExpiresAt = authorizationExpiresAt;
+	}
+
+	public String getAuthorization() {
+		return authorization;
+	}
+
+	public void setAuthorization(String authorization) {
+		this.authorization = authorization;
+	}
+
+	public ExtendedAuthorizationAttributes getExtendedAuthorizationAttributes() {
+		return extendedAuthorizationAttributes;
+	}
+
+	public void setExtendedAuthorizationAttributes(ExtendedAuthorizationAttributes extendedAuthorizationAttributes) {
+		this.extendedAuthorizationAttributes = extendedAuthorizationAttributes;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public PaymentDetails getPaymentDetails() {
+		return paymentDetails;
+	}
+
+	public PaymentsRefundAttributes getPaymentsRefundAttributes() {
+		return paymentsRefundAttributes;
+	}
+
+	public DateTime getProcessedAt() {
+		return processedAt;
+	}
+
+	public String getSourceName() {
+		return sourceName;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public CurrencyExchangeAdjustment getCurrencyExchangeAdjustment() {
+		return currencyExchangeAdjustment;
+	}
 }
