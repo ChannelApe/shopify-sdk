@@ -1849,7 +1849,6 @@ public class ShopifySdkTest {
 		);
 
 		final ShopifyTransaction shopifyTransaction = shopifySdk.createOrderTransaction(shopifyTransactionCreationRequest);
-
 		assertNotNull(shopifyTransaction);
 		assertEquals(request.getOrderId(), shopifyTransaction.getOrderId());
 		assertEquals(request.getId(), shopifyTransaction.getId());
