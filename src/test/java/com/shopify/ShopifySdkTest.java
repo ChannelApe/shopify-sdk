@@ -2929,7 +2929,7 @@ public class ShopifySdkTest {
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("currency").asText());
 		assertEquals("bogus",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("gateway").asText());
-		assertEquals("suggested_refund",
+		assertEquals("refund",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("kind").asText());
 		assertEquals("123123",
 				calculateRequestBody.getContent().get("refund").get("transactions").path(0).get("order_id").asText());
