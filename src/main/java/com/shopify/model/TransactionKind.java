@@ -1,9 +1,5 @@
 package com.shopify.model;
 
-/**
- * Valid Shopify [[Transaction]] kinds
- * @see [[https://shopify.dev/api/admin-rest/2022-10/resources/transaction Transaction]]
- */
 public enum TransactionKind  {
     AUTHORIZATION("authorization"),
     CAPTURE("capture"),
