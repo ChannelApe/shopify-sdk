@@ -112,6 +112,8 @@ import com.shopify.model.ShopifyVariantCreationRequest;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
+import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrder;
+import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrderLineItem;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -460,10 +462,26 @@ public class ShopifySdkTest {
 	public void givenSomeShopifyFulfillmenmtUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillmentWithFulfillmentOrderApi()
 			throws JsonProcessingException {
 
+		final String fulfillmentOrderId = "1234";
+
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
 		lineItem.setSku("some_sku");
 		lineItem.setQuantity(5L);
+
+		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
+		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
+		fulfillmentOrderLineItem.setQuantity(1);
+		fulfillmentOrderLineItem.setFulfillableQuantity(1);
+		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
+		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
+
+		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
+		fulfillmentOrder.setId(fulfillmentOrderId);
+		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+		fulfillmentOrder.setAssignedLocationId("5678");
+		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
+		fulfillmentOrders.add(fulfillmentOrder);
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
 				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append(ShopifySdk.FULFILLMENTS)
@@ -478,20 +496,19 @@ public class ShopifySdkTest {
 		final int expectedStatusCode = expectedStatus.getStatusCode();
 		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
 		driver.addExpectation(
-				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken).withMethod(Method.PUT)
-						.capturingBodyIn(actualRequestBody),
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
 				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
 
 		final ShopifyFulfillmentUpdateRequest request = ShopifyFulfillmentUpdateRequest.newBuilder()
 				.withCurrentShopifyFulfillment(currentFulfillment).withTrackingCompany("USPS")
 				.withTrackingNumber("12341234").withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
-				.withLocationId("1").withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
+				.withLocationId("1").withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2"))
+				.withFulfillmentOrders(fulfillmentOrders).build();
 
 		shopifySdk.shouldUseShopifyFulfillmentOrderApi(true);
 		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.updateFulfillment(request);
-
 		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
-
 	}
 
 	@Test

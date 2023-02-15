@@ -26,7 +26,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.github.rholder.retry.Attempt;
@@ -222,8 +221,10 @@ public class ShopifySdk {
 		 * Default value is: 1 second.
 		 *
 		 * @param duration
+		 *            of the minimum retry delay
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
@@ -236,8 +237,10 @@ public class ShopifySdk {
 		 * Default value is: 5 seconds.
 		 *
 		 * @param duration
+		 *            of the maximum retry delay
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMaximumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
@@ -246,8 +249,10 @@ public class ShopifySdk {
 		 * Default value is: 3 minutes.
 		 *
 		 * @param duration
+		 *            of the request timeout
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMaximumRequestRetryTimeout(int duration, TimeUnit timeUnit);
 
@@ -256,8 +261,10 @@ public class ShopifySdk {
 		 * Default value is: 1 minute.
 		 *
 		 * @param duration
+		 *            of the connection timeout
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withConnectionTimeout(int duration, TimeUnit timeUnit);
 
@@ -266,8 +273,10 @@ public class ShopifySdk {
 		 * Default value is: 15 seconds.
 		 *
 		 * @param duration
+		 *            of the duration to be considered
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withReadTimeout(int duration, TimeUnit timeUnit);
 
@@ -279,15 +288,17 @@ public class ShopifySdk {
 		 * ensure you leave off the version if you are using this.
 		 *
 		 * @param apiVersion
-		 * @return
+		 *            current apiVersion value
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withApiVersion(final String apiVersion);
 
 		/**
 		 * Boolean value defining if an api starting from 2023-04 will be used
 		 *
-		 * @param apiVersion
-		 * @return
+		 * @param useShopifyFulfillmentOrderApi
+		 *            a flag determining if we're using the new fulfillment api
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withFulfillmentOrderApi(final boolean useShopifyFulfillmentOrderApi);
 
@@ -1232,8 +1243,7 @@ public class ShopifySdk {
 	}
 
 	public ShopifyFulfillment moveFulfillmentOrder(final String newLocationId,
-			final ShopifyFulfillmentOrder shopifyFulfillmentOrder)
-			throws ShopifyIncompatibleApiException, JsonProcessingException {
+			final ShopifyFulfillmentOrder shopifyFulfillmentOrder) throws ShopifyIncompatibleApiException {
 		if (!this.shouldUseShopifyFulfillmentOrderApi()) {
 			throw new ShopifyIncompatibleApiException();
 		} else {
