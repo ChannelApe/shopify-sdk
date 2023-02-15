@@ -1,10 +1,14 @@
 package com.shopify.model;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrder;
 
 public class ShopifyFulfillmentUpdateRequest {
 
 	private final ShopifyFulfillment request;
+	private List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
 
 	public static interface CurrentShopifyFulfillmentStep {
 		public TrackingCompanyStep withCurrentShopifyFulfillment(final ShopifyFulfillment shopifyFulfillment);
@@ -31,7 +35,14 @@ public class ShopifyFulfillmentUpdateRequest {
 	}
 
 	public static interface TrackingUrlsStep {
-		BuildStep withTrackingUrls(final List<String> trackingUrls);
+		OptionalsStep withTrackingUrls(final List<String> trackingUrls);
+	}
+
+	public interface OptionalsStep {
+
+		public OptionalsStep withFulfillmentOrders(final List<ShopifyFulfillmentOrder> fulfillmentOrders);
+
+		public ShopifyFulfillmentUpdateRequest build();
 	}
 
 	public static interface BuildStep {
@@ -46,18 +57,25 @@ public class ShopifyFulfillmentUpdateRequest {
 		return request;
 	}
 
-	private ShopifyFulfillmentUpdateRequest(final ShopifyFulfillment request) {
+	private ShopifyFulfillmentUpdateRequest(final ShopifyFulfillment request,
+			List<ShopifyFulfillmentOrder> fulfillmentOrders) {
 		this.request = request;
+		this.fulfillmentOrders = fulfillmentOrders;
+	}
+
+	public List<ShopifyFulfillmentOrder> getFulfillmentOrders() {
+		return fulfillmentOrders;
 	}
 
 	private static class Steps implements CurrentShopifyFulfillmentStep, TrackingCompanyStep, TrackingNumberStep,
-			NotifyCustomerStep, LineItemsStep, LocationIdStep, TrackingUrlsStep, BuildStep {
+			NotifyCustomerStep, LineItemsStep, LocationIdStep, TrackingUrlsStep, OptionalsStep, BuildStep {
 
 		private ShopifyFulfillment request;
+		private List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
 
 		@Override
 		public ShopifyFulfillmentUpdateRequest build() {
-			return new ShopifyFulfillmentUpdateRequest(request);
+			return new ShopifyFulfillmentUpdateRequest(request, fulfillmentOrders);
 		}
 
 		@Override
@@ -97,8 +115,14 @@ public class ShopifyFulfillmentUpdateRequest {
 		}
 
 		@Override
-		public BuildStep withTrackingUrls(final List<String> trackingUrls) {
+		public OptionalsStep withTrackingUrls(final List<String> trackingUrls) {
 			request.setTrackingUrls(trackingUrls);
+			return this;
+		}
+
+		@Override
+		public OptionalsStep withFulfillmentOrders(final List<ShopifyFulfillmentOrder> fulfillmentOrders) {
+			this.fulfillmentOrders = fulfillmentOrders;
 			return this;
 		}
 
