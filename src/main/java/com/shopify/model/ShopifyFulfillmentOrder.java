@@ -1,4 +1,4 @@
-package com.shopify.model.fulfillmentOrderApi;
+package com.shopify.model;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,23 +17,47 @@ import com.shopify.model.adapters.DateTimeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyFulfillmentOrder {
 
+	/**
+	 * Lists all acceptable status for a given FulfillmentOrder
+	 * 
+	 * @see #OPEN
+	 * @see #CLOSED
+	 * @see #ON_HOLD
+	 * @see #CANCELLED
+	 * @see #SCHEDULED
+	 * @see #INCOMPLETE
+	 * @see #IN_PROGRESS
+	 */
 	public enum Status {
-
-		// The fulfillment order is ready for fulfillment
+		/**
+		 * The fulfillment order is ready for fulfillment
+		 */
 		OPEN("open"),
-		// The fulfillment order has been completed and closed
+		/**
+		 * The fulfillment order has been completed and closed
+		 */
 		CLOSED("closed"),
-		// The fulfillment order is on hold. The fulfillment process can't be
-		// initiated until the hold on the fulfillment order is released
+		/**
+		 * The fulfillment order is on hold. The fulfillment process can't be
+		 * initiated until the hold on the fulfillment order is released
+		 */
 		ON_HOLD("on_hold"),
-		// The fulfillment order has been cancelled by the merchant
+		/**
+		 * The fulfillment order has been cancelled by the merchant
+		 */
 		CANCELLED("cancelled"),
-		// The fulfillment order is deferred and will be ready for fulfillment
-		// after the datetime specified in fulfill_at
+		/**
+		 * The fulfillment order is deferred and will be ready for fulfillment
+		 * after the datetime specified in fulfill_at
+		 */
 		SCHEDULED("scheduled"),
-		// The fulfillment order cannot be completed as requested
+		/**
+		 * The fulfillment order cannot be completed as requested
+		 */
 		INCOMPLETE("incomplete"),
-		// The fulfillment order is being processed
+		/**
+		 * The fulfillment order is being processed
+		 */
 		IN_PROGRESS("in_progress");
 
 		static final String NO_MATCHING_ENUMS_ERROR_MESSAGE = "No matching enum found for status: %s";
@@ -69,8 +93,10 @@ public class ShopifyFulfillmentOrder {
 		}
 	}
 
+	/**
+	 * The actions that can be performed on this fulfillment order.
+	 */
 	public enum SupportedActions {
-
 		HOLD("hold"),
 		MOVE("move"),
 		EXTERNAL("external"),
@@ -118,15 +144,56 @@ public class ShopifyFulfillmentOrder {
 		}
 	}
 
+	/**
+	 * List of all request status of the fulfillment order. Valid values
+	 * 
+	 * @see #CLOSED
+	 * @see #ACCEPTED
+	 * @see #REJECTED
+	 * @see #SUBMITTED
+	 * @see #UNSUBMITTED
+	 * @see #CANCELLATION_ACCEPTED
+	 * @see #CANCELLATION_REJECTED
+	 * @see #CANCELLATION_REQUESTED
+	 */
 	public enum RequestStatus {
-
+		/**
+		 * The fulfillment service closed the fulfillment order without
+		 * completing it.
+		 */
 		CLOSED("closed"),
+		/**
+		 * The fulfillment service accepted the merchant's fulfillment request
+		 */
 		ACCEPTED("accepted"),
+		/**
+		 * The fulfillment service rejected the merchant's fulfillment request
+		 */
 		REJECTED("rejected"),
+		/**
+		 * The merchant requested fulfillment for this fulfillment order
+		 */
 		SUBMITTED("submitted"),
+		/**
+		 * The initial request status for newly-created fulfillment orders. This
+		 * is the only valid request status for fulfillment orders that aren't
+		 * assigned to a fulfillment service
+		 */
 		UNSUBMITTED("unsubmitted"),
+		/**
+		 * The fulfillment service accepted the merchant's fulfillment
+		 * cancellation request
+		 */
 		CANCELLATION_ACCEPTED("cancellation_accepted"),
+		/**
+		 * The fulfillment service rejected the merchant's fulfillment
+		 * cancellation request
+		 */
 		CANCELLATION_REJECTED("cancellation_rejected"),
+		/**
+		 * The merchant requested a cancellation of the fulfillment request for
+		 * this fulfillment order
+		 */
 		CANCELLATION_REQUESTED("cancellation_requested");
 
 		static final String NO_MATCHING_ENUMS_ERROR_MESSAGE = "No matching enum found for supported action: %s";

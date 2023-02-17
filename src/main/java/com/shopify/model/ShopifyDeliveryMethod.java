@@ -1,4 +1,4 @@
-package com.shopify.model.fulfillmentOrderApi;
+package com.shopify.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,17 +14,41 @@ import com.shopify.model.adapters.DateTimeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyDeliveryMethod {
 
+	/**
+	 * The type of method used to transfer a product or service to a customer
+	 * 
+	 * @see #NONE
+	 * @see #LOCAL
+	 * @see #CUSTOM
+	 * @see #RETAIL
+	 * @see #PICK_UP
+	 * @see #SHIPPING
+	 */
 	public enum MethodType {
-		// No delivery method.
+		/**
+		 * No delivery method
+		 */
 		NONE("none"),
-		// A delivery to a customer's doorstep.
+		/**
+		 * A delivery to a customer's doorstep.
+		 */
 		LOCAL("local"),
-		// Items delivered immediately in a retail store.
+		/**
+		 * A default value for a non matching delivery method
+		 */
+		CUSTOM("custom"),
+		/**
+		 * Items delivered immediately in a retail store.
+		 */
 		RETAIL("retail"),
-		// A delivery that a customer picks up at your retail store, curbside,
-		// or any location that you choose
+		/**
+		 * A delivery that a customer picks up at your retail store, curbside,
+		 * or any location that you choose
+		 */
 		PICK_UP("pick_up"),
-		// A delivery to a customer using a shipping carrier
+		/**
+		 * A delivery to a customer using a shipping carrier
+		 */
 		SHIPPING("shipping");
 
 		static final String NO_MATCHING_ENUMS_ERROR_MESSAGE = "No matching enum found for status: %s";
@@ -45,9 +69,9 @@ public class ShopifyDeliveryMethod {
 				return MethodType.PICK_UP;
 			} else if (SHIPPING.toString().equals(value)) {
 				return MethodType.SHIPPING;
+			} else {
+				return MethodType.CUSTOM;
 			}
-
-			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
 		}
 
 		@Override

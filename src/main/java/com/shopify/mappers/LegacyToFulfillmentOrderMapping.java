@@ -8,18 +8,19 @@ import org.slf4j.LoggerFactory;
 
 import com.shopify.ShopifySdk;
 import com.shopify.model.ShopifyFulfillment;
+import com.shopify.model.ShopifyFulfillmentOrder;
+import com.shopify.model.ShopifyFulfillmentOrder.SupportedActions;
+import com.shopify.model.ShopifyFulfillmentOrderLineItem;
+import com.shopify.model.ShopifyFulfillmentOrderMoveLocationPayload;
+import com.shopify.model.ShopifyFulfillmentOrderMoveRequestRoot;
+import com.shopify.model.ShopifyFulfillmentOrderPayloadLineItem;
+import com.shopify.model.ShopifyFulfillmentPayload;
+import com.shopify.model.ShopifyFulfillmentPayloadRoot;
 import com.shopify.model.ShopifyLineItem;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrder;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrderLineItem;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrderMoveRequestRoot;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrderPayload;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentOrderPayloadLineItem;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentPayload;
-import com.shopify.model.fulfillmentOrderApi.ShopifyFulfillmentPayloadRoot;
-import com.shopify.model.fulfillmentOrderApi.ShopifyLineItemsByFulfillmentOrder;
-import com.shopify.model.fulfillmentOrderApi.ShopifyTrackingInfo;
-import com.shopify.model.fulfillmentOrderApi.ShopifyUpdateFulfillmentPayload;
-import com.shopify.model.fulfillmentOrderApi.ShopifyUpdateFulfillmentPayloadRoot;
+import com.shopify.model.ShopifyLineItemsByFulfillmentOrder;
+import com.shopify.model.ShopifyTrackingInfo;
+import com.shopify.model.ShopifyUpdateFulfillmentPayload;
+import com.shopify.model.ShopifyUpdateFulfillmentPayloadRoot;
 
 public class LegacyToFulfillmentOrderMapping {
 
@@ -44,7 +45,7 @@ public class LegacyToFulfillmentOrderMapping {
 	public static ShopifyFulfillmentOrderMoveRequestRoot toShopifyMoveFulfillmentOrder(final String newLocation,
 			ShopifyFulfillmentOrder fulfillmentOrder) {
 		try {
-			final ShopifyFulfillmentOrderPayload payload = new ShopifyFulfillmentOrderPayload();
+			final ShopifyFulfillmentOrderMoveLocationPayload payload = new ShopifyFulfillmentOrderMoveLocationPayload();
 			payload.setNewLocationId(newLocation);
 			for (final ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem : fulfillmentOrder.getLineItems()) {
 				payload.getFulfillmentOrderLineItems().add(new ShopifyFulfillmentOrderPayloadLineItem(
@@ -93,20 +94,27 @@ public class LegacyToFulfillmentOrderMapping {
 			// referenced inside the payload's line_items_by_fulfillment_order
 			// section
 			for (final ShopifyFulfillmentOrder fulfillmentOrder : fulfillmentOrders) {
-				ShopifyLineItemsByFulfillmentOrder lineItemsByFulfillment = new ShopifyLineItemsByFulfillmentOrder();
-				lineItemsByFulfillment.setFulfillmentOrderId(fulfillmentOrder.getId());
-				for (final ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem : fulfillmentOrder.getLineItems()) {
-					for (final ShopifyLineItem fulfillmentLineItem : fulfillment.getLineItems()) {
-						if (fulfillmentOrderLineItem.getLineItemId().equals(fulfillmentLineItem.getId())) {
-							ShopifyFulfillmentOrderPayloadLineItem payloadLineItem = new ShopifyFulfillmentOrderPayloadLineItem(
-									fulfillmentOrderLineItem.getId(), fulfillmentLineItem.getQuantity());
-							lineItemsByFulfillment.getFulfillmentOrderLineItems().add(payloadLineItem);
+				// if a shopify fulfillment is cancelled a new fulfillment order
+				// is added the old one gets it's supported actions emptied, so
+				// we need to make sure the current fulfillmentOrder supportes
+				// fulfillment creation under it
+				if (fulfillmentOrder.getSupportedActions().contains(SupportedActions.CREATE_FULFILLMENT.toString())) {
+					ShopifyLineItemsByFulfillmentOrder lineItemsByFulfillment = new ShopifyLineItemsByFulfillmentOrder();
+					lineItemsByFulfillment.setFulfillmentOrderId(fulfillmentOrder.getId());
+					for (final ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem : fulfillmentOrder
+							.getLineItems()) {
+						for (final ShopifyLineItem fulfillmentLineItem : fulfillment.getLineItems()) {
+							if (fulfillmentOrderLineItem.getLineItemId().equals(fulfillmentLineItem.getId())) {
+								ShopifyFulfillmentOrderPayloadLineItem payloadLineItem = new ShopifyFulfillmentOrderPayloadLineItem(
+										fulfillmentOrderLineItem.getId(), fulfillmentLineItem.getQuantity());
+								lineItemsByFulfillment.getFulfillmentOrderLineItems().add(payloadLineItem);
+							}
 						}
 					}
-				}
 
-				if (lineItemsByFulfillment.getFulfillmentOrderLineItems().size() > 0) {
-					lineItemsByFulfillmentOrder.add(lineItemsByFulfillment);
+					if (lineItemsByFulfillment.getFulfillmentOrderLineItems().size() > 0) {
+						lineItemsByFulfillmentOrder.add(lineItemsByFulfillment);
+					}
 				}
 			}
 

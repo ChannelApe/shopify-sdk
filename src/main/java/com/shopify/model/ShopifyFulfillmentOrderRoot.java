@@ -1,4 +1,4 @@
-package com.shopify.model.fulfillmentOrderApi;
+package com.shopify.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,17 +7,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyFulfillmentOrderMoveRequestRoot {
+public class ShopifyFulfillmentOrderRoot {
 
 	@XmlElement(name = "fulfillment_order")
-	private ShopifyFulfillmentOrderPayload fulfillmentOrder;
+	private ShopifyFulfillmentOrder fulfillmentOrder;
 
-	public ShopifyFulfillmentOrderPayload getFulfillmentOrder() {
+	public ShopifyFulfillmentOrder getFulfillmentOrder() {
 		return fulfillmentOrder;
 	}
 
-	public void setFulfillmentOrder(ShopifyFulfillmentOrderPayload fulfillmentOrder) {
+	public void setFulfillmentOrder(ShopifyFulfillmentOrder fulfillmentOrder) {
 		this.fulfillmentOrder = fulfillmentOrder;
 	}
-
 }

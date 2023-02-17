@@ -1,4 +1,4 @@
-package com.shopify.model.fulfillmentOrderApi;
+package com.shopify.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

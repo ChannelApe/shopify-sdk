@@ -1,4 +1,4 @@
-package com.shopify.model.fulfillmentOrderApi;
+package com.shopify.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,10 +8,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyInternationalDuty {
 
+	/**
+	 * The international duties relevant to the fulfillment order
+	 * 
+	 * @see #DAP
+	 * @see #DDP
+	 */
 	public enum Inconterm {
-		// Delivered at place.
+		/**
+		 * Delivered at place.
+		 */
 		DAP("dap"),
-		// Delivered duty paid
+		/**
+		 * Delivered duty paid.
+		 */
 		DDP("ddp");
 
 		static final String NO_MATCHING_ENUMS_ERROR_MESSAGE = "No matching enum found for status: %s";

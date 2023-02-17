@@ -1,4 +1,4 @@
-package com.shopify.model.fulfillmentOrderApi;
+package com.shopify.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,19 +7,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ShopifyAssignedLocation {
+public class ShopifyDestination {
 
+	private String id;
 	private String address1;
 	private String address2;
 	private String city;
-	@XmlElement(name = "country_code")
-	private String countryCode;
-	@XmlElement(name = "location_id")
-	private String locationId;
-	private String name;
+	private String company;
+	private String country;
+	private String email;
+	@XmlElement(name = "first_name")
+	private String firstName;
+	@XmlElement(name = "last_name")
+	private String lastName;
 	private String phone;
 	private String province;
 	private String zip;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getAddress1() {
 		return address1;
@@ -45,28 +56,44 @@ public class ShopifyAssignedLocation {
 		this.city = city;
 	}
 
-	public String getCountryCode() {
-		return countryCode;
+	public String getCompany() {
+		return company;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setCompany(String company) {
+		this.company = company;
 	}
 
-	public String getLocationId() {
-		return locationId;
+	public String getCountry() {
+		return country;
 	}
 
-	public void setLocationId(String locationId) {
-		this.locationId = locationId;
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
-	public String getName() {
-		return name;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getPhone() {
