@@ -63,6 +63,7 @@ import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentOrder;
 import com.shopify.model.ShopifyFulfillmentOrderMoveRequestRoot;
+import com.shopify.model.ShopifyFulfillmentOrderMoveResponseRoot;
 import com.shopify.model.ShopifyFulfillmentOrdersRoot;
 import com.shopify.model.ShopifyFulfillmentPayloadRoot;
 import com.shopify.model.ShopifyFulfillmentRoot;
@@ -1239,15 +1240,16 @@ public class ShopifySdk {
 		return fulfillmentOrders;
 	}
 
-	public ShopifyFulfillment moveFulfillmentOrder(final String newLocationId,
+	public ShopifyFulfillmentOrder moveFulfillmentOrder(final String newLocationId,
 			final ShopifyFulfillmentOrder shopifyFulfillmentOrder) throws ShopifyIncompatibleApiException {
 		final ShopifyFulfillmentOrderMoveRequestRoot payload = LegacyToFulfillmentOrderMapping
 				.toShopifyMoveFulfillmentOrder(newLocationId, shopifyFulfillmentOrder);
 
 		final Response response = post(
 				getWebTarget().path(FULFILLMENT_ORDERS).path(shopifyFulfillmentOrder.getId()).path(MOVE), payload);
-		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
-		return shopifyFulfillmentRootResponse.getFulfillment();
+		final ShopifyFulfillmentOrderMoveResponseRoot shopifyFulfillmentRootResponse = response
+				.readEntity(ShopifyFulfillmentOrderMoveResponseRoot.class);
+		return shopifyFulfillmentRootResponse.getOriginalFulfillmentOrder();
 	}
 
 	private ShopifyFulfillment createFulfillmentWithLegacyApi(
