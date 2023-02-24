@@ -57,8 +57,9 @@ public class LegacyToFulfillmentOrderMapping {
 			return root;
 		} catch (final Exception e) {
 			LOGGER.error(
-					"There was an error parsing fulfillmentOrder into a ShopifyFulfillmentOrder moveRequest payload");
-			return null;
+					"There was an error parsing fulfillmentOrder into a ShopifyFulfillmentOrder moveRequest payload",
+					e);
+			throw e;
 		}
 	}
 
@@ -126,8 +127,8 @@ public class LegacyToFulfillmentOrderMapping {
 			root.setFulfillment(payload);
 			return root;
 		} catch (final Exception e) {
-			LOGGER.error("There was an error parsing fulfillmentOrder into a ShopifyFulfillment create payload");
-			return null;
+			LOGGER.error("There was an error parsing fulfillmentOrder into a ShopifyFulfillment create payload", e);
+			throw e;
 		}
 	}
 
@@ -162,8 +163,8 @@ public class LegacyToFulfillmentOrderMapping {
 			root.setFulfillment(payload);
 			return root;
 		} catch (final Exception e) {
-			LOGGER.error("There was an error parsing fulfillmentOrder into a ShopifyFulfillment update payload");
-			return null;
+			LOGGER.error("There was an error parsing fulfillmentOrder into a ShopifyFulfillment update payload", e);
+			throw e;
 		}
 	}
 
