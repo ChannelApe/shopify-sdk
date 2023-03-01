@@ -38,7 +38,7 @@ import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.exceptions.ShopifyIncompatibleApiException;
-import com.shopify.exceptions.ShopifyUnsupportedActionException;
+import com.shopify.exceptions.ShopifyEmptyLineItemsException;
 import com.shopify.mappers.LegacyToFulfillmentOrderMapping;
 import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
@@ -736,18 +736,14 @@ public class ShopifySdk {
 	 * @param fulfillmentOrders
 	 *            the fulfillment orders list to create the new fulfillment
 	 * @return the newly created fulfillment
-	 * @throws ShopifyUnsupportedActionException
+	 * @throws ShopifyEmptyLineItemsException
 	 *             in case we have a fulfillment associated with a
 	 *             fulfillmentOrder without supported action
 	 */
 	public ShopifyFulfillment createFulfillment(
 			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest,
-			List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyUnsupportedActionException {
-		try {
-			return this.createFulfillmentWithFulfillmentOrderApi(shopifyFulfillmentCreationRequest, fulfillmentOrders);
-		} catch (Exception e) {
-			throw e;
-		}
+			List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyEmptyLineItemsException {
+		return this.createFulfillmentWithFulfillmentOrderApi(shopifyFulfillmentCreationRequest, fulfillmentOrders);
 	}
 
 	/**
@@ -1273,7 +1269,7 @@ public class ShopifySdk {
 
 	private ShopifyFulfillment createFulfillmentWithFulfillmentOrderApi(
 			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest,
-			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyUnsupportedActionException {
+			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyEmptyLineItemsException {
 		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
 				.toShopifyFulfillmentPayloadRoot(shopifyFulfillmentCreationRequest.getRequest(), fulfillmentOrders);
 
