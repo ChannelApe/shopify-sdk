@@ -42,6 +42,7 @@ import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
+import com.shopify.exceptions.ShopifyEmptyLineItemsException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
@@ -264,7 +265,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeShopifyFulfillmenmtCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithLegacyApi()
+	public void givenSomeShopifyFulfillmentCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithLegacyApi()
 			throws JsonProcessingException, ConnectException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
@@ -303,28 +304,118 @@ public class ShopifySdkTest {
 
 	}
 
-	@Test
-	public void givenSomeShopifyFulfillmenmtCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithFulfillmentOrderApi()
-			throws JsonProcessingException, ConnectException {
+	@Test(expected = ShopifyEmptyLineItemsException.class)
+	public void givenSomeShopifyFulfillmentOrderWithNoCreateFulfillmentSupportedActionWhenCreatingShopifyFulfillmentThenGetAnUnsupportedActionException()
+			throws JsonProcessingException, ConnectException, ShopifyEmptyLineItemsException {
+		final String lineItemId = "987";
+		final String fulfillmentOrderId = "1234";
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
-		lineItem.setId("some_line_item_id");
+		lineItem.setId(lineItemId);
 		lineItem.setSku("some_sku");
 		lineItem.setQuantity(5L);
-
-		final String fulfillmentOrderId = "1234";
 
 		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
 		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
 		fulfillmentOrderLineItem.setQuantity(1);
-		fulfillmentOrderLineItem.setLineItemId("fulfillmentOrderId");
+		fulfillmentOrderLineItem.setLineItemId(lineItemId);
 		fulfillmentOrderLineItem.setFulfillableQuantity(1);
 		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
 		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
 
+		final List<String> supportedActions = new LinkedList<>();
+		supportedActions.add("move");
+
 		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
 		fulfillmentOrder.setId(fulfillmentOrderId);
 		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+		fulfillmentOrder.setSupportedActions(supportedActions);
+		fulfillmentOrder.setAssignedLocationId("5678");
+		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
+		fulfillmentOrders.add(fulfillmentOrder);
+
+		final ShopifyFulfillment currentFulfillment = buildShopifyFulfillment(lineItem);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		shopifyFulfillmentRoot.setFulfillment(currentFulfillment);
+
+		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
+				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
+
+		shopifySdk.createFulfillment(request, fulfillmentOrders);
+	}
+
+	@Test(expected = ShopifyEmptyLineItemsException.class)
+	public void givenSomeShopifyFulfillmentOrderAndFulfillmentWithNoMatchingLineItemsWhenCreatingShopifyFulfillmentThenGetAnUnsupportedActionException()
+			throws JsonProcessingException, ConnectException, ShopifyEmptyLineItemsException {
+		final String lineItemId = "987";
+		final String fulfillmentOrderId = "1234";
+
+		final ShopifyLineItem lineItem = new ShopifyLineItem();
+		lineItem.setId("lineItemId");
+		lineItem.setSku("some_sku");
+		lineItem.setQuantity(5L);
+
+		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
+		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
+		fulfillmentOrderLineItem.setQuantity(1);
+		fulfillmentOrderLineItem.setLineItemId(lineItemId);
+		fulfillmentOrderLineItem.setFulfillableQuantity(1);
+		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
+		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
+
+		final List<String> supportedActions = new LinkedList<>();
+		supportedActions.add("move");
+		supportedActions.add("create_fulfillment");
+
+		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
+		fulfillmentOrder.setId(fulfillmentOrderId);
+		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+		fulfillmentOrder.setSupportedActions(supportedActions);
+		fulfillmentOrder.setAssignedLocationId("5678");
+		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
+		fulfillmentOrders.add(fulfillmentOrder);
+
+		final ShopifyFulfillment currentFulfillment = buildShopifyFulfillment(lineItem);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		shopifyFulfillmentRoot.setFulfillment(currentFulfillment);
+
+		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withLineItems(Arrays.asList(lineItem)).withLocationId("1")
+				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
+
+		shopifySdk.createFulfillment(request, fulfillmentOrders);
+	}
+
+	@Test
+	public void givenSomeShopifyFulfillmentCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithFulfillmentOrderApi()
+			throws JsonProcessingException, ConnectException, ShopifyEmptyLineItemsException {
+		final String lineItemId = "987";
+		final String fulfillmentOrderId = "1234";
+
+		final ShopifyLineItem lineItem = new ShopifyLineItem();
+		lineItem.setId(lineItemId);
+		lineItem.setSku("some_sku");
+		lineItem.setQuantity(5L);
+
+		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
+		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
+		fulfillmentOrderLineItem.setQuantity(1);
+		fulfillmentOrderLineItem.setLineItemId(lineItemId);
+		fulfillmentOrderLineItem.setFulfillableQuantity(1);
+		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
+		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
+
+		final List<String> supportedActions = new LinkedList<>();
+		supportedActions.add("move");
+		supportedActions.add("create_fulfillment");
+
+		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
+		fulfillmentOrder.setId(fulfillmentOrderId);
+		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+		fulfillmentOrder.setSupportedActions(supportedActions);
 		fulfillmentOrder.setAssignedLocationId("5678");
 		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
 		fulfillmentOrders.add(fulfillmentOrder);
@@ -357,31 +448,35 @@ public class ShopifySdkTest {
 		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.createFulfillment(request, fulfillmentOrders);
 
 		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
-
 	}
 
 	@Test
-	public void givenSomeShopifyFulfillmenmtCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithFulfillmentOrderApiAndFulfillmentToADifferentShopLocation()
-			throws JsonProcessingException, ConnectException {
+	public void givenSomeShopifyFulfillmentCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithFulfillmentOrderApiAndFulfillmentToADifferentShopLocation()
+			throws JsonProcessingException, ConnectException, ShopifyEmptyLineItemsException {
+		final String lineItemId = "987";
+		final String fulfillmentOrderId = "1234";
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
-		lineItem.setId("some_line_item_id");
+		lineItem.setId(lineItemId);
 		lineItem.setSku("some_sku");
 		lineItem.setQuantity(5L);
-
-		final String fulfillmentOrderId = "1234";
 
 		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
 		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
 		fulfillmentOrderLineItem.setQuantity(1);
-		fulfillmentOrderLineItem.setLineItemId(fulfillmentOrderId);
+		fulfillmentOrderLineItem.setLineItemId(lineItemId);
 		fulfillmentOrderLineItem.setFulfillableQuantity(1);
 		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
 		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
 
+		final List<String> supportedActions = new LinkedList<>();
+		supportedActions.add("move");
+		supportedActions.add("create_fulfillment");
+
 		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
 		fulfillmentOrder.setId(fulfillmentOrderId);
 		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+		fulfillmentOrder.setSupportedActions(supportedActions);
 		fulfillmentOrder.setAssignedLocationId("5678");
 		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
 		fulfillmentOrders.add(fulfillmentOrder);
@@ -449,11 +544,10 @@ public class ShopifySdkTest {
 				.withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
 		shopifySdk.createFulfillment(request);
-
 	}
 
 	@Test
-	public void givenSomeShopifyFulfillmenmtUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillmentWithLegacyApi()
+	public void givenSomeShopifyFulfillmentUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillmentWithLegacyApi()
 			throws JsonProcessingException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
@@ -490,7 +584,7 @@ public class ShopifySdkTest {
 	}
 
 	@Test
-	public void givenSomeShopifyFulfillmenmtUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillmentWithFulfillmentOrderApi()
+	public void givenSomeShopifyFulfillmentUpdateRequestWhenUpdatingShopifyFulfillmentThenUpdateAndReturnFulfillmentWithFulfillmentOrderApi()
 			throws JsonProcessingException {
 
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
@@ -520,8 +614,7 @@ public class ShopifySdkTest {
 				.withTrackingNumber("12341234").withNotifyCustomer(true).withLineItems(Arrays.asList(lineItem))
 				.withLocationId("1").withTrackingUrls(Arrays.asList("tracking_url1", "tracking_url2")).build();
 
-		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk
-				.updateFulfillmentTrackingInfo(request);
+		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.updateFulfillmentTrackingInfo(request);
 		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
 	}
 
