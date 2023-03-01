@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shopify.ShopifySdk;
+import com.shopify.exceptions.ShopifyUnsupportedActionException;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentOrder;
 import com.shopify.model.ShopifyFulfillmentOrder.SupportedActions;
@@ -80,7 +81,7 @@ public class LegacyToFulfillmentOrderMapping {
 	 * @return an ShopifyFulfillmentPayloadRoot instance to be sent to shopify
 	 */
 	public static ShopifyFulfillmentPayloadRoot toShopifyFulfillmentPayloadRoot(final ShopifyFulfillment fulfillment,
-			final List<ShopifyFulfillmentOrder> fulfillmentOrders) {
+			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyUnsupportedActionException {
 		try {
 			final ShopifyTrackingInfo trackingInfo = new ShopifyTrackingInfo();
 			final ShopifyFulfillmentPayload payload = new ShopifyFulfillmentPayload();
@@ -122,6 +123,8 @@ public class LegacyToFulfillmentOrderMapping {
 			payload.setTrackingInfo(trackingInfo);
 			payload.setNotifyCustomer(fulfillment.isNotifyCustomer());
 			payload.setLineItemsByFulfillmentOrder(lineItemsByFulfillmentOrder);
+			if (lineItemsByFulfillmentOrder.size() < 1)
+				throw new ShopifyUnsupportedActionException(SupportedActions.CREATE_FULFILLMENT);
 
 			ShopifyFulfillmentPayloadRoot root = new ShopifyFulfillmentPayloadRoot();
 			root.setFulfillment(payload);
