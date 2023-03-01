@@ -413,4 +413,15 @@ public class ShopifyFulfillmentOrder {
 		this.updatedAt = updatedAt;
 	}
 
+	public boolean hasSupportedAction(final SupportedActions action) {
+		final String stringAction = action.toString().toLowerCase();
+		for (final String supportedAction : this.getSupportedActions()) {
+			if (supportedAction.toLowerCase().equals(stringAction)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }

@@ -79,6 +79,7 @@ public class LegacyToFulfillmentOrderMapping {
 	 *            a list of fulfillment orders that are contained within the
 	 *            order
 	 * @return an ShopifyFulfillmentPayloadRoot instance to be sent to shopify
+	 * @throws ShopifyUnsupportedActionException
 	 */
 	public static ShopifyFulfillmentPayloadRoot toShopifyFulfillmentPayloadRoot(final ShopifyFulfillment fulfillment,
 			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyUnsupportedActionException {
@@ -100,7 +101,7 @@ public class LegacyToFulfillmentOrderMapping {
 				// is added the old one gets it's supported actions emptied, so
 				// we need to make sure the current fulfillmentOrder supportes
 				// fulfillment creation under it
-				if (fulfillmentOrder.getSupportedActions().contains(SupportedActions.CREATE_FULFILLMENT.toString())) {
+				if (fulfillmentOrder.hasSupportedAction(SupportedActions.CREATE_FULFILLMENT)) {
 					ShopifyLineItemsByFulfillmentOrder lineItemsByFulfillment = new ShopifyLineItemsByFulfillmentOrder();
 					lineItemsByFulfillment.setFulfillmentOrderId(fulfillmentOrder.getId());
 					for (final ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem : fulfillmentOrder
@@ -119,12 +120,12 @@ public class LegacyToFulfillmentOrderMapping {
 					}
 				}
 			}
+			if (lineItemsByFulfillmentOrder.size() < 1)
+				throw new ShopifyUnsupportedActionException(SupportedActions.CREATE_FULFILLMENT);
 
 			payload.setTrackingInfo(trackingInfo);
 			payload.setNotifyCustomer(fulfillment.isNotifyCustomer());
 			payload.setLineItemsByFulfillmentOrder(lineItemsByFulfillmentOrder);
-			if (lineItemsByFulfillmentOrder.size() < 1)
-				throw new ShopifyUnsupportedActionException(SupportedActions.CREATE_FULFILLMENT);
 
 			ShopifyFulfillmentPayloadRoot root = new ShopifyFulfillmentPayloadRoot();
 			root.setFulfillment(payload);
