@@ -17,12 +17,14 @@ public class ResponseEntityToStringMapper {
 	}
 
 	/**
-	 * JAXRS Jersey Client implementation closes stream buffers when reading entity
-	 * by string. To combat this and be able to read entities via a string more than
-	 * once, this deals with the input streams involved and resets where necessary.
+	 * JAXRS Jersey Client implementation closes stream buffers when reading
+	 * entity by string. To combat this and be able to read entities via a
+	 * string more than once, this deals with the input streams involved and
+	 * resets where necessary.
 	 *
 	 * @param response
-	 * @return
+	 *            the response gotten from a request
+	 * @return the response as a string value
 	 */
 	public static String map(final Response response) {
 

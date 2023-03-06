@@ -37,6 +37,9 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.exceptions.ShopifyIncompatibleApiException;
+import com.shopify.exceptions.ShopifyEmptyLineItemsException;
+import com.shopify.mappers.LegacyToFulfillmentOrderMapping;
 import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
@@ -59,6 +62,11 @@ import com.shopify.model.ShopifyCustomerUpdateRoot;
 import com.shopify.model.ShopifyCustomersRoot;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
+import com.shopify.model.ShopifyFulfillmentOrder;
+import com.shopify.model.ShopifyFulfillmentOrderMoveRequestRoot;
+import com.shopify.model.ShopifyFulfillmentOrderMoveResponseRoot;
+import com.shopify.model.ShopifyFulfillmentOrdersRoot;
+import com.shopify.model.ShopifyFulfillmentPayloadRoot;
 import com.shopify.model.ShopifyFulfillmentRoot;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
 import com.shopify.model.ShopifyGetCustomersRequest;
@@ -96,6 +104,7 @@ import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyShop;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyTransactionsRoot;
+import com.shopify.model.ShopifyUpdateFulfillmentPayloadRoot;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
@@ -129,12 +138,15 @@ public class ShopifySdk {
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
 	static final String ORDERS = "orders";
 	static final String FULFILLMENTS = "fulfillments";
+	static final String FULFILLMENT_ORDERS = "fulfillment_orders";
 	static final String ACTIVATE = "activate";
 	static final String IMAGES = "images";
 	static final String SHOP = "shop";
 	static final String COUNT = "count";
 	static final String CLOSE = "close";
 	static final String CANCEL = "cancel";
+	static final String MOVE = "move";
+	static final String UPDATE_TRACKING = "update_tracking";
 	static final String METAFIELDS = "metafields";
 	static final String RISKS = "risks";
 	static final String LOCATIONS = "locations";
@@ -199,28 +211,34 @@ public class ShopifySdk {
 	public static interface OptionalsStep {
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
-		 * time to wait before retrying a failed request. Value must also be less than
-		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Minimum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be less than
+		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 1 second.
 		 *
 		 * @param duration
+		 *            of the minimum retry delay
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
-		 * time to wait before retrying a failed request. Value must also be more than
-		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Maximum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be more than
+		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 5 seconds.
 		 *
 		 * @param duration
+		 *            of the maximum retry delay
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMaximumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
@@ -229,8 +247,10 @@ public class ShopifySdk {
 		 * Default value is: 3 minutes.
 		 *
 		 * @param duration
+		 *            of the request timeout
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMaximumRequestRetryTimeout(int duration, TimeUnit timeUnit);
 
@@ -239,8 +259,10 @@ public class ShopifySdk {
 		 * Default value is: 1 minute.
 		 *
 		 * @param duration
+		 *            of the connection timeout
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withConnectionTimeout(int duration, TimeUnit timeUnit);
 
@@ -249,20 +271,23 @@ public class ShopifySdk {
 		 * Default value is: 15 seconds.
 		 *
 		 * @param duration
+		 *            of the duration to be considered
 		 * @param timeUnit
-		 * @return {@link OptionalsStep}
+		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withReadTimeout(int duration, TimeUnit timeUnit);
 
 		/**
-		 * String representation of the version you want to use. If not populated, this
-		 * will use shopify oldest stable version. Although this is not recommended so
-		 * you can target a set of shopify features. Ex: '2020-10' '2020-07' '2020-04'.
-		 * If you are specifying the API URL ensure you leave off the version if you are
-		 * using this.
+		 * String representation of the version you want to use. If not
+		 * populated, this will use shopify oldest stable version. Although this
+		 * is not recommended so you can target a set of shopify features. Ex:
+		 * '2020-10' '2020-07' '2020-04'. If you are specifying the API URL
+		 * ensure you leave off the version if you are using this.
 		 *
 		 * @param apiVersion
-		 * @return
+		 *            current apiVersion value
+		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withApiVersion(final String apiVersion);
 
@@ -688,24 +713,75 @@ public class ShopifySdk {
 		return getOrders(response);
 	}
 
+	/**
+	 * Creates a fulfillment in shopify
+	 * 
+	 * @deprecated starting in March 01, 2023 this method will be obsolete
+	 * @param shopifyFulfillmentCreationRequest
+	 *            the fulfillment creaton request
+	 * @return the newly created fulfillment
+	 */
+	@Deprecated
 	public ShopifyFulfillment createFulfillment(
 			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest) {
-		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
-		final ShopifyFulfillment shopifyFulfillment = shopifyFulfillmentCreationRequest.getRequest();
-
-		shopifyFulfillmentRoot.setFulfillment(shopifyFulfillment);
-		final Response response = post(buildOrdersEndpoint().path(shopifyFulfillment.getOrderId()).path(FULFILLMENTS),
-				shopifyFulfillmentRoot);
-		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
-		return shopifyFulfillmentRootResponse.getFulfillment();
+		return this.createFulfillmentWithLegacyApi(shopifyFulfillmentCreationRequest);
 	}
 
+	/**
+	 * Creates a fulfillment in shopify starting with api 2023-04
+	 * 
+	 * @param shopifyFulfillmentCreationRequest
+	 *            the fulfillment creaton request
+	 * 
+	 * @param fulfillmentOrders
+	 *            the fulfillment orders list to create the new fulfillment
+	 * @return the newly created fulfillment
+	 * @throws ShopifyEmptyLineItemsException
+	 *             in case we have a fulfillment associated with a
+	 *             fulfillmentOrder without supported action
+	 */
+	public ShopifyFulfillment createFulfillment(
+			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest,
+			List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyEmptyLineItemsException {
+		return this.createFulfillmentWithFulfillmentOrderApi(shopifyFulfillmentCreationRequest, fulfillmentOrders);
+	}
+
+	/**
+	 * Updates a fulfillment in shopify
+	 * 
+	 * @deprecated starting in March 01, 2023 this method will be obsolete
+	 * @param shopifyFulfillmentUpdateRequest
+	 *            the fulfillment update request
+	 * @return the newly updated fulfillment
+	 */
+	@Deprecated
 	public ShopifyFulfillment updateFulfillment(final ShopifyFulfillmentUpdateRequest shopifyFulfillmentUpdateRequest) {
 		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
 		final ShopifyFulfillment shopifyFulfillment = shopifyFulfillmentUpdateRequest.getRequest();
 		shopifyFulfillmentRoot.setFulfillment(shopifyFulfillment);
 		final Response response = put(buildOrdersEndpoint().path(shopifyFulfillment.getOrderId()).path(FULFILLMENTS)
 				.path(shopifyFulfillment.getId()), shopifyFulfillmentRoot);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
+		return shopifyFulfillmentRootResponse.getFulfillment();
+	}
+
+	/**
+	 * Based on the api starting from 2023-04 it only updates tracking
+	 * information
+	 * 
+	 * @param shopifyFulfillmentUpdateRequest
+	 *            the information needed to update the fulfillment's tracking
+	 *            info
+	 * @return the updated version of the shopify fulfillment
+	 */
+	public ShopifyFulfillment updateFulfillmentTrackingInfo(
+			final ShopifyFulfillmentUpdateRequest shopifyFulfillmentUpdateRequest) {
+		final ShopifyFulfillment shopifyFulfillment = shopifyFulfillmentUpdateRequest.getRequest();
+		final ShopifyUpdateFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
+				.toUpdateShopifyFulfillmentPayloadRoot(shopifyFulfillment);
+
+		final Response response = post(
+				getWebTarget().path(FULFILLMENTS).path(shopifyFulfillment.getId()).path(UPDATE_TRACKING), payload);
 		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
 		return shopifyFulfillmentRootResponse.getFulfillment();
 	}
@@ -996,7 +1072,7 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
 				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
@@ -1155,5 +1231,51 @@ public class ShopifySdk {
 
 	private WebTarget buildOrdersEndpoint() {
 		return getWebTarget().path(ORDERS);
+	}
+
+	public List<ShopifyFulfillmentOrder> getFulfillmentOrdersFromOrder(final String shopifyOrderId) {
+		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
+		final Response response = get(buildOrdersEndpoint().path(shopifyOrderId).path(FULFILLMENT_ORDERS));
+		final ShopifyFulfillmentOrdersRoot shopifyFulfillmentOrdersRoot = response
+				.readEntity(ShopifyFulfillmentOrdersRoot.class);
+
+		fulfillmentOrders.addAll(shopifyFulfillmentOrdersRoot.getFulfillmentOrders());
+
+		return fulfillmentOrders;
+	}
+
+	public ShopifyFulfillmentOrder moveFulfillmentOrder(final String newLocationId,
+			final ShopifyFulfillmentOrder shopifyFulfillmentOrder) throws ShopifyIncompatibleApiException {
+		final ShopifyFulfillmentOrderMoveRequestRoot payload = LegacyToFulfillmentOrderMapping
+				.toShopifyMoveFulfillmentOrder(newLocationId, shopifyFulfillmentOrder);
+
+		final Response response = post(
+				getWebTarget().path(FULFILLMENT_ORDERS).path(shopifyFulfillmentOrder.getId()).path(MOVE), payload);
+		final ShopifyFulfillmentOrderMoveResponseRoot shopifyFulfillmentRootResponse = response
+				.readEntity(ShopifyFulfillmentOrderMoveResponseRoot.class);
+		return shopifyFulfillmentRootResponse.getOriginalFulfillmentOrder();
+	}
+
+	private ShopifyFulfillment createFulfillmentWithLegacyApi(
+			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest) {
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		final ShopifyFulfillment shopifyFulfillment = shopifyFulfillmentCreationRequest.getRequest();
+		shopifyFulfillmentRoot.setFulfillment(shopifyFulfillment);
+		final Response response = post(buildOrdersEndpoint().path(shopifyFulfillment.getOrderId()).path(FULFILLMENTS),
+				shopifyFulfillmentRoot);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
+		return shopifyFulfillmentRootResponse.getFulfillment();
+	}
+
+	private ShopifyFulfillment createFulfillmentWithFulfillmentOrderApi(
+			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest,
+			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyEmptyLineItemsException {
+		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
+				.toShopifyFulfillmentPayloadRoot(shopifyFulfillmentCreationRequest.getRequest(), fulfillmentOrders);
+
+		final Response response = post(getWebTarget().path(FULFILLMENTS), payload);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRootResponse = response.readEntity(ShopifyFulfillmentRoot.class);
+
+		return shopifyFulfillmentRootResponse.getFulfillment();
 	}
 }
