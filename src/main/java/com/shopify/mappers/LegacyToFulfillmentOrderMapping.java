@@ -83,57 +83,51 @@ public class LegacyToFulfillmentOrderMapping {
 	 */
 	public static ShopifyFulfillmentPayloadRoot toShopifyFulfillmentPayloadRoot(final ShopifyFulfillment fulfillment,
 			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyEmptyLineItemsException {
-		try {
-			final ShopifyTrackingInfo trackingInfo = new ShopifyTrackingInfo();
-			final ShopifyFulfillmentPayload payload = new ShopifyFulfillmentPayload();
-			final List<ShopifyLineItemsByFulfillmentOrder> lineItemsByFulfillmentOrder = new LinkedList<>();
+		final ShopifyTrackingInfo trackingInfo = new ShopifyTrackingInfo();
+		final ShopifyFulfillmentPayload payload = new ShopifyFulfillmentPayload();
+		final List<ShopifyLineItemsByFulfillmentOrder> lineItemsByFulfillmentOrder = new LinkedList<>();
 
-			trackingInfo.setUrl(fulfillment.getTrackingUrl());
-			trackingInfo.setNumber(fulfillment.getTrackingNumber());
-			trackingInfo.setCompany(fulfillment.getTrackingCompany());
+		trackingInfo.setUrl(fulfillment.getTrackingUrl());
+		trackingInfo.setNumber(fulfillment.getTrackingNumber());
+		trackingInfo.setCompany(fulfillment.getTrackingCompany());
 
-			// here we need to iterate through all fulfillmentOrder line items
-			// to determine which fulfillment order line items are going to be
-			// referenced inside the payload's line_items_by_fulfillment_order
-			// section
-			for (final ShopifyFulfillmentOrder fulfillmentOrder : fulfillmentOrders) {
-				// if a shopify fulfillment is cancelled a new fulfillment order
-				// is added the old one gets it's supported actions emptied, so
-				// we need to make sure the current fulfillmentOrder supportes
-				// fulfillment creation under it
-				if (fulfillmentOrder.hasSupportedAction(SupportedActions.CREATE_FULFILLMENT)) {
-					ShopifyLineItemsByFulfillmentOrder lineItemsByFulfillment = new ShopifyLineItemsByFulfillmentOrder();
-					lineItemsByFulfillment.setFulfillmentOrderId(fulfillmentOrder.getId());
-					for (final ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem : fulfillmentOrder
-							.getLineItems()) {
-						for (final ShopifyLineItem fulfillmentLineItem : fulfillment.getLineItems()) {
-							if (fulfillmentOrderLineItem.getLineItemId().equals(fulfillmentLineItem.getId())) {
-								ShopifyFulfillmentOrderPayloadLineItem payloadLineItem = new ShopifyFulfillmentOrderPayloadLineItem(
-										fulfillmentOrderLineItem.getId(), fulfillmentLineItem.getQuantity());
-								lineItemsByFulfillment.getFulfillmentOrderLineItems().add(payloadLineItem);
-							}
+		// here we need to iterate through all fulfillmentOrder line items
+		// to determine which fulfillment order line items are going to be
+		// referenced inside the payload's line_items_by_fulfillment_order
+		// section
+		for (final ShopifyFulfillmentOrder fulfillmentOrder : fulfillmentOrders) {
+			// if a shopify fulfillment is cancelled a new fulfillment order
+			// is added the old one gets it's supported actions emptied, so
+			// we need to make sure the current fulfillmentOrder supportes
+			// fulfillment creation under it
+			if (fulfillmentOrder.hasSupportedAction(SupportedActions.CREATE_FULFILLMENT)) {
+				ShopifyLineItemsByFulfillmentOrder lineItemsByFulfillment = new ShopifyLineItemsByFulfillmentOrder();
+				lineItemsByFulfillment.setFulfillmentOrderId(fulfillmentOrder.getId());
+				for (final ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem : fulfillmentOrder.getLineItems()) {
+					for (final ShopifyLineItem fulfillmentLineItem : fulfillment.getLineItems()) {
+						if (fulfillmentOrderLineItem.getLineItemId().equals(fulfillmentLineItem.getId())) {
+							ShopifyFulfillmentOrderPayloadLineItem payloadLineItem = new ShopifyFulfillmentOrderPayloadLineItem(
+									fulfillmentOrderLineItem.getId(), fulfillmentLineItem.getQuantity());
+							lineItemsByFulfillment.getFulfillmentOrderLineItems().add(payloadLineItem);
 						}
 					}
+				}
 
-					if (lineItemsByFulfillment.getFulfillmentOrderLineItems().size() > 0) {
-						lineItemsByFulfillmentOrder.add(lineItemsByFulfillment);
-					}
+				if (lineItemsByFulfillment.getFulfillmentOrderLineItems().size() > 0) {
+					lineItemsByFulfillmentOrder.add(lineItemsByFulfillment);
 				}
 			}
-			if (lineItemsByFulfillmentOrder.size() < 1)
-				throw new ShopifyEmptyLineItemsException();
-
-			payload.setTrackingInfo(trackingInfo);
-			payload.setNotifyCustomer(fulfillment.isNotifyCustomer());
-			payload.setLineItemsByFulfillmentOrder(lineItemsByFulfillmentOrder);
-
-			ShopifyFulfillmentPayloadRoot root = new ShopifyFulfillmentPayloadRoot();
-			root.setFulfillment(payload);
-			return root;
-		} catch (final Exception e) {
-			LOGGER.error("There was an error parsing fulfillmentOrder into a ShopifyFulfillment create payload", e);
-			throw e;
 		}
+		if (lineItemsByFulfillmentOrder.size() < 1)
+			throw new ShopifyEmptyLineItemsException();
+
+		payload.setTrackingInfo(trackingInfo);
+		payload.setNotifyCustomer(fulfillment.isNotifyCustomer());
+		payload.setLineItemsByFulfillmentOrder(lineItemsByFulfillmentOrder);
+
+		ShopifyFulfillmentPayloadRoot root = new ShopifyFulfillmentPayloadRoot();
+		root.setFulfillment(payload);
+		return root;
 	}
 
 	/**
