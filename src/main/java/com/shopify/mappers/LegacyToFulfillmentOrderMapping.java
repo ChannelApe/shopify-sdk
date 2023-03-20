@@ -70,6 +70,14 @@ public class LegacyToFulfillmentOrderMapping {
 	 * have here</a>, the resulting payload will be sent to shopify via the
 	 * active ShopifySdk instance
 	 * 
+	 * we need to iterate through all fulfillmentOrder line items to determine
+	 * which fulfillment order line items are going to be referenced inside the
+	 * payload's line_items_by_fulfillment_order section
+	 * 
+	 * if a shopify fulfillment is cancelled a new fulfillment order is added
+	 * the old one gets it's supported actions emptied, so we need to make sure
+	 * the current fulfillmentOrder supportes fulfillment creation under it
+	 * 
 	 * @see ShopifySdk
 	 * @see ShopifyFulfillmentPayloadRoot
 	 * 
