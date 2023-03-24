@@ -28,6 +28,29 @@ public class LegacyToFulfillmentOrderMapping {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LegacyToFulfillmentOrderMapping.class);
 
 	/**
+	 * creates the fulfillment order's tracking info based on a fulfillment
+	 * shopify fulfillment order based creation does not support a list of
+	 * tracking urls, so we're getting the first one of CA's list if available.
+	 * Otherwise we just grab the single tracking url string
+	 * 
+	 * @param fulfillment
+	 *            the fulfillment to be created by the fulfillment order api
+	 * @return the payload's tracking info
+	 */
+	private static ShopifyTrackingInfo getFulfillmentTrackingInfo(final ShopifyFulfillment fulfillment) {
+		final ShopifyTrackingInfo trackingInfo = new ShopifyTrackingInfo();
+		if (fulfillment.getTrackingUrls().size() > 0) {
+			trackingInfo.setUrl(fulfillment.getTrackingUrls().get(0));
+		} else {
+			trackingInfo.setUrl(fulfillment.getTrackingUrl());
+		}
+		trackingInfo.setNumber(fulfillment.getTrackingNumber());
+		trackingInfo.setCompany(fulfillment.getTrackingCompany());
+
+		return trackingInfo;
+	}
+
+	/**
 	 * the idea here is to create a payload similar to what <a href=
 	 * "https://shopify.dev/docs/api/admin-rest/2023-04/resources/fulfillmentorder#post-fulfillment-orders-fulfillment-order-id-move">we
 	 * have here</a>, the resulting payload will be sent to shopify via the
@@ -91,13 +114,9 @@ public class LegacyToFulfillmentOrderMapping {
 	 */
 	public static ShopifyFulfillmentPayloadRoot toShopifyFulfillmentPayloadRoot(final ShopifyFulfillment fulfillment,
 			final List<ShopifyFulfillmentOrder> fulfillmentOrders) throws ShopifyEmptyLineItemsException {
-		final ShopifyTrackingInfo trackingInfo = new ShopifyTrackingInfo();
+		final ShopifyTrackingInfo trackingInfo = getFulfillmentTrackingInfo(fulfillment);
 		final ShopifyFulfillmentPayload payload = new ShopifyFulfillmentPayload();
 		final List<ShopifyLineItemsByFulfillmentOrder> lineItemsByFulfillmentOrder = new LinkedList<>();
-
-		trackingInfo.setUrl(fulfillment.getTrackingUrl());
-		trackingInfo.setNumber(fulfillment.getTrackingNumber());
-		trackingInfo.setCompany(fulfillment.getTrackingCompany());
 
 		// here we need to iterate through all fulfillmentOrder line items
 		// to determine which fulfillment order line items are going to be
@@ -155,12 +174,8 @@ public class LegacyToFulfillmentOrderMapping {
 	public static ShopifyUpdateFulfillmentPayloadRoot toUpdateShopifyFulfillmentPayloadRoot(
 			final ShopifyFulfillment fulfillment) {
 		try {
-			final ShopifyTrackingInfo trackingInfo = new ShopifyTrackingInfo();
+			final ShopifyTrackingInfo trackingInfo = getFulfillmentTrackingInfo(fulfillment);
 			final ShopifyUpdateFulfillmentPayload payload = new ShopifyUpdateFulfillmentPayload();
-
-			trackingInfo.setUrl(fulfillment.getTrackingUrl());
-			trackingInfo.setNumber(fulfillment.getTrackingNumber());
-			trackingInfo.setCompany(fulfillment.getTrackingCompany());
 
 			payload.setTrackingInfo(trackingInfo);
 			payload.setNotifyCustomer(fulfillment.isNotifyCustomer());
