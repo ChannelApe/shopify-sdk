@@ -44,6 +44,7 @@ import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.shopify.exceptions.ShopifyClientException;
 import com.shopify.exceptions.ShopifyEmptyLineItemsException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
+import com.shopify.mappers.LegacyToFulfillmentOrderMapping;
 import com.shopify.mappers.ShopifySdkObjectMapper;
 import com.shopify.model.Count;
 import com.shopify.model.Image;
@@ -69,6 +70,7 @@ import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
 import com.shopify.model.ShopifyFulfillmentOrder;
 import com.shopify.model.ShopifyFulfillmentOrderLineItem;
+import com.shopify.model.ShopifyFulfillmentPayloadRoot;
 import com.shopify.model.ShopifyFulfillmentRoot;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
 import com.shopify.model.ShopifyGetCustomersRequest;
@@ -447,6 +449,77 @@ public class ShopifySdkTest {
 
 		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.createFulfillment(request, fulfillmentOrders);
 
+		// making sure the tracking url mapping is correct
+		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
+				.toShopifyFulfillmentPayloadRoot(request.getRequest(), fulfillmentOrders);
+
+		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url1");
+		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
+	}
+
+	@Test
+	public void givenSomeShopifyFulfillmentCreationRequestWhenCreatingShopifyFulfillmentThenCreateAndReturnFulfillmentWithFulfillmentOrderApiWithoutTrackingUrlsArray()
+			throws JsonProcessingException, ConnectException, ShopifyEmptyLineItemsException {
+		final String lineItemId = "987";
+		final String fulfillmentOrderId = "1234";
+
+		final ShopifyLineItem lineItem = new ShopifyLineItem();
+		lineItem.setId(lineItemId);
+		lineItem.setSku("some_sku");
+		lineItem.setQuantity(5L);
+
+		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
+		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
+		fulfillmentOrderLineItem.setQuantity(1);
+		fulfillmentOrderLineItem.setLineItemId(lineItemId);
+		fulfillmentOrderLineItem.setFulfillableQuantity(1);
+		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
+		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
+
+		final List<String> supportedActions = new LinkedList<>();
+		supportedActions.add("move");
+		supportedActions.add("create_fulfillment");
+
+		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
+		fulfillmentOrder.setId(fulfillmentOrderId);
+		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+		fulfillmentOrder.setSupportedActions(supportedActions);
+		fulfillmentOrder.setAssignedLocationId("5678");
+		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
+		fulfillmentOrders.add(fulfillmentOrder);
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
+				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append(ShopifySdk.FULFILLMENTS)
+				.toString();
+		final ShopifyFulfillment currentFulfillment = buildShopifyFulfillment(lineItem);
+		final ShopifyFulfillmentRoot shopifyFulfillmentRoot = new ShopifyFulfillmentRoot();
+		shopifyFulfillmentRoot.setFulfillment(currentFulfillment);
+
+		final String expectedResponseBodyString = getJsonString(ShopifyFulfillmentRoot.class, shopifyFulfillmentRoot);
+
+		final Status expectedStatus = Status.CREATED;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		final JsonBodyCapture actualRequestBody = new JsonBodyCapture();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader(ShopifySdk.ACCESS_TOKEN_HEADER, accessToken)
+						.withMethod(Method.POST).capturingBodyIn(actualRequestBody),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode)
+						.withHeader(ShopifySdk.DEPRECATED_REASON_HEADER, "Call to be removed from API.")
+						.withHeader("Location", new StringBuilder().append("https://test.myshopify.com/admin")
+								.append(expectedPath).toString()));
+
+		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
+				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+				.withLineItems(Arrays.asList(lineItem)).withLocationId("1").withTrackingUrls(Arrays.asList()).build();
+
+		request.getRequest().setTrackingUrl("tracking_url");
+		final ShopifyFulfillment actualShopifyFulfillment = shopifySdk.createFulfillment(request, fulfillmentOrders);
+
+		// making sure the tracking url mapping is correct
+		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
+				.toShopifyFulfillmentPayloadRoot(request.getRequest(), fulfillmentOrders);
+
+		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url");
 		assertValidFulfillment(currentFulfillment, actualShopifyFulfillment);
 	}
 
