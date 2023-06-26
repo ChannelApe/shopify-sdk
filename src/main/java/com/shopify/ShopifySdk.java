@@ -36,9 +36,9 @@ import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.shopify.exceptions.ShopifyClientException;
+import com.shopify.exceptions.ShopifyEmptyLineItemsException;
 import com.shopify.exceptions.ShopifyErrorResponseException;
 import com.shopify.exceptions.ShopifyIncompatibleApiException;
-import com.shopify.exceptions.ShopifyEmptyLineItemsException;
 import com.shopify.mappers.LegacyToFulfillmentOrderMapping;
 import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
@@ -211,33 +211,27 @@ public class ShopifySdk {
 	public static interface OptionalsStep {
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Minimum
-		 * duration time to wait before retrying a failed request. Value must
-		 * also be less than
-		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum
-		 * Request Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
+		 * time to wait before retrying a failed request. Value must also be less than
+		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
+		 * Retry Random Delay}.<br>
 		 * Default value is: 1 second.
 		 *
-		 * @param duration
-		 *            of the minimum retry delay
-		 * @param timeUnit
-		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @param duration of the minimum retry delay
+		 * @param timeUnit the time unit to be used (miliseconds, seconds, etc...)
 		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Maximum
-		 * duration time to wait before retrying a failed request. Value must
-		 * also be more than
-		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum
-		 * Request Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
+		 * time to wait before retrying a failed request. Value must also be more than
+		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
+		 * Retry Random Delay}.<br>
 		 * Default value is: 5 seconds.
 		 *
-		 * @param duration
-		 *            of the maximum retry delay
-		 * @param timeUnit
-		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @param duration of the maximum retry delay
+		 * @param timeUnit the time unit to be used (miliseconds, seconds, etc...)
 		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMaximumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
@@ -246,10 +240,8 @@ public class ShopifySdk {
 		 * Maximum duration time to keep attempting requests <br>
 		 * Default value is: 3 minutes.
 		 *
-		 * @param duration
-		 *            of the request timeout
-		 * @param timeUnit
-		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @param duration of the request timeout
+		 * @param timeUnit the time unit to be used (miliseconds, seconds, etc...)
 		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withMaximumRequestRetryTimeout(int duration, TimeUnit timeUnit);
@@ -258,10 +250,8 @@ public class ShopifySdk {
 		 * The duration to wait when connecting to Shopify's API. <br>
 		 * Default value is: 1 minute.
 		 *
-		 * @param duration
-		 *            of the connection timeout
-		 * @param timeUnit
-		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @param duration of the connection timeout
+		 * @param timeUnit the time unit to be used (miliseconds, seconds, etc...)
 		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withConnectionTimeout(int duration, TimeUnit timeUnit);
@@ -270,23 +260,20 @@ public class ShopifySdk {
 		 * The duration to attempt to read a response from Shopify's API. <br>
 		 * Default value is: 15 seconds.
 		 *
-		 * @param duration
-		 *            of the duration to be considered
-		 * @param timeUnit
-		 *            the time unit to be used (miliseconds, seconds, etc...)
+		 * @param duration of the duration to be considered
+		 * @param timeUnit the time unit to be used (miliseconds, seconds, etc...)
 		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withReadTimeout(int duration, TimeUnit timeUnit);
 
 		/**
-		 * String representation of the version you want to use. If not
-		 * populated, this will use shopify oldest stable version. Although this
-		 * is not recommended so you can target a set of shopify features. Ex:
-		 * '2020-10' '2020-07' '2020-04'. If you are specifying the API URL
-		 * ensure you leave off the version if you are using this.
+		 * String representation of the version you want to use. If not populated, this
+		 * will use shopify oldest stable version. Although this is not recommended so
+		 * you can target a set of shopify features. Ex: '2020-10' '2020-07' '2020-04'.
+		 * If you are specifying the API URL ensure you leave off the version if you are
+		 * using this.
 		 *
-		 * @param apiVersion
-		 *            current apiVersion value
+		 * @param apiVersion current apiVersion value
 		 * @return {@link OptionalsStep} the OptionalsStep interface
 		 */
 		OptionalsStep withApiVersion(final String apiVersion);
@@ -717,8 +704,7 @@ public class ShopifySdk {
 	 * Creates a fulfillment in shopify
 	 * 
 	 * @deprecated starting in March 01, 2023 this method will be obsolete
-	 * @param shopifyFulfillmentCreationRequest
-	 *            the fulfillment creaton request
+	 * @param shopifyFulfillmentCreationRequest the fulfillment creaton request
 	 * @return the newly created fulfillment
 	 */
 	@Deprecated
@@ -730,15 +716,14 @@ public class ShopifySdk {
 	/**
 	 * Creates a fulfillment in shopify starting with api 2023-04
 	 * 
-	 * @param shopifyFulfillmentCreationRequest
-	 *            the fulfillment creaton request
+	 * @param shopifyFulfillmentCreationRequest the fulfillment creaton request
 	 * 
-	 * @param fulfillmentOrders
-	 *            the fulfillment orders list to create the new fulfillment
+	 * @param fulfillmentOrders                 the fulfillment orders list to
+	 *                                          create the new fulfillment
 	 * @return the newly created fulfillment
-	 * @throws ShopifyEmptyLineItemsException
-	 *             in case we have a fulfillment associated with a
-	 *             fulfillmentOrder without supported action
+	 * @throws ShopifyEmptyLineItemsException in case we have a fulfillment
+	 *                                        associated with a fulfillmentOrder
+	 *                                        without supported action
 	 */
 	public ShopifyFulfillment createFulfillment(
 			final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest,
@@ -750,8 +735,7 @@ public class ShopifySdk {
 	 * Updates a fulfillment in shopify
 	 * 
 	 * @deprecated starting in March 01, 2023 this method will be obsolete
-	 * @param shopifyFulfillmentUpdateRequest
-	 *            the fulfillment update request
+	 * @param shopifyFulfillmentUpdateRequest the fulfillment update request
 	 * @return the newly updated fulfillment
 	 */
 	@Deprecated
@@ -766,12 +750,10 @@ public class ShopifySdk {
 	}
 
 	/**
-	 * Based on the api starting from 2023-04 it only updates tracking
-	 * information
+	 * Based on the api starting from 2023-04 it only updates tracking information
 	 * 
-	 * @param shopifyFulfillmentUpdateRequest
-	 *            the information needed to update the fulfillment's tracking
-	 *            info
+	 * @param shopifyFulfillmentUpdateRequest the information needed to update the
+	 *                                        fulfillment's tracking info
 	 * @return the updated version of the shopify fulfillment
 	 */
 	public ShopifyFulfillment updateFulfillmentTrackingInfo(
@@ -1072,7 +1054,7 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
 				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
@@ -1103,7 +1085,7 @@ public class ShopifySdk {
 		return false;
 	}
 
-	private String generateToken() {
+	public String generateToken() {
 		try {
 
 			final Entity<String> entity = Entity.entity(EMPTY_STRING, MediaType.APPLICATION_JSON);
