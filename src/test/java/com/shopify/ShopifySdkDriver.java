@@ -103,6 +103,15 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
+	public void givenSomeOrderWithComplexPropertiesThenExpectGetToWork() {
+		final ShopifyOrder actualOrder = shopifySdk.getOrder("5350004064317");
+
+		assertEquals("5350004064317", actualOrder.getId());
+		assertEquals("123", actualOrder.getLineItems().get(0).getProperties().get(0).getName());
+		assertEquals("123", actualOrder.getLineItems().get(0).getProperties().get(0).getValue());
+	}
+
+	@Test
 	public void givenValidOrderIdWhenRetrievingOrderThenReturnShopifyOrder() {
 		final String orderId = "661078999099";
 
