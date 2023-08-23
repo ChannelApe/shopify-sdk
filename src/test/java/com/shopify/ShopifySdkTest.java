@@ -2341,6 +2341,34 @@ public class ShopifySdkTest {
 	}
 
 	@Test
+	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestWithPropertiesAndCreatingOrderThenCreateAndReturn()
+			throws Exception {
+
+		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
+				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append("orders")
+				.append(FORWARD_SLASH).append("123").toString();
+		final ShopifyOrderRoot shopifyOrderRoot = new ShopifyOrderRoot();
+		final ShopifyOrder shopifyOrder = new ShopifyOrder();
+
+		final String expectedResponseBodyString = "{ \"order\": { \"line_items\": [{ \"id\": \"1\", \"properties\": [ { \"name\": \"metafields\", \"value\": { \"test\": \"hello\" }},{ \"name\": \"some-basic-string\", \"value\": \"some-basic-string-value\"} ] }] } }";
+
+		final Status expectedStatus = Status.OK;
+		final int expectedStatusCode = expectedStatus.getStatusCode();
+		driver.addExpectation(
+				onRequestTo(expectedPath).withHeader("X-Shopify-Access-Token", accessToken).withMethod(Method.GET),
+				giveResponse(expectedResponseBodyString, MediaType.APPLICATION_JSON).withStatus(expectedStatusCode));
+
+		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder("123");
+		assertEquals(1, actualShopifyOrder.getLineItems().size());
+		assertEquals("metafields", actualShopifyOrder.getLineItems().get(0).getProperties().get(0).getName());
+		assertEquals("{\"test\":\"hello\"}",
+				actualShopifyOrder.getLineItems().get(0).getProperties().get(0).getValue());
+		assertEquals("some-basic-string", actualShopifyOrder.getLineItems().get(0).getProperties().get(1).getName());
+		assertEquals("some-basic-string-value",
+				actualShopifyOrder.getLineItems().get(0).getProperties().get(1).getValue());
+	}
+
+	@Test
 	public void givenSomeValidAccessTokenAndSubdomainAndValidRequestAndCreatingOrderThenCreateAndReturn()
 			throws Exception {
 
