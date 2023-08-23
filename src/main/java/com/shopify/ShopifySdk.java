@@ -211,10 +211,11 @@ public class ShopifySdk {
 	public static interface OptionalsStep {
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Minimum duration
-		 * time to wait before retrying a failed request. Value must also be less than
-		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Minimum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be less than
+		 * {@link #withMaximumRequestRetryRandomDelay(int, TimeUnit) Maximum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 1 second.
 		 *
 		 * @param duration of the minimum retry delay
@@ -224,10 +225,11 @@ public class ShopifySdk {
 		OptionalsStep withMinimumRequestRetryRandomDelay(int duration, TimeUnit timeUnit);
 
 		/**
-		 * The Shopify SDK uses random waits in between retry attempts. Maximum duration
-		 * time to wait before retrying a failed request. Value must also be more than
-		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum Request
-		 * Retry Random Delay}.<br>
+		 * The Shopify SDK uses random waits in between retry attempts. Maximum
+		 * duration time to wait before retrying a failed request. Value must
+		 * also be more than
+		 * {@link #withMinimumRequestRetryRandomDelay(int, TimeUnit) Minimum
+		 * Request Retry Random Delay}.<br>
 		 * Default value is: 5 seconds.
 		 *
 		 * @param duration of the maximum retry delay
@@ -267,11 +269,11 @@ public class ShopifySdk {
 		OptionalsStep withReadTimeout(int duration, TimeUnit timeUnit);
 
 		/**
-		 * String representation of the version you want to use. If not populated, this
-		 * will use shopify oldest stable version. Although this is not recommended so
-		 * you can target a set of shopify features. Ex: '2020-10' '2020-07' '2020-04'.
-		 * If you are specifying the API URL ensure you leave off the version if you are
-		 * using this.
+		 * String representation of the version you want to use. If not
+		 * populated, this will use shopify oldest stable version. Although this
+		 * is not recommended so you can target a set of shopify features. Ex:
+		 * '2020-10' '2020-07' '2020-04'. If you are specifying the API URL
+		 * ensure you leave off the version if you are using this.
 		 *
 		 * @param apiVersion current apiVersion value
 		 * @return {@link OptionalsStep} the OptionalsStep interface
@@ -1054,7 +1056,7 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
 				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
