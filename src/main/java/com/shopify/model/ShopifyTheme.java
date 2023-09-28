@@ -11,14 +11,14 @@ public class ShopifyTheme {
 	@XmlElement(name = "created_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime createdAt;
-	private int id;
+	private String id;
 	private String name;
 	private boolean previewable;
 	private boolean processing;
 	private String role;
 	private String src;
 	@XmlElement(name = "theme_store_id")
-	private int themeStoreId;
+	private String themeStoreId;
 	@XmlElement(name = "updated_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime updatedAt;
@@ -33,11 +33,11 @@ public class ShopifyTheme {
 		this.createdAt = createdAt;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -81,11 +81,11 @@ public class ShopifyTheme {
 		this.src = src;
 	}
 
-	public int getThemeStoreId() {
+	public String getThemeStoreId() {
 		return themeStoreId;
 	}
 
-	public void setThemeStoreId(int themeStoreId) {
+	public void setThemeStoreId(String themeStoreId) {
 		this.themeStoreId = themeStoreId;
 	}
 
