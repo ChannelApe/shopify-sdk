@@ -4,13 +4,13 @@ import java.util.List;
 
 public class ShopifyThemesRoot {
 
-	private List<ShopifyTheme> customer;
+	private List<ShopifyTheme> themes;
 
-	public List<ShopifyTheme> getCustomer() {
-		return customer;
+	public List<ShopifyTheme> getThemes() {
+		return themes;
 	}
 
-	public void setCustomer(List<ShopifyTheme> customer) {
-		this.customer = customer;
+	public void setThemes(List<ShopifyTheme> themes) {
+		this.themes = themes;
 	}
 }

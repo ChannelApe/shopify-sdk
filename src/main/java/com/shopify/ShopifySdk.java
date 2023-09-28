@@ -1,5 +1,7 @@
 package com.shopify;
 
+import com.shopify.model.ShopifyTheme;
+import com.shopify.model.ShopifyThemesRoot;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -133,6 +135,7 @@ public class ShopifySdk {
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
+	static final String THEMES = "themes";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
@@ -480,6 +483,29 @@ public class ShopifySdk {
 			shopifyProducts.addAll(shopifyProductsPage);
 		}
 		return new ShopifyProducts(shopifyProducts);
+	}
+	public List<ShopifyTheme> getThemes() {
+		final List<ShopifyTheme> shopifyThemes = new LinkedList<>();
+
+		ShopifyPage<ShopifyTheme> shopifyThemesPage = getThemes(DEFAULT_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} themes from first page", shopifyThemesPage.size());
+		shopifyThemes.addAll(shopifyThemesPage);
+		while (shopifyThemesPage.getNextPageInfo() != null) {
+			shopifyThemesPage = getThemes(shopifyThemesPage.getNextPageInfo(), DEFAULT_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} themes from page {}", shopifyThemesPage.size(),
+					shopifyThemesPage.getNextPageInfo());
+			shopifyThemes.addAll(shopifyThemesPage);
+		}
+		return shopifyThemes;
+	}
+	public ShopifyPage<ShopifyTheme> getThemes(final int pageSize) {
+		return this.getThemes(null, pageSize);
+	}
+	public ShopifyPage<ShopifyTheme> getThemes(final String pageInfo, final int pageSize) {
+		final Response response = get(getWebTarget().path(THEMES).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyThemesRoot shopifyThemesRoot = response.readEntity(ShopifyThemesRoot.class);
+		return mapPagedResponse(shopifyThemesRoot.getThemes(), response);
 	}
 
 	public int getProductCount() {
@@ -952,6 +978,10 @@ public class ShopifySdk {
 	private ShopifyPage<ShopifyCustomer> getCustomers(final Response response) {
 		final ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);
 		return mapPagedResponse(shopifyCustomersRootResponse.getCustomers(), response);
+	}
+	private ShopifyPage<ShopifyTheme> getThemes(final Response response) {
+		final ShopifyThemesRoot shopifyThemesRootResponse = response.readEntity(ShopifyThemesRoot.class);
+		return mapPagedResponse(shopifyThemesRootResponse.getThemes(), response);
 	}
 
 	private ShopifyRefund calculateRefund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
