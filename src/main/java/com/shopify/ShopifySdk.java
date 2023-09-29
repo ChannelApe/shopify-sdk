@@ -1,5 +1,8 @@
 package com.shopify;
 
+import com.shopify.model.ShopifyAssertsRoot;
+import com.shopify.model.ShopifyAsset;
+import com.shopify.model.ShopifyAssetRoot;
 import com.shopify.model.ShopifyTheme;
 import com.shopify.model.ShopifyThemesRoot;
 import java.net.URI;
@@ -136,6 +139,7 @@ public class ShopifySdk {
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
 	static final String THEMES = "themes";
+	static final String ASSETS = "assets";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
@@ -156,6 +160,7 @@ public class ShopifySdk {
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String JSON = ".json";
 	static final String LIMIT_QUERY_PARAMETER = "limit";
+	static final String ASSET_KEY_PARAMETER="asset[key]";
 	static final String PAGE_INFO_QUERY_PARAMETER = "page_info";
 	static final String STATUS_QUERY_PARAMETER = "status";
 	static final String ANY_STATUSES = "any";
@@ -178,6 +183,7 @@ public class ShopifySdk {
 	private static final String AUTHORIZATION_CODE = "code";
 
 	private static final int DEFAULT_REQUEST_LIMIT = 50;
+	private static final int MAX_REQUEST_LIMIT = 250;
 	private static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
 	private static final int UNPROCESSABLE_ENTITY_STATUS_CODE = 422;
 	private static final int LOCKED_STATUS_CODE = 423;
@@ -486,12 +492,11 @@ public class ShopifySdk {
 	}
 	public List<ShopifyTheme> getThemes() {
 		final List<ShopifyTheme> shopifyThemes = new LinkedList<>();
-
-		ShopifyPage<ShopifyTheme> shopifyThemesPage = getThemes(DEFAULT_REQUEST_LIMIT);
+		ShopifyPage<ShopifyTheme> shopifyThemesPage = getThemes(MAX_REQUEST_LIMIT);
 		LOGGER.info("Retrieved {} themes from first page", shopifyThemesPage.size());
 		shopifyThemes.addAll(shopifyThemesPage);
 		while (shopifyThemesPage.getNextPageInfo() != null) {
-			shopifyThemesPage = getThemes(shopifyThemesPage.getNextPageInfo(), DEFAULT_REQUEST_LIMIT);
+			shopifyThemesPage = getThemes(shopifyThemesPage.getNextPageInfo(), MAX_REQUEST_LIMIT);
 			LOGGER.info("Retrieved {} themes from page {}", shopifyThemesPage.size(),
 					shopifyThemesPage.getNextPageInfo());
 			shopifyThemes.addAll(shopifyThemesPage);
@@ -507,7 +512,33 @@ public class ShopifySdk {
 		final ShopifyThemesRoot shopifyThemesRoot = response.readEntity(ShopifyThemesRoot.class);
 		return mapPagedResponse(shopifyThemesRoot.getThemes(), response);
 	}
-
+	public ShopifyAsset getAsset(String themeId, String assetKey) {
+		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(ASSET_KEY_PARAMETER,assetKey));
+		final ShopifyAssetRoot shopifyAssetRootResponse = response.readEntity(ShopifyAssetRoot.class);
+		return shopifyAssetRootResponse.getAsset();
+	}
+	public List<ShopifyAsset> getAssets(String themeId) {
+		final List<ShopifyAsset> shopifyAssets = new LinkedList<>();
+		ShopifyPage<ShopifyAsset> shopifyAssetsPage = getAssets(MAX_REQUEST_LIMIT, themeId);
+		LOGGER.info("Retrieved {} assets from first page", shopifyAssetsPage.size());
+		shopifyAssets.addAll(shopifyAssetsPage);
+		while (shopifyAssetsPage.getNextPageInfo() != null) {
+			shopifyAssetsPage = getAssets(shopifyAssetsPage.getNextPageInfo(), MAX_REQUEST_LIMIT, themeId);
+			LOGGER.info("Retrieved {} assets from page {}", shopifyAssetsPage.size(),
+					shopifyAssetsPage.getNextPageInfo());
+			shopifyAssets.addAll(shopifyAssetsPage);
+		}
+		return shopifyAssets;
+	}
+	public ShopifyPage<ShopifyAsset> getAssets(final String pageInfo, final int pageSize, String themeId) {
+		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyAssertsRoot shopifyAsseRoot = response.readEntity(ShopifyAssertsRoot.class);
+		return mapPagedResponse(shopifyAsseRoot.getAssets(), response);
+	}
+	public ShopifyPage<ShopifyAsset> getAssets(final int pageSize, String themeId) {
+		return this.getAssets(null, pageSize, themeId);
+	}
 	public int getProductCount() {
 		final Response response = get(getWebTarget().path(PRODUCTS).path(COUNT));
 		final Count count = response.readEntity(Count.class);
@@ -978,10 +1009,6 @@ public class ShopifySdk {
 	private ShopifyPage<ShopifyCustomer> getCustomers(final Response response) {
 		final ShopifyCustomersRoot shopifyCustomersRootResponse = response.readEntity(ShopifyCustomersRoot.class);
 		return mapPagedResponse(shopifyCustomersRootResponse.getCustomers(), response);
-	}
-	private ShopifyPage<ShopifyTheme> getThemes(final Response response) {
-		final ShopifyThemesRoot shopifyThemesRootResponse = response.readEntity(ShopifyThemesRoot.class);
-		return mapPagedResponse(shopifyThemesRootResponse.getThemes(), response);
 	}
 
 	private ShopifyRefund calculateRefund(final ShopifyRefundCreationRequest shopifyRefundCreationRequest) {
