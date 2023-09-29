@@ -5,6 +5,8 @@ import com.shopify.model.ShopifyAsset;
 import com.shopify.model.ShopifyAssetRoot;
 import com.shopify.model.ShopifyTheme;
 import com.shopify.model.ShopifyThemesRoot;
+import com.shopify.model.ShopifyWebhook;
+import com.shopify.model.ShopifyWebhookRoot;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -140,6 +142,7 @@ public class ShopifySdk {
 	static final String PRODUCTS = "products";
 	static final String THEMES = "themes";
 	static final String ASSETS = "assets";
+	static final String WEBHOOKS = "webhooks";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
@@ -529,6 +532,38 @@ public class ShopifySdk {
 			shopifyAssets.addAll(shopifyAssetsPage);
 		}
 		return shopifyAssets;
+	}
+	public ShopifyPage<ShopifyAsset> getAssets(final String pageInfo, final int pageSize, String themeId) {
+		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyAssertsRoot shopifyAsseRoot = response.readEntity(ShopifyAssertsRoot.class);
+		return mapPagedResponse(shopifyAsseRoot.getAssets(), response);
+	}
+	public ShopifyPage<ShopifyAsset> getAssets(final int pageSize, String themeId) {
+		return this.getAssets(null, pageSize, themeId);
+	}
+	public ShopifyWebhookRoot createWebhook(ShopifyWebhookRoot request) {
+		final Response response =  post(getWebTarget().path(WEBHOOKS), request);
+		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
+		return result;
+	}
+	public ShopifyWebhookRoot getWebooks() {
+		final Response response =  get(getWebTarget().path(WEBHOOKS).path());
+		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
+		return result;
+	}
+	public List<ShopifyWebhook> getWebhooks() {
+		final List<ShopifyWebhook> shopifyWebhooks = new LinkedList<>();
+		ShopifyPage<ShopifyWebhook> shopifyWebhooksPage = getWebhooks(MAX_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} Webhooks from first page", shopifyWebhooksPage.size());
+		shopifyWebhooks.addAll(shopifyWebhooksPage);
+		while (shopifyWebhooksPage.getNextPageInfo() != null) {
+			shopifyWebhooksPage = getWebhooks(shopifyWebhooksPage.getNextPageInfo(), MAX_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} Webhooks from page {}", shopifyWebhooksPage.size(),
+					shopifyWebhooksPage.getNextPageInfo());
+			shopifyWebhooks.addAll(shopifyWebhooksPage);
+		}
+		return shopifyWebhooks;
 	}
 	public ShopifyPage<ShopifyAsset> getAssets(final String pageInfo, final int pageSize, String themeId) {
 		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
