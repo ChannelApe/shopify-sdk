@@ -1,5 +1,6 @@
 package com.shopify;
 
+import com.shopify.mappers.ObjectMapperProvider;
 import com.shopify.model.ShopifyAssertsRoot;
 import com.shopify.model.ShopifyAsset;
 import com.shopify.model.ShopifyAssetRoot;
@@ -1241,11 +1242,7 @@ public class ShopifySdk {
 	}
 
 	private static Client buildClient() {
-		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
-		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
-		provider.setMapper(mapper);
-
-		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+		return ClientBuilder.newClient().register(JacksonFeature.class).register(ObjectMapperProvider.class);
 	}
 
 	public class ShopifySdkRetryListener implements RetryListener {
