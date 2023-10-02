@@ -24,7 +24,7 @@ public class ShopifyWebhook {
 	private String topic;
 	private String api_version;
 	private String created_at;
-	private String fields;
+	private List<String> fields;
 	private String format;
 	@XmlElement(name = "metafield_namespaces")
 	private List<String> metafieldNamespaces;
@@ -74,11 +74,11 @@ public class ShopifyWebhook {
 		this.created_at = created_at;
 	}
 
-	public String getFields() {
+	public List<String> getFields() {
 		return fields;
 	}
 
-	public void setFields(String fields) {
+	public void setFields(List<String> fields) {
 		this.fields = fields;
 	}
 

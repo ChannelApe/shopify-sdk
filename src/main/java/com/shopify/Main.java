@@ -1,5 +1,6 @@
 package com.shopify;
 
+import com.shopify.model.ShopifyWebhook;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -11,10 +12,15 @@ public class Main {
             .withMinimumRequestRetryRandomDelay(200, TimeUnit.MILLISECONDS)
             .withMaximumRequestRetryTimeout(225, TimeUnit.MILLISECONDS)
             .withConnectionTimeout(500, TimeUnit.MILLISECONDS).build();
-    List<String> ids = shopifySdk.getThemes().stream().map(x -> x.getId()).collect(Collectors.toList());
-    System.out.println(shopifySdk.getThemes().stream().map(x -> x.getId()).collect(Collectors.toList()));
-    String key = shopifySdk.getAssets(ids.get(0)).get(100).getKey();
-    System.out.println(key);
-    System.out.println(shopifySdk.getAsset("97060814984",key ).getValue());
+    ShopifyWebhook request = new ShopifyWebhook();
+    request.setAddress("https://google.com.vn");
+    request.setFormat("json");
+    request.setTopic("app/uninstalled");
+    shopifySdk.createWebhook(request);
+    List<String> ids = shopifySdk.getWebhooks().stream().map(x -> x.getId()).collect(Collectors.toList());
+    System.out.println(ids);
+    shopifySdk.deleteWebhook(ids.get(0));
+    List<String> ids1 = shopifySdk.getWebhooks().stream().map(x -> x.getId()).collect(Collectors.toList());
+    System.out.println(ids1);
   }
 }
