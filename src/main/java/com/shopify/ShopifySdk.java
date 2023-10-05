@@ -551,7 +551,7 @@ public class ShopifySdk {
 		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
 		return result.getWebhook();
 	}
-	public ShopifyWebhook getWeebhook(String webhookId) {
+	public ShopifyWebhook getWebhook(String webhookId) {
 		final Response response =  get(getWebTarget().path(WEBHOOKS).path(webhookId));
 		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
 		return result.getWebhook();
