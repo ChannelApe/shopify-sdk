@@ -1,9 +1,12 @@
 package com.shopify.model;
 
+import com.shopify.model.adapters.DateTimeAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.joda.time.DateTime;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -12,7 +15,9 @@ public class ShopifyAsset {
   private String checksum;
   @XmlElement(name = "content_type")
   private String contentType;
-  private String created_at;
+  @XmlElement(name = "create_at")
+  @XmlJavaTypeAdapter(DateTimeAdapter.class)
+  private DateTime createdAt;
   private String key;
   @XmlElement(name = "public_url")
   private String publicUrl;
@@ -20,7 +25,8 @@ public class ShopifyAsset {
   @XmlElement(name = "theme_id")
   private Long themeId;
   @XmlElement(name = "update_at")
-  private String updatedAt;
+  @XmlJavaTypeAdapter(DateTimeAdapter.class)
+  private DateTime updatedAt;
   private String value;
 
   public String getAttachment() {
@@ -47,13 +53,6 @@ public class ShopifyAsset {
     this.contentType = contentType;
   }
 
-  public String getCreated_at() {
-    return created_at;
-  }
-
-  public void setCreated_at(String created_at) {
-    this.created_at = created_at;
-  }
 
   public String getKey() {
     return key;
@@ -87,19 +86,27 @@ public class ShopifyAsset {
     this.themeId = themeId;
   }
 
-  public String getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(String updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
   public String getValue() {
     return value;
   }
 
   public void setValue(String value) {
     this.value = value;
+  }
+
+  public DateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(DateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public DateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(DateTime updatedAt) {
+    this.updatedAt = updatedAt;
   }
 }
