@@ -15,7 +15,7 @@ public class ShopifyAsset {
   private String checksum;
   @XmlElement(name = "content_type")
   private String contentType;
-  @XmlElement(name = "create_at")
+  @XmlElement(name = "created_at")
   @XmlJavaTypeAdapter(DateTimeAdapter.class)
   private DateTime createdAt;
   private String key;
@@ -24,7 +24,7 @@ public class ShopifyAsset {
   private Long size;
   @XmlElement(name = "theme_id")
   private Long themeId;
-  @XmlElement(name = "update_at")
+  @XmlElement(name = "updated_at")
   @XmlJavaTypeAdapter(DateTimeAdapter.class)
   private DateTime updatedAt;
   private String value;
