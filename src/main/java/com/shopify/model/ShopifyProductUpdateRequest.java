@@ -148,20 +148,32 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 				changed = true;
 			}
 
-			final List<ShopifyVariant> shopifyVariants = new ArrayList<>(variantRequests.size());
-			final List<Integer> positions = new ArrayList<>(variantRequests.size());
+			List<ShopifyVariant> shopifyVariants = new ArrayList<>(variantRequests.size());
+			List<Integer> positions = new ArrayList<>(variantRequests.size());
 
 			for (int i = 0; i < variantRequests.size(); i++) {
 				final ShopifyVariantRequest shopifyVariantRequestForPosition = variantRequests.get(i);
 				positions.add(shopifyVariantRequestForPosition.getRequest().getPosition());
-
 			}
 
-			int maxPosition = variantRequests.stream().map(ShopifyVariantRequest::getRequest)
-					.map(ShopifyVariant::getPosition).max(Comparator.naturalOrder()).get();
+			int maxPosition = positions.stream().max(Comparator.naturalOrder()).get();
+
 			Collections.sort(variantRequests, new ShopifyVariantRequestOption1Comparator());
+
+			updateVariants(variantRequests, shopifyVariants, positions, maxPosition);
+
+			shopifyProduct.setVariants(shopifyVariants);
+
+			return this;
+		}
+
+		private void updateVariants(final List<ShopifyVariantRequest> variantRequests,
+				final List<ShopifyVariant> shopifyVariants,
+				final List<Integer> positions,
+				int maxPosition) {
 			for (int i = 0; i < variantRequests.size(); i++) {
 				final ShopifyVariantRequest shopifyVariantRequest = variantRequests.get(i);
+
 				if (shopifyVariantRequest.hasChanged()) {
 					changed = true;
 				}
@@ -169,36 +181,22 @@ public class ShopifyProductUpdateRequest implements ShopifyProductRequest {
 				final ShopifyVariant shopifyVariant = shopifyVariantRequest.getRequest();
 
 				if (shopifyVariant.getPosition() == 0) {
-
-					maxPosition = maxPosition + 1;
+					maxPosition += 1;
 					shopifyVariant.setPosition(maxPosition);
 				}
 
 				if (shopifyVariantRequest.hasImageSource()) {
 					final String imageSource = shopifyVariantRequest.getImageSource();
-					shopifyProduct.getImages().stream().filter(image -> image.getSource().equals(imageSource))
-							.findFirst().ifPresent(image -> {
-								variantPositionToImagePosition.put(shopifyVariant.getPosition(), image.getPosition());
-							});
+					shopifyProduct.getImages().stream()
+							.filter(image -> image.getSource().equals(imageSource))
+							.findFirst()
+							.ifPresent(
+									image -> variantPositionToImagePosition.put(shopifyVariant.getPosition(),
+											image.getPosition()));
 				}
 
-			}
-
-			Collections.sort(variantRequests, new ShopifyVariantRequestPositionComparator());
-
-			for (int i = 0; i < variantRequests.size(); i++) {
-				final ShopifyVariantRequest shopifyVariantRequest = variantRequests.get(i);
-				if (shopifyVariantRequest.hasChanged()) {
-					changed = true;
-				}
-
-				final ShopifyVariant shopifyVariant = shopifyVariantRequest.getRequest();
 				shopifyVariants.add(shopifyVariant);
-
 			}
-
-			shopifyProduct.setVariants(shopifyVariants);
-			return this;
 		}
 
 		@Override
