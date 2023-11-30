@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -31,7 +31,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -117,6 +116,7 @@ import com.shopify.model.ShopifyVariantCreationRequest;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRoot;
 import com.shopify.model.ShopifyVariantUpdateRequest;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopifySdkTest {
@@ -134,7 +134,7 @@ public class ShopifySdkTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "OFF");
+		System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "OFF");
 	}
 
 	@Before
@@ -1150,7 +1150,7 @@ public class ShopifySdkTest {
 		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(someOrderId);
 
 		assertEquals(
-				"{\"number\":0,\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"fulfillments\":[],\"billing_address\":{},\"shipping_address\":{},\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[],\"refunds\":[],\"metafields\":[]}",
+				"{\"number\":0,\"fulfillments\":[],\"customer\":{\"accepts_marketing\":false,\"orders_count\":0},\"refunds\":[],\"metafields\":[],\"total_weight\":0,\"taxes_included\":false,\"buyer_accepts_marketing\":false,\"line_items\":[],\"billing_address\":{},\"shipping_address\":{},\"shipping_lines\":[],\"tax_lines\":[],\"note_attributes\":[]}",
 				actualRequestBody.getContent());
 		assertNotNull(actualShopifyOrder);
 		assertEquals(someOrderId, actualShopifyOrder.getId());
@@ -2329,7 +2329,7 @@ public class ShopifySdkTest {
 
 		final ShopifyVariant actualShopifyVariant = shopifySdk.updateVariant(shopifyVariantUpdateRequest);
 
-		final String expectedRequestBodyString = "{\"variant\":{\"id\":\"98746868985974\",\"title\":\"UK 8\",\"price\":10.00,\"barcode\":\"459876235897\",\"position\":0,\"grams\":0,\"requires_shipping\":false,\"taxable\":false}}";
+		final String expectedRequestBodyString = "{\"variant\":{\"id\":\"98746868985974\",\"title\":\"UK 8\",\"price\":10.00,\"barcode\":\"459876235897\",\"position\":0,\"grams\":0,\"taxable\":false,\"requires_shipping\":false}}";
 		assertEquals(expectedRequestBodyString, stringBodyCapture.getContent());
 
 		assertEquals(shopifyVariantUpdateRequest.getRequest().getId(), actualShopifyVariant.getId());

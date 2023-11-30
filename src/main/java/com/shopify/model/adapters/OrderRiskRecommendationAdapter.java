@@ -1,6 +1,6 @@
 package com.shopify.model.adapters;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 import com.shopify.model.OrderRiskRecommendation;
 

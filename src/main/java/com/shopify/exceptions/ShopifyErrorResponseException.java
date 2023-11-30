@@ -2,7 +2,7 @@ package com.shopify.exceptions;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import com.shopify.mappers.ResponseEntityToStringMapper;
 
