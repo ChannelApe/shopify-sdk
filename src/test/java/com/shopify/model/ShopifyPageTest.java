@@ -1,18 +1,18 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyPageTest {
+class ShopifyPageTest {
 
 	private static final ShopifyOrder SHOPIFY_ORDER_1 = new ShopifyOrder();
 	private static final ShopifyOrder SHOPIFY_ORDER_2 = new ShopifyOrder();
 
 	@Test
-	public void givenSomeValuesWhenBuildingShopifyPageThenExpectCorrectValues() throws Exception {
+	void givenSomeValuesWhenBuildingShopifyPageThenExpectCorrectValues() throws Exception {
 		final ShopifyPage<ShopifyOrder> shopifyPage = new ShopifyPage<>();
 		shopifyPage.add(SHOPIFY_ORDER_1);
 		shopifyPage.add(SHOPIFY_ORDER_2);
@@ -27,7 +27,7 @@ public class ShopifyPageTest {
 	}
 
 	@Test
-	public void givenTwoDifferentShopifyPagesWhenComparingHashCodesExpectThemToBeDifferent() throws Exception {
+	void givenTwoDifferentShopifyPagesWhenComparingHashCodesExpectThemToBeDifferent() throws Exception {
 		final ShopifyPage<ShopifyOrder> shopifyPage1 = new ShopifyPage<>();
 		shopifyPage1.add(SHOPIFY_ORDER_1);
 		shopifyPage1.add(SHOPIFY_ORDER_2);
@@ -44,7 +44,7 @@ public class ShopifyPageTest {
 	}
 
 	@Test
-	public void givenTwoSameShopifyPagesWhenComparingHashCodesExpectThemToBeSame() throws Exception {
+	void givenTwoSameShopifyPagesWhenComparingHashCodesExpectThemToBeSame() throws Exception {
 		final ShopifyPage<ShopifyOrder> shopifyPage1 = new ShopifyPage<>();
 		shopifyPage1.add(SHOPIFY_ORDER_1);
 		shopifyPage1.add(SHOPIFY_ORDER_2);
@@ -55,7 +55,7 @@ public class ShopifyPageTest {
 	}
 
 	@Test
-	public void givenTwoDifferentShopifyPagesWithSameValuesWhenComparingHashCodesExpectThemToBeSame() throws Exception {
+	void givenTwoDifferentShopifyPagesWithSameValuesWhenComparingHashCodesExpectThemToBeSame() throws Exception {
 		final ShopifyPage<ShopifyOrder> shopifyPage1 = new ShopifyPage<>();
 		shopifyPage1.add(SHOPIFY_ORDER_1);
 		shopifyPage1.add(SHOPIFY_ORDER_2);
@@ -71,7 +71,7 @@ public class ShopifyPageTest {
 	}
 
 	@Test
-	public void givenTwoDifferentShopifyPagesWithSameValuesWhenComparingEqualsExpectThemToBeSame() throws Exception {
+	void givenTwoDifferentShopifyPagesWithSameValuesWhenComparingEqualsExpectThemToBeSame() throws Exception {
 		final ShopifyPage<ShopifyOrder> shopifyPage1 = new ShopifyPage<>();
 		shopifyPage1.add(SHOPIFY_ORDER_1);
 		shopifyPage1.add(SHOPIFY_ORDER_2);

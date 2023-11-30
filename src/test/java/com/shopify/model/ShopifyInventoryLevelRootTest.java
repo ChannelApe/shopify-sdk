@@ -1,13 +1,13 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyInventoryLevelRootTest {
+class ShopifyInventoryLevelRootTest {
 
 	@Test
-	public void givenSomeValuesWhenCreatingShopifyInventoryLevelUpdateRequestThenExpectCorrectValues() {
+	void givenSomeValuesWhenCreatingShopifyInventoryLevelUpdateRequestThenExpectCorrectValues() {
 		final ShopifyInventoryLevel shopifyInventoryLevel = new ShopifyInventoryLevel();
 		shopifyInventoryLevel.setAvailable(2L);
 		shopifyInventoryLevel.setInventoryItemId("12387734");

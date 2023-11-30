@@ -1,15 +1,15 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyVariantCreationRequestTest {
+class ShopifyVariantCreationRequestTest {
 
 	private static final String SOME_SKU = "10004";
 	private static final String SOME_BARCODE = "144141141";
@@ -26,7 +26,7 @@ public class ShopifyVariantCreationRequestTest {
 	private static final String SOME_FULFILLMENT_SERVICE = "garage";
 
 	@Test
-	public void givenValuesSetAndNoCompareAtPriceAndNoImageSourceAndDefaultInventoryPolicyAndDefaultFulfillmentSErviceAndDefaultInventoryManagementAndDefaultRequiresShippingAndDefaultTaxableWhenBuildingShopifyVariantCreationRequestThenExpectCorrectValues() {
+	void givenValuesSetAndNoCompareAtPriceAndNoImageSourceAndDefaultInventoryPolicyAndDefaultFulfillmentSErviceAndDefaultInventoryManagementAndDefaultRequiresShippingAndDefaultTaxableWhenBuildingShopifyVariantCreationRequestThenExpectCorrectValues() {
 		final ShopifyVariantCreationRequest actualShopifyVariantCreationRequest = ShopifyVariantCreationRequest
 				.newBuilder().withPrice(SOME_PRICE_AMOUNT).noCompareAtPrice().withSku(SOME_SKU)
 				.withBarcode(SOME_BARCODE).withWeight(SOME_GRAMS_AMOUNT).withAvailable(SOME_QUANTITY)
@@ -55,7 +55,7 @@ public class ShopifyVariantCreationRequestTest {
 	}
 
 	@Test
-	public void givenValuesSetWhenBuildingShopifyVariantCreationRequestThenExpectCorrectValues() {
+	void givenValuesSetWhenBuildingShopifyVariantCreationRequestThenExpectCorrectValues() {
 		final ShopifyVariantCreationRequest actualShopifyVariantCreationRequest = ShopifyVariantCreationRequest
 				.newBuilder().withPrice(SOME_PRICE_AMOUNT).withCompareAtPrice(SOME_COMPARE_AT_PRICE_AMOUNT)
 				.withSku(SOME_SKU).withBarcode(SOME_BARCODE).withWeight(SOME_GRAMS_AMOUNT).withAvailable(SOME_QUANTITY)

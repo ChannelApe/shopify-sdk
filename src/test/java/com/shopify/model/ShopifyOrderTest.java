@@ -1,6 +1,7 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -8,9 +9,9 @@ import java.util.Currency;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyOrderTest {
+class ShopifyOrderTest {
 
 	private static final String SOME_USER_ID = "123123";
 	private static final int SOME_TOTAL_WEIGHT = 123;
@@ -44,7 +45,7 @@ public class ShopifyOrderTest {
 	private static final String SOME_BROWSER_IP = "SomeBrowserIP";
 
 	@Test
-	public void givenSomeValuesWhenSettingOrderValuesWhenCreatingShopifyOrderThenExpectCorrectValues()
+	void givenSomeValuesWhenSettingOrderValuesWhenCreatingShopifyOrderThenExpectCorrectValues()
 			throws Exception {
 		final ShopifyOrder shopifyOrder = new ShopifyOrder();
 		shopifyOrder.setBrowserIp(SOME_BROWSER_IP);
@@ -86,7 +87,7 @@ public class ShopifyOrderTest {
 
 		assertEquals(SOME_BROWSER_IP, shopifyOrder.getBrowserIp());
 		assertEquals(SOME_BILLING_ADDRESS, shopifyOrder.getBillingAddress());
-		assertEquals(true, shopifyOrder.isBuyerAcceptsMarketing());
+		assertTrue(shopifyOrder.isBuyerAcceptsMarketing());
 		assertEquals(SOME_DATE, shopifyOrder.getCancelledAt());
 		assertEquals(SOME_CANCELLED_REASON, shopifyOrder.getCancelReason());
 		assertEquals(SOME_CART_TOKEN, shopifyOrder.getCartToken());
@@ -110,7 +111,7 @@ public class ShopifyOrderTest {
 		assertEquals(HTTP_REFERRED_SITE, shopifyOrder.getReferringSite());
 		assertEquals(SOME_PROCESSING_METHOD, shopifyOrder.getProcessingMethod());
 		assertEquals(SOME_TAGS, shopifyOrder.getTags());
-		assertEquals(true, shopifyOrder.isTaxesIncluded());
+		assertTrue(shopifyOrder.isTaxesIncluded());
 		assertEquals(SOME_TAX_LINES, shopifyOrder.getTaxLines());
 		assertEquals(SOME_TOKEN, shopifyOrder.getToken());
 		assertEquals(SOME_TOTAL_DISCOUNTS, shopifyOrder.getTotalDiscounts());

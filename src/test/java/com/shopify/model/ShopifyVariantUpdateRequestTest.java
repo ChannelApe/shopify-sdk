@@ -1,15 +1,15 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyVariantUpdateRequestTest {
+class ShopifyVariantUpdateRequestTest {
 
 	private static final String SOME_CURRENT_SKU = "10004";
 	private static final String SOME_CURRENT_BARCODE = "144141141";
@@ -37,7 +37,7 @@ public class ShopifyVariantUpdateRequestTest {
 	private static final String SOME_NEW_FULFILLMENT_SERVICE = "garage";
 
 	@Test
-	public void givenNoNewValuesSetWhenBuildingShopifyVariantUpdateRequestThenExpectCorrectValues() {
+	void givenNoNewValuesSetWhenBuildingShopifyVariantUpdateRequestThenExpectCorrectValues() {
 		final ShopifyVariant currentShopifyVariant = buildCurrentShopifyVariant();
 
 		final ShopifyVariantUpdateRequest actualShopifyVariantUpdateRequest = ShopifyVariantUpdateRequest.newBuilder()
@@ -70,7 +70,7 @@ public class ShopifyVariantUpdateRequestTest {
 	}
 
 	@Test
-	public void givenAllNewValuesSetWhenBuildingShopifyVariantUpdateRequestThenExpectCorrectValues() {
+	void givenAllNewValuesSetWhenBuildingShopifyVariantUpdateRequestThenExpectCorrectValues() {
 		final ShopifyVariant currentShopifyVariant = buildCurrentShopifyVariant();
 
 		final ShopifyVariantUpdateRequest actualShopifyVariantUpdateRequest = ShopifyVariantUpdateRequest.newBuilder()
@@ -106,7 +106,7 @@ public class ShopifyVariantUpdateRequestTest {
 	}
 
 	@Test
-	public void givenAllNewValuesAndNoOptionsAndNoImageSetWhenBuildingShopifyVariantUpdateRequestWithNullPriceAndNullCompareAtPriceThenExpectCorrectValues() {
+	void givenAllNewValuesAndNoOptionsAndNoImageSetWhenBuildingShopifyVariantUpdateRequestWithNullPriceAndNullCompareAtPriceThenExpectCorrectValues() {
 		final ShopifyVariant currentShopifyVariant = buildCurrentShopifyVariant();
 		currentShopifyVariant.setPrice(null);
 		currentShopifyVariant.setCompareAtPrice(null);

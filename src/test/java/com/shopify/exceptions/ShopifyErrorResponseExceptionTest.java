@@ -1,7 +1,7 @@
 package com.shopify.exceptions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,14 +14,14 @@ import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.Test;
-
 import com.shopify.exceptions.ShopifyErrorCode.Type;
 
-public class ShopifyErrorResponseExceptionTest {
+import org.junit.jupiter.api.Test;
+
+class ShopifyErrorResponseExceptionTest {
 
 	@Test
-	public void givenResponseWith422StatusCodeAndSomeResponseBodyAndSomeResponsHeadersWhenCreatingShopifyErroResponseExceptionThenCreateExceptionWithExpectedMessageAndException() {
+	void givenResponseWith422StatusCodeAndSomeResponseBodyAndSomeResponsHeadersWhenCreatingShopifyErroResponseExceptionThenCreateExceptionWithExpectedMessageAndException() {
 		final Response response = mock(Response.class);
 		final int expectedStatusCode = 422;
 		when(response.getStatus()).thenReturn(expectedStatusCode);
@@ -56,7 +56,7 @@ public class ShopifyErrorResponseExceptionTest {
 	}
 
 	@Test
-	public void givenResponseWith422StatusCodeAndSomeResponseBodyAndSomeResponsHeadersWhenCreatingShopifyErroResponseExceptionWithUnparseableBodyThenCreateExceptionWithExpectedMessageAndException() {
+	void givenResponseWith422StatusCodeAndSomeResponseBodyAndSomeResponsHeadersWhenCreatingShopifyErroResponseExceptionWithUnparseableBodyThenCreateExceptionWithExpectedMessageAndException() {
 		final Response response = mock(Response.class);
 		final int expectedStatusCode = 422;
 		when(response.getStatus()).thenReturn(expectedStatusCode);
@@ -90,7 +90,7 @@ public class ShopifyErrorResponseExceptionTest {
 	}
 
 	@Test
-	public void givenResponseWith422StatusCodeAndSomeResponseBodyAndSomeResponsHeadersWhenCreatingShopifyErroResponseExceptionWithParsableBodyThenCreateExceptionWithExpectedMessageAndException() {
+	void givenResponseWith422StatusCodeAndSomeResponseBodyAndSomeResponsHeadersWhenCreatingShopifyErroResponseExceptionWithParsableBodyThenCreateExceptionWithExpectedMessageAndException() {
 		final Response response = mock(Response.class);
 		final int expectedStatusCode = 422;
 		when(response.getStatus()).thenReturn(expectedStatusCode);

@@ -1,22 +1,22 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyLineItemTest {
+class ShopifyLineItemTest {
 
 	private static final LinkedList<ShopifyTaxLine> SOME_TAX_LINES = new LinkedList<>();
 	private static final LinkedList<ShopifyProperty> SOME_PROPERTIES = new LinkedList<>();
 	private static final BigDecimal SOME_PRICE = BigDecimal.valueOf(41.55);
 
 	@Test
-	public void givenSomeValuesWhenBuildingLineItemsThenExpectLineItemValuesToBeCorrect() throws Exception {
+	void givenSomeValuesWhenBuildingLineItemsThenExpectLineItemValuesToBeCorrect() throws Exception {
 		final ShopifyLineItem shopifyLineItem = new ShopifyLineItem();
 		shopifyLineItem.setFulfillableQuantity(1);
 		shopifyLineItem.setFulfillmentService("manual");

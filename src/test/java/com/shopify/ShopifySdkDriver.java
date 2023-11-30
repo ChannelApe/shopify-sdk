@@ -1,10 +1,10 @@
 package com.shopify;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,7 +67,7 @@ import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
 import com.shopify.model.ShopifyVariantRequest;
 import com.shopify.model.ShopifyVariantUpdateRequest;
 
-public class ShopifySdkDriver {
+class ShopifySdkDriver {
 
 	private static final String HEADER_DELIMITER = "--------------";
 	private static final String TEST_DELIMITER = "===============================================";
@@ -77,15 +77,15 @@ public class ShopifySdkDriver {
 
 	private ShopifySdk shopifySdk;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken(ACCESS_TOKEN)
 				.withMaximumRequestRetryTimeout(5, TimeUnit.SECONDS)
 				.withMaximumRequestRetryRandomDelay(5, TimeUnit.SECONDS).withApiVersion("2020-07").build();
 	}
 
 	@Test
-	public void givenSomeShopifyVariantMetafieldCreationRequestWhenCreatingMetafieldThenReturnMetafield() {
+	void givenSomeShopifyVariantMetafieldCreationRequestWhenCreatingMetafieldThenReturnMetafield() {
 		final ShopifyVariantMetafieldCreationRequest shopifyVariantMetafieldCreationRequest = ShopifyVariantMetafieldCreationRequest
 				.newBuilder().withVariantId("31905723148").withNamespace("channelape").withKey("test_creation")
 				.withValue("updated").withValueType(MetafieldType.SINGLE_LINE_TEXT).build();
@@ -96,14 +96,14 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeShopifyVariantIdWhenRetrievingMetafieldsThenReturnMetafields() {
+	void givenSomeShopifyVariantIdWhenRetrievingMetafieldsThenReturnMetafields() {
 		final List<Metafield> actualMetafields = shopifySdk.getVariantMetafields("31905723148");
 
 		assertFalse(actualMetafields.isEmpty());
 	}
 
 	@Test
-	public void givenSomeOrderWithComplexPropertiesThenExpectGetToWork() {
+	void givenSomeOrderWithComplexPropertiesThenExpectGetToWork() {
 		final ShopifyOrder actualOrder = shopifySdk.getOrder("5350004064317");
 
 		assertEquals("5350004064317", actualOrder.getId());
@@ -112,16 +112,16 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenValidOrderIdWhenRetrievingOrderThenReturnShopifyOrder() {
+	void givenValidOrderIdWhenRetrievingOrderThenReturnShopifyOrder() {
 		final String orderId = "661078999099";
 
 		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder(orderId);
 
 		assertEquals(orderId, actualShopifyOrder.getId());
 		assertEquals("ryan.kazokas@gmail.com", actualShopifyOrder.getEmail());
-		assertTrue(new DateTime("2018-10-18T12:54:24-04:00").compareTo(actualShopifyOrder.getCreatedAt()) == 0);
-		assertTrue(new DateTime("2018-10-22T14:25:15-04:00").compareTo(actualShopifyOrder.getUpdatedAt()) == 0);
-		assertTrue(new DateTime("2018-10-18T12:52:23-04:00").compareTo(actualShopifyOrder.getProcessedAt()) == 0);
+		assertEquals(0, new DateTime("2018-10-18T12:54:24-04:00").compareTo(actualShopifyOrder.getCreatedAt()));
+		assertEquals(0, new DateTime("2018-10-22T14:25:15-04:00").compareTo(actualShopifyOrder.getUpdatedAt()));
+		assertEquals(0, new DateTime("2018-10-18T12:52:23-04:00").compareTo(actualShopifyOrder.getProcessedAt()));
 		assertEquals(42, actualShopifyOrder.getNumber());
 		assertEquals("#6218", actualShopifyOrder.getName());
 
@@ -132,7 +132,7 @@ public class ShopifySdkDriver {
 		assertEquals("16068954816571", actualFirstLineItem.getVariantId());
 		assertEquals("Cool Shoes 1 - Blue / 11", actualFirstLineItem.getTitle());
 		assertEquals(1L, actualFirstLineItem.getQuantity());
-		assertTrue(new BigDecimal(45.00).compareTo(actualFirstLineItem.getPrice()) == 0);
+		assertEquals(0, new BigDecimal(45.00).compareTo(actualFirstLineItem.getPrice()));
 		assertEquals("ABC-1234570", actualFirstLineItem.getSku());
 		assertEquals("Ryan Supplier Store Test", actualFirstLineItem.getVendor());
 		assertEquals("manual", actualFirstLineItem.getFulfillmentService());
@@ -144,7 +144,7 @@ public class ShopifySdkDriver {
 		assertEquals("16068954718267", actualSecondLineItem.getVariantId());
 		assertEquals("Cool Shoes 1 - Blue / 12", actualSecondLineItem.getTitle());
 		assertEquals(1L, actualSecondLineItem.getQuantity());
-		assertTrue(new BigDecimal(45.00).compareTo(actualSecondLineItem.getPrice()) == 0);
+		assertEquals(0, new BigDecimal(45.00).compareTo(actualSecondLineItem.getPrice()));
 		assertEquals("ABC-1234568", actualSecondLineItem.getSku());
 		assertEquals("Ryan Supplier Store Test", actualSecondLineItem.getVendor());
 		assertEquals("manual", actualSecondLineItem.getFulfillmentService());
@@ -181,40 +181,40 @@ public class ShopifySdkDriver {
 		assertEquals("1597021683771",
 				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItemId());
 		assertEquals("no_restock", actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getRestockType());
-		assertEquals(null, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
+		assertNull(actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
 		assertEquals("ABC-1234570",
 				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
 
 		assertEquals(1, actualShopifyOrder.getTaxLines().size());
-		assertTrue(BigDecimal.valueOf(8.64).compareTo(actualShopifyOrder.getTaxLines().get(0).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06).compareTo(actualShopifyOrder.getTaxLines().get(0).getRate()) == 0);
+		assertEquals(0, BigDecimal.valueOf(8.64).compareTo(actualShopifyOrder.getTaxLines().get(0).getPrice()));
+		assertEquals(0, BigDecimal.valueOf(0.06).compareTo(actualShopifyOrder.getTaxLines().get(0).getRate()));
 		assertEquals("Pennsylvania State Tax", actualShopifyOrder.getTaxLines().get(0).getTitle());
 
 		assertEquals(2, actualShopifyOrder.getLineItems().get(0).getTaxLines().size());
 		assertEquals(1, actualShopifyOrder.getLineItems().get(1).getTaxLines().size());
 
-		assertTrue(BigDecimal.valueOf(2.16)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getRate()) == 0);
+		assertEquals(0, BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getPrice()));
+		assertEquals(0, BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getRate()));
 		assertEquals("Pennsylvania State Tax",
 				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getTitle());
-		assertTrue(BigDecimal.valueOf(2.16)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getRate()) == 0);
+		assertEquals(0, BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getPrice()));
+		assertEquals(0, BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getRate()));
 		assertEquals("Pennsylvania State Tax",
 				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getTitle());
-		assertTrue(BigDecimal.valueOf(2.16)
-				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06)
-				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getRate()) == 0);
+		assertEquals(0, BigDecimal.valueOf(2.16)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getPrice()));
+		assertEquals(0, BigDecimal.valueOf(0.06)
+				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getRate()));
 		assertEquals("Pennsylvania State Tax",
 				actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getTitle());
 	}
 
 	@Test
-	public void givenValidOrderIdWithRefundTransactionsAndAdjustmentAndNoRefundLineItemsWhenRetrievingOrderThenReturnShopifyOrder() {
+	void givenValidOrderIdWithRefundTransactionsAndAdjustmentAndNoRefundLineItemsWhenRetrievingOrderThenReturnShopifyOrder() {
 		final String orderId = "2934166880317";
 
 		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder(orderId);
@@ -232,22 +232,22 @@ public class ShopifySdkDriver {
 				actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getCurrency());
 		assertEquals("manual", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getGateway());
 		assertEquals("refund", actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getKind());
-		assertTrue(BigDecimal.valueOf(25.00)
-				.compareTo(actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getAmount()) == 0);
+		assertEquals(0, BigDecimal.valueOf(25.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getTransactions().get(0).getAmount()));
 
 		assertEquals("130293006397", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getId());
 		assertEquals("702404231229", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getRefundId());
 		assertEquals("refund_discrepancy", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getKind());
 		assertEquals("Refund discrepancy", actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getReason());
-		assertTrue(BigDecimal.valueOf(-25.00)
-				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getAmount()) == 0);
-		assertTrue(BigDecimal.valueOf(0.00)
-				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getTaxAmount()) == 0);
+		assertEquals(0, BigDecimal.valueOf(-25.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getAmount()));
+		assertEquals(0, BigDecimal.valueOf(0.00)
+				.compareTo(actualShopifyOrder.getRefunds().get(0).getAdjustments().get(0).getTaxAmount()));
 
 	}
 
 	@Test
-	public void givenValidOrderIdWhenCancelingOrderThenCancelShopifyOrder() {
+	void givenValidOrderIdWhenCancelingOrderThenCancelShopifyOrder() {
 		final String orderId = "5388977100";
 		final String reason = null;
 
@@ -257,7 +257,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenValidOrderIdWhenRetrievingOrderRisksThenReturnShopifyOrderRisks() {
+	void givenValidOrderIdWhenRetrievingOrderRisksThenReturnShopifyOrderRisks() {
 		final String orderId = "5982557452";
 
 		final List<ShopifyOrderRisk> actualOrderRisks = shopifySdk.getOrderRisks(orderId);
@@ -266,7 +266,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenShopifyFulfillmentCreationRequestWhenFulfillingShopifyOrderThenReturnShopifyFulfillment() {
+	void givenShopifyFulfillmentCreationRequestWhenFulfillingShopifyOrderThenReturnShopifyFulfillment() {
 		final ShopifyLineItem shopifyLineItem = new ShopifyLineItem();
 		shopifyLineItem.setId("1575362756667");
 		shopifyLineItem.setQuantity(1);
@@ -289,7 +289,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenShopifyFulfillmentUpdateRequestWhenFulfillingShopifyOrderThenReturnShopifyFulfillment() {
+	void givenShopifyFulfillmentUpdateRequestWhenFulfillingShopifyOrderThenReturnShopifyFulfillment() {
 
 		final ShopifyOrder shopifyOrder = shopifySdk.getOrder("649449373755");
 
@@ -314,7 +314,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenShopifyOrderIdWhenClosingShopifyOrderThenReturnShopifyOrder() {
+	void givenShopifyOrderIdWhenClosingShopifyOrderThenReturnShopifyOrder() {
 		final String orderId = "692381450299";
 
 		final ShopifyOrder actualShopifyOrder = shopifySdk.closeOrder(orderId);
@@ -324,7 +324,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomePageWhenQueryingOrdersThenReturnShopifyOrders() {
+	void givenSomePageWhenQueryingOrdersThenReturnShopifyOrders() {
 		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(250);
 		assertEquals(250, actualOrdersFirstPage.size());
 		assertNotNull(actualOrdersFirstPage.getNextPageInfo());
@@ -341,7 +341,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeQueryWhenGettingCustomersFromMultiplePagesThenRetrieveCustomers() {
+	void givenSomeQueryWhenGettingCustomersFromMultiplePagesThenRetrieveCustomers() {
 		final ShopifyGetCustomersRequest shopifyGetCustomersRequest = ShopifyGetCustomersRequest.newBuilder()
 				.withCreatedAtMin(DateTime.now(DateTimeZone.UTC).minusYears(4)).withLimit(10).build();
 		final ShopifyPage<ShopifyCustomer> actualCustomersPage = shopifySdk.getCustomers(shopifyGetCustomersRequest);
@@ -362,7 +362,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomePageAndMinimumDateWhenQueryingOrdersThenReturnShopifyOrders() {
+	void givenSomePageAndMinimumDateWhenQueryingOrdersThenReturnShopifyOrders() {
 		final ShopifyPage<ShopifyOrder> actualOrdersFirstPage = shopifySdk.getOrders(new DateTime().minusYears(4), 250);
 		assertEquals(250, actualOrdersFirstPage.size());
 
@@ -377,7 +377,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeShopifyRecurringApplicationChargeCreationRequestWhenCreatingRecurringChargeThenReturnShopifyRecurringApplicationCharge() {
+	void givenSomeShopifyRecurringApplicationChargeCreationRequestWhenCreatingRecurringChargeThenReturnShopifyRecurringApplicationCharge() {
 		final String expectedName = "ChannelApe";
 		final String expectedTerms = "Price varies by integrations installed.";
 		final BigDecimal expectedPrice = new BigDecimal("49.99");
@@ -407,7 +407,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeChargeIdWhenRetrievingRecurringChargeThenReturnShopifyRecurringApplicationCharge() {
+	void givenSomeChargeIdWhenRetrievingRecurringChargeThenReturnShopifyRecurringApplicationCharge() {
 		final String chargeId = "2590029";
 		final ShopifyRecurringApplicationCharge actualShopifyRecurringApplicationCharge = shopifySdk
 				.getRecurringApplicationCharge(chargeId);
@@ -417,7 +417,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeChargeIdWhenActivatingRecurringChargeThenReturnShopifyRecurringApplicationCharge() {
+	void givenSomeChargeIdWhenActivatingRecurringChargeThenReturnShopifyRecurringApplicationCharge() {
 		final String chargeId = "2590029";
 		final ShopifyRecurringApplicationCharge actualShopifyRecurringApplicationCharge = shopifySdk
 				.activateRecurringApplicationCharge(chargeId);
@@ -427,18 +427,18 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void whenDeletingAllProductsThenEnsureStoreIsEmpty() {
+	void whenDeletingAllProductsThenEnsureStoreIsEmpty() {
 		final ShopifyProducts shopifyProducts = shopifySdk.getProducts();
 		shopifyProducts.values().parallelStream().map(ShopifyProduct::getId).forEach(shopifySdk::deleteProduct);
 
 		final int productCount = shopifySdk.getProductCount();
 		outputHeader("Product Count");
 		output(productCount);
-		assertTrue(productCount == 0);
+		assertEquals(0, productCount);
 	}
 
 	@Test
-	public void whenRetrievingProductCountThenReturnCorrectInteger() {
+	void whenRetrievingProductCountThenReturnCorrectInteger() {
 		final int productCount = shopifySdk.getProductCount();
 		outputHeader("Product Count");
 		output(productCount);
@@ -446,15 +446,15 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void whenRetrievingTransactionsForAnOrderThenExpectNotNull() {
+	void whenRetrievingTransactionsForAnOrderThenExpectNotNull() {
 		final List<ShopifyTransaction> transactions = shopifySdk.getOrderTransactions("750362787951");
 		assertNotNull(transactions);
 		assertEquals(1, transactions.size());
-		assertEquals(true, transactions.get(0).getReceipt().isApplePay());
+		assertTrue(transactions.get(0).getReceipt().isApplePay());
 	}
 
 	@Test
-	public void givenValidShopifyProductUpdateRequestWhenUpdatingProductThenReturnUpdatedShopifyProduct() {
+	void givenValidShopifyProductUpdateRequestWhenUpdatingProductThenReturnUpdatedShopifyProduct() {
 		final String productId = "1696786939963";
 		final ShopifyProduct currentShopifyProduct = shopifySdk.getProduct(productId);
 
@@ -523,7 +523,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void whenRetrievingProductsThenReturnExpectedProductsAndVariantsAndImages() {
+	void whenRetrievingProductsThenReturnExpectedProductsAndVariantsAndImages() {
 		final ShopifyProducts products = shopifySdk.getProducts();
 		outputHeader("Products");
 
@@ -566,7 +566,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void whenRetrievingShopThenReturnExpectedIdAndName() {
+	void whenRetrievingShopThenReturnExpectedIdAndName() {
 		final Shop shop = shopifySdk.getShop().getShop();
 		outputHeader("Shop");
 		output("ID " + shop.getId());
@@ -574,20 +574,20 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void whenRevokingInvalidOAuthTokenThenReturnFalse() {
+	void whenRevokingInvalidOAuthTokenThenReturnFalse() {
 		shopifySdk = ShopifySdk.newBuilder().withSubdomain(SHOP_SUBDOMAIN).withAccessToken("ASDF").build();
 		outputHeader("Revoke OAuth Token");
 		assertFalse(shopifySdk.revokeOAuthToken());
 	}
 
 	@Test
-	public void whenRevokingValidOAuthTokenThenReturnTrue() {
+	void whenRevokingValidOAuthTokenThenReturnTrue() {
 		outputHeader("Revoke OAuth Token");
 		assertTrue(shopifySdk.revokeOAuthToken());
 	}
 
 	@Test
-	public void givenValidRequestWhenRetrievingLocationsThenReturnShopifyOrderRisks() {
+	void givenValidRequestWhenRetrievingLocationsThenReturnShopifyOrderRisks() {
 
 		final List<ShopifyLocation> actualLocations = shopifySdk.getLocations();
 
@@ -595,7 +595,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeRequestToCalculateRefundWhenCalculatingRefundThenCalculateRefund() throws Exception {
+	void givenSomeRequestToCalculateRefundWhenCalculatingRefundThenCalculateRefund() throws Exception {
 		final ShopifyRefundRoot shopifyRefundRoot = new ShopifyRefundRoot();
 		final ShopifyRefund shopifyRefund = new ShopifyRefund();
 		shopifyRefund.setOrderId("649446195259");
@@ -619,7 +619,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeGiftCardCreationRequestWhenCreatingGiftCardThenCreateGiftCard() throws Exception {
+	void givenSomeGiftCardCreationRequestWhenCreatingGiftCardThenCreateGiftCard() throws Exception {
 		final ShopifyGiftCardCreationRequest giftCard = ShopifyGiftCardCreationRequest.newBuilder()
 				.withInitialValue(new BigDecimal(25.00)).withCode("ABCJFKLDSJZZ4CAPE").withCurrency("USD").build();
 
@@ -631,7 +631,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenValidRequestWhenUpdatingInventoryLevelsThenReturnShopifyInventoryLevel() {
+	void givenValidRequestWhenUpdatingInventoryLevelsThenReturnShopifyInventoryLevel() {
 
 		final ShopifyInventoryLevel actualInventoryLevel = shopifySdk.updateInventoryLevel("362476234", "8782373482",
 				666);
@@ -640,7 +640,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeUpdatedAtMinWhenRetrievingUpdatedOrdersThenExpectUpdatedOrders()
+	void givenSomeUpdatedAtMinWhenRetrievingUpdatedOrdersThenExpectUpdatedOrders()
 			throws JsonProcessingException {
 		final ShopifyPage<ShopifyOrder> actualShopifyOrders = shopifySdk.getUpdatedOrdersCreatedBefore(
 				DateTime.now(DateTimeZone.UTC).minusHours(24), DateTime.now(DateTimeZone.UTC),
@@ -650,7 +650,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeOrderWhenCreatingOrderThenCreateOrder() throws JsonProcessingException {
+	void givenSomeOrderWhenCreatingOrderThenCreateOrder() throws JsonProcessingException {
 		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
 		shopifyLineItem1.setVariantId("12262219972712");
 		shopifyLineItem1.setQuantity(44);
@@ -705,13 +705,13 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeValuesExistWhenRetrievingCustomCollectionsThenRetrieveCustomCollections() {
+	void givenSomeValuesExistWhenRetrievingCustomCollectionsThenRetrieveCustomCollections() {
 		final List<ShopifyCustomCollection> retrievedCustomCollections = shopifySdk.getCustomCollections();
 		assertEquals(3, retrievedCustomCollections.size());
 	}
 
 	@Test
-	public void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
+	void givenSomeValuesWhenUpdatingAnOrderThenExpectValuesToBeUpdatedOnOrder() throws JsonProcessingException {
 
 		final ShopifyOrderShippingAddressUpdateRequest shopifyOrderUpdateRequest = ShopifyOrderShippingAddressUpdateRequest
 				.newBuilder().withId("1124214472765").withAddress1("Testing From SDK Driver2").withAddress2("Suite 100")
@@ -724,7 +724,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeValuesWhenUpdatingACustomerThenExpectValuesToBeUpdatedOnCustomer()
+	void givenSomeValuesWhenUpdatingACustomerThenExpectValuesToBeUpdatedOnCustomer()
 			throws JsonProcessingException {
 
 		final ShopifyCustomerUpdateRequest shopifyOrderUpdateRequest = ShopifyCustomerUpdateRequest.newBuilder()
@@ -736,7 +736,7 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenSomeErrorOccurrsWhenCreatingFulfillmentThenExpectCorrectErrors() {
+	void givenSomeErrorOccurrsWhenCreatingFulfillmentThenExpectCorrectErrors() {
 		try {
 			shopifySdk.createFulfillment(ShopifyFulfillmentCreationRequest.newBuilder().withOrderId("2854620102717")
 					.withTrackingCompany("UPS").withTrackingNumber("ABC-123").withNotifyCustomer(false)
@@ -748,8 +748,8 @@ public class ShopifySdkDriver {
 
 	}
 
-	@After
-	public void after() {
+	@AfterEach
+	void after() {
 		System.out.println(TEST_DELIMITER);
 	}
 

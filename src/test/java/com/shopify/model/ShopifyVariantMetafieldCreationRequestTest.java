@@ -1,12 +1,12 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyVariantMetafieldCreationRequestTest {
+class ShopifyVariantMetafieldCreationRequestTest {
 
 	private static final String SOME_VARIANT_ID = UUID.randomUUID().toString();
 	private static final String SOME_NAMESPACE = "channelape";
@@ -15,7 +15,7 @@ public class ShopifyVariantMetafieldCreationRequestTest {
 	private static final MetafieldType SOME_VALUE_TYPE = MetafieldType.NUMBER_INTEGER;
 
 	@Test
-	public void givenSomeValuesWhenCreatingShopifyVariantMetafieldCreationRequestThenReturnValues() {
+	void givenSomeValuesWhenCreatingShopifyVariantMetafieldCreationRequestThenReturnValues() {
 		final ShopifyVariantMetafieldCreationRequest actualShopifyVariantMetafieldCreationRequest = ShopifyVariantMetafieldCreationRequest
 				.newBuilder().withVariantId(SOME_VARIANT_ID).withNamespace(SOME_NAMESPACE).withKey(SOME_KEY)
 				.withValue(SOME_VALUE).withValueType(SOME_VALUE_TYPE).build();

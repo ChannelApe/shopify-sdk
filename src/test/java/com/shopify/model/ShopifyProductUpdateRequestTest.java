@@ -1,10 +1,10 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -15,9 +15,9 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyProductUpdateRequestTest {
+class ShopifyProductUpdateRequestTest {
 
 	private static final String SOME_BARCODE = "144141141";
 	private static final long SOME_QUANTITY = 25;
@@ -50,7 +50,7 @@ public class ShopifyProductUpdateRequestTest {
 	private static final String SOME_FIRST_IMAGE_SOURCE = "image9191919";
 
 	@Test
-	public void givenNoNewValuesSetAndPublishedWhenBuildingShopifyProductUpdateRequestThenExpectCorrectValues() {
+	void givenNoNewValuesSetAndPublishedWhenBuildingShopifyProductUpdateRequestThenExpectCorrectValues() {
 		final String firstVariantFirstOptionValue = "Green";
 		final String firstVariantSecondOptionValue = "Lemon";
 		final String firstVariantThirdOptionValue = "24 ea";
@@ -138,7 +138,7 @@ public class ShopifyProductUpdateRequestTest {
 	}
 
 	@Test
-	public void givenAllNewValuesSetAndUnpublishedWhenBuildingShopifyProductUpdateRequestThenExpectCorrectValues() {
+	void givenAllNewValuesSetAndUnpublishedWhenBuildingShopifyProductUpdateRequestThenExpectCorrectValues() {
 		final ShopifyVariantCreationRequest firstVariantCreationRequest = ShopifyVariantCreationRequest.newBuilder()
 				.withPrice(BigDecimal.TEN).withCompareAtPrice(BigDecimal.TEN).withSku(SOME_SKU)
 				.withBarcode(SOME_BARCODE).withWeight(BigDecimal.ZERO).withAvailable(SOME_QUANTITY)

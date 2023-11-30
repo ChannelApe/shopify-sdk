@@ -1,18 +1,18 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ShopifyVariantRequestOption1ComparatorTest {
 
 	private static final int ZERO = 0;
 
 	@Test
-	public void givenShopifyVariantRequestWithNullFirstOptionAndOtherShopifyVariantRequestWithNullFirstOptionWhenComparingThenReturnZero() {
+	void givenShopifyVariantRequestWithNullFirstOptionAndOtherShopifyVariantRequestWithNullFirstOptionWhenComparingThenReturnZero() {
 		final ShopifyVariantRequestOption1Comparator shopifyVariantRequestOption1Comparator = new ShopifyVariantRequestOption1Comparator();
 		final ShopifyVariantRequest shopifyVariantRequest = buildShopifyVariantRequest(null);
 		final ShopifyVariantRequest otherShopifyVariantRequest = buildShopifyVariantRequest(null);
@@ -24,7 +24,7 @@ public class ShopifyVariantRequestOption1ComparatorTest {
 	}
 
 	@Test
-	public void givenShopifyVariantRequestWithNullFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnANegativeNumber() {
+	void givenShopifyVariantRequestWithNullFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnANegativeNumber() {
 		final ShopifyVariantRequestOption1Comparator shopifyVariantRequestOption1Comparator = new ShopifyVariantRequestOption1Comparator();
 		final ShopifyVariantRequest shopifyVariantRequest = buildShopifyVariantRequest(null);
 		final ShopifyVariantRequest otherShopifyVariantRequest = buildShopifyVariantRequest("Yellow");
@@ -36,7 +36,7 @@ public class ShopifyVariantRequestOption1ComparatorTest {
 	}
 
 	@Test
-	public void givenShopifyVariantRequestWithYellowFirstOptionAndOtherShopifyVariantRequestWithNullFirstOptionWhenComparingThenReturnAPositiveNumber() {
+	void givenShopifyVariantRequestWithYellowFirstOptionAndOtherShopifyVariantRequestWithNullFirstOptionWhenComparingThenReturnAPositiveNumber() {
 		final ShopifyVariantRequestOption1Comparator shopifyVariantRequestOption1Comparator = new ShopifyVariantRequestOption1Comparator();
 		final ShopifyVariantRequest shopifyVariantRequest = buildShopifyVariantRequest("Yellow");
 		final ShopifyVariantRequest otherShopifyVariantRequest = buildShopifyVariantRequest(null);
@@ -48,7 +48,7 @@ public class ShopifyVariantRequestOption1ComparatorTest {
 	}
 
 	@Test
-	public void givenShopifyVariantRequestWithYellowFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnZero() {
+	void givenShopifyVariantRequestWithYellowFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnZero() {
 		final ShopifyVariantRequestOption1Comparator shopifyVariantRequestOption1Comparator = new ShopifyVariantRequestOption1Comparator();
 		final ShopifyVariantRequest shopifyVariantRequest = buildShopifyVariantRequest("Yellow");
 		final ShopifyVariantRequest otherShopifyVariantRequest = buildShopifyVariantRequest("Yellow");
@@ -60,7 +60,7 @@ public class ShopifyVariantRequestOption1ComparatorTest {
 	}
 
 	@Test
-	public void givenShopifyVariantRequestWithyellowFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnZero() {
+	void givenShopifyVariantRequestWithyellowFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnZero() {
 		final ShopifyVariantRequestOption1Comparator shopifyVariantRequestOption1Comparator = new ShopifyVariantRequestOption1Comparator();
 		final ShopifyVariantRequest shopifyVariantRequest = buildShopifyVariantRequest("yellow");
 		final ShopifyVariantRequest otherShopifyVariantRequest = buildShopifyVariantRequest("Yellow");
@@ -72,7 +72,7 @@ public class ShopifyVariantRequestOption1ComparatorTest {
 	}
 
 	@Test
-	public void givenShopifyVariantRequestWithRedFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnANegativeNumber() {
+	void givenShopifyVariantRequestWithRedFirstOptionAndOtherShopifyVariantRequestWithYellowFirstOptionWhenComparingThenReturnANegativeNumber() {
 		final ShopifyVariantRequestOption1Comparator shopifyVariantRequestOption1Comparator = new ShopifyVariantRequestOption1Comparator();
 		final ShopifyVariantRequest shopifyVariantRequest = buildShopifyVariantRequest("Red");
 		final ShopifyVariantRequest otherShopifyVariantRequest = buildShopifyVariantRequest("Yellow");

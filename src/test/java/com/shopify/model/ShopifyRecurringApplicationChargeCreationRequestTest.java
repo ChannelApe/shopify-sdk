@@ -1,14 +1,14 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyRecurringApplicationChargeCreationRequestTest {
+class ShopifyRecurringApplicationChargeCreationRequestTest {
 
 	private String SOME_NAME = "ChannelApe";
 	private String SOME_TERMS = "Price varies by integrations installed.";
@@ -18,7 +18,7 @@ public class ShopifyRecurringApplicationChargeCreationRequestTest {
 	private int SOME_TRIAL_DAYS = 14;
 
 	@Test
-	public void givenSomeValuesWhenCreatingRequestThenReturnExpectedRequestValues() {
+	void givenSomeValuesWhenCreatingRequestThenReturnExpectedRequestValues() {
 		final ShopifyRecurringApplicationChargeCreationRequest actualShopifyRecurringApplicationChargeCreationRequest = ShopifyRecurringApplicationChargeCreationRequest
 				.newBuilder().withName(SOME_NAME).withTerms(SOME_TERMS).withPrice(SOME_PRICE)
 				.withCappedAmount(SOME_CAPPED_AMOUNT).withReturnUrl(SOME_RETURN_URL).withTrialDays(SOME_TRIAL_DAYS)
@@ -35,7 +35,7 @@ public class ShopifyRecurringApplicationChargeCreationRequestTest {
 	}
 
 	@Test
-	public void givenSomeValuesAndNotTestWhenCreatingRequestThenReturnExpectedRequestValues() {
+	void givenSomeValuesAndNotTestWhenCreatingRequestThenReturnExpectedRequestValues() {
 		final ShopifyRecurringApplicationChargeCreationRequest actualShopifyRecurringApplicationChargeCreationRequest = ShopifyRecurringApplicationChargeCreationRequest
 				.newBuilder().withName(SOME_NAME).withTerms(SOME_TERMS).withPrice(SOME_PRICE)
 				.withCappedAmount(SOME_CAPPED_AMOUNT).withReturnUrl(SOME_RETURN_URL).withTrialDays(SOME_TRIAL_DAYS)

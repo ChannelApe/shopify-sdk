@@ -1,16 +1,16 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyProductTest {
+class ShopifyProductTest {
 
 	@Test
-	public void givenSomeUnsortedOptionsWhenRetrievingSortedOptionNamesThenReturnSortedOptionNamesList() {
+	void givenSomeUnsortedOptionsWhenRetrievingSortedOptionNamesThenReturnSortedOptionNamesList() {
 		final List<Option> options = Arrays.asList(buildOption(45, "Size"), buildOption(2, "Viscosity"),
 				buildOption(84, "Flavor"));
 		final ShopifyProduct shopifyProduct = new ShopifyProduct();
