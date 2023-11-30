@@ -33,7 +33,7 @@ public class ShopifyErrorCodeFactory {
 			shopifyErrorCodes.addAll(shippingAddressErrorCodes);
 
 			if (shopifyErrorCodes.isEmpty()) {
-				throw new IllegalArgumentException(String.format(NO_VALID_ERROR_CODES_FOUND_MESSAGE, responseBody));
+				throw new IllegalArgumentException(NO_VALID_ERROR_CODES_FOUND_MESSAGE.formatted(responseBody));
 			}
 		} catch (final Exception e) {
 			final ShopifyErrorCode shopifyErrorCode = new ShopifyErrorCode(ShopifyErrorCode.Type.UNKNOWN, responseBody);

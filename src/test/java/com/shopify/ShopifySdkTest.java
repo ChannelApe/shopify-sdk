@@ -2318,23 +2318,39 @@ public class ShopifySdkTest {
 		final ShopifyVariantRoot shopifyVariantRoot = new ShopifyVariantRoot();
 		shopifyVariantRoot.setVariant(shopifyVariantUpdateRequest.getRequest());
 
-		final String expectedResponseBodyString = "{\r\n" + "    \"variant\": {\r\n"
-				+ "        \"id\": 98746868985974,\r\n" + "        \"product_id\": 2180984635510,\r\n"
-				+ "        \"title\": \"UK 8\",\r\n" + "        \"price\": \"10.00\",\r\n"
-				+ "        \"sku\": \"TL1MKCC090\",\r\n" + "        \"position\": 2,\r\n"
-				+ "        \"inventory_policy\": \"deny\",\r\n" + "        \"compare_at_price\": null,\r\n"
-				+ "        \"fulfillment_service\": \"manual\",\r\n"
-				+ "        \"inventory_management\": \"shopify\",\r\n" + "        \"option1\": \"UK 8\",\r\n"
-				+ "        \"option2\": null,\r\n" + "        \"option3\": null,\r\n"
-				+ "        \"created_at\": \"2018-09-28T22:41:26+01:00\",\r\n"
-				+ "        \"updated_at\": \"2018-10-09T19:55:53+01:00\",\r\n" + "        \"taxable\": true,\r\n"
-				+ "        \"barcode\": \"459876235897\",\r\n" + "        \"grams\": 0,\r\n"
-				+ "        \"image_id\": null,\r\n" + "        \"inventory_quantity\": 1337,\r\n"
-				+ "        \"weight\": 0,\r\n" + "        \"weight_unit\": \"lb\",\r\n"
-				+ "        \"inventory_item_id\": 20119411261558,\r\n" + "        \"tax_code\": \"\",\r\n"
-				+ "        \"old_inventory_quantity\": 2,\r\n" + "        \"requires_shipping\": true,\r\n"
-				+ "        \"admin_graphql_api_id\": \"gid://shopify/ProductVariant/19746868985974\"\r\n" + "    }\r\n"
-				+ "}";
+		final String expectedResponseBodyString = """
+				{
+				    "variant": {
+				        "id": 98746868985974,
+				        "product_id": 2180984635510,
+				        "title": "UK 8",
+				        "price": "10.00",
+				        "sku": "TL1MKCC090",
+				        "position": 2,
+				        "inventory_policy": "deny",
+				        "compare_at_price": null,
+				        "fulfillment_service": "manual",
+				        "inventory_management": "shopify",
+				        "option1": "UK 8",
+				        "option2": null,
+				        "option3": null,
+				        "created_at": "2018-09-28T22:41:26+01:00",
+				        "updated_at": "2018-10-09T19:55:53+01:00",
+				        "taxable": true,
+				        "barcode": "459876235897",
+				        "grams": 0,
+				        "image_id": null,
+				        "inventory_quantity": 1337,
+				        "weight": 0,
+				        "weight_unit": "lb",
+				        "inventory_item_id": 20119411261558,
+				        "tax_code": "",
+				        "old_inventory_quantity": 2,
+				        "requires_shipping": true,
+				        "admin_graphql_api_id": "gid://shopify/ProductVariant/19746868985974"
+				    }
+				}\
+				""";
 
 		final String expectedPath = new StringBuilder().append(FORWARD_SLASH).append(ShopifySdk.API_VERSION_PREFIX)
 				.append(FORWARD_SLASH).append(SOME_API_VERSION).append(FORWARD_SLASH).append(ShopifySdk.VARIANTS)

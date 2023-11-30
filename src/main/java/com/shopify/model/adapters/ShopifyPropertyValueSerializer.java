@@ -18,12 +18,11 @@ public class ShopifyPropertyValueSerializer extends JsonSerializer<Object> {
 		if (value == null) {
 			gen.writeNull();
 		} else {
-			if (value instanceof String) {
-				gen.writeString((String) value);
+			if (value instanceof String valueStr) {
+				gen.writeString(valueStr);
 			} else {
 				JsonNode node = objectMapper.valueToTree(value);
-				if (node instanceof ObjectNode) {
-					ObjectNode objectNode = (ObjectNode) node;
+				if (node instanceof ObjectNode objectNode) {
 					// Convert the complex object to a JSON string
 					String jsonString = objectMapper.writeValueAsString(objectNode);
 					gen.writeString(jsonString);

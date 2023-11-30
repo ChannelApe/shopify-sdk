@@ -23,7 +23,7 @@ public class ShopifyErrorResponseException extends RuntimeException {
 
 	private static String buildMessage(final Response response) {
 		final String readEntity = ResponseEntityToStringMapper.map(response);
-		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(), readEntity);
+		return MESSAGE.formatted(response.getStatus(), response.getStringHeaders(), readEntity);
 	}
 
 	public int getStatusCode() {

@@ -6,11 +6,13 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import lombok.Data;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.DateTimeAdapter;
 import com.shopify.model.adapters.MetafieldTypeAdapter;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Metafield {
@@ -32,77 +34,5 @@ public class Metafield {
 	@XmlElement(name = "updated_at")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime updatedAt;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public MetafieldType getType() {
-		return type;
-	}
-
-	public void setType(MetafieldType type) {
-		this.type = type;
-	}
-
-	public String getNamespace() {
-		return namespace;
-	}
-
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
-
-	public String getOwnerId() {
-		return ownerId;
-	}
-
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
-	}
-
-	public String getOwnerResource() {
-		return ownerResource;
-	}
-
-	public void setOwnerResource(String ownerResource) {
-		this.ownerResource = ownerResource;
-	}
-
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
 
 }

@@ -38,7 +38,7 @@ public class ShopifyInternationalDuty {
 				return Inconterm.DDP;
 			}
 
-			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
+			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
 		}
 
 		@Override

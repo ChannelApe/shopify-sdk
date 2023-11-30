@@ -84,7 +84,7 @@ public class ShopifyFulfillmentOrder {
 				return Status.IN_PROGRESS;
 			}
 
-			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
+			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
 		}
 
 		@Override
@@ -135,7 +135,7 @@ public class ShopifyFulfillmentOrder {
 				return SupportedActions.CANCEL_FULFILLMENT_ORDER;
 			}
 
-			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
+			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
 		}
 
 		@Override
@@ -222,7 +222,7 @@ public class ShopifyFulfillmentOrder {
 				return RequestStatus.CANCELLATION_REQUESTED;
 			}
 
-			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
+			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
 		}
 
 		@Override
