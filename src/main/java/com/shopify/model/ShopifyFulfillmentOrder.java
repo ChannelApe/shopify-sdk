@@ -3,18 +3,16 @@ package com.shopify.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-
-import com.shopify.model.adapters.DateTimeAdapter;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.Data;
 
-@Data
+import org.joda.time.DateTime;
+
+import com.shopify.model.adapters.DateTimeAdapter;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyFulfillmentOrder {
@@ -270,6 +268,150 @@ public class ShopifyFulfillmentOrder {
 	private ShopifyAssignedLocation assignedLocation;
 	@XmlElement(name = "merchant_requests")
 	private List<ShopifyMerchandRequest> merchantRequests = new LinkedList<>();
+
+	public String getAssignedLocationId() {
+		return assignedLocationId;
+	}
+
+	public void setAssignedLocationId(String assignedLocationId) {
+		this.assignedLocationId = assignedLocationId;
+	}
+
+	public ShopifyDestination getDestination() {
+		return destination;
+	}
+
+	public void setDestination(ShopifyDestination destination) {
+		this.destination = destination;
+	}
+
+	public ShopifyDeliveryMethod getDeliveryMethod() {
+		return deliveryMethod;
+	}
+
+	public void setDeliveryMethod(ShopifyDeliveryMethod deliveryMethod) {
+		this.deliveryMethod = deliveryMethod;
+	}
+
+	public DateTime getFulfillAt() {
+		return fulfillAt;
+	}
+
+	public void setFulfillAt(DateTime fulfillAt) {
+		this.fulfillAt = fulfillAt;
+	}
+
+	public DateTime getFulfillBy() {
+		return fulfillBy;
+	}
+
+	public void setFulfillBy(DateTime fulfillBy) {
+		this.fulfillBy = fulfillBy;
+	}
+
+	public List<ShopifyFulfillmentHold> getFulfillmentHolds() {
+		return fulfillmentHolds;
+	}
+
+	public void setFulfillmentHolds(List<ShopifyFulfillmentHold> fulfillmentHolds) {
+		this.fulfillmentHolds = fulfillmentHolds;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public ShopifyInternationalDuty getInternationalDuties() {
+		return internationalDuties;
+	}
+
+	public void setInternationalDuties(ShopifyInternationalDuty internationalDuties) {
+		this.internationalDuties = internationalDuties;
+	}
+
+	public List<ShopifyFulfillmentOrderLineItem> getLineItems() {
+		return lineItems;
+	}
+
+	public void setLineItems(List<ShopifyFulfillmentOrderLineItem> lineItems) {
+		this.lineItems = lineItems;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getRequestStatus() {
+		return requestStatus;
+	}
+
+	public void setRequestStatus(String requestStatus) {
+		this.requestStatus = requestStatus;
+	}
+
+	public String getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(String shopId) {
+		this.shopId = shopId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public List<String> getSupportedActions() {
+		return supportedActions;
+	}
+
+	public void setSupportedActions(List<String> supportedActions) {
+		this.supportedActions = supportedActions;
+	}
+
+	public List<ShopifyMerchandRequest> getMerchantRequests() {
+		return merchantRequests;
+	}
+
+	public void setMerchantRequests(List<ShopifyMerchandRequest> merchantRequests) {
+		this.merchantRequests = merchantRequests;
+	}
+
+	public ShopifyAssignedLocation getAssignedLocation() {
+		return assignedLocation;
+	}
+
+	public void setAssignedLocation(ShopifyAssignedLocation assignedLocation) {
+		this.assignedLocation = assignedLocation;
+	}
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
 	public boolean hasSupportedAction(final SupportedActions action) {
 		final String stringAction = action.toString().toLowerCase();

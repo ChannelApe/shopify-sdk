@@ -1,17 +1,14 @@
 package com.shopify.model;
 
-import org.joda.time.DateTime;
-
 import com.shopify.model.adapters.DateTimeAdapter;
+import org.joda.time.DateTime;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.Data;
 
-@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyCustomCollection {
@@ -43,4 +40,94 @@ public class ShopifyCustomCollection {
 
 	@XmlElement(name = "admin_graphql_api_id")
 	private String adminGraphqlApiId;
+
+
+	public String getAdminGraphqlApiId() {
+		return adminGraphqlApiId;
+	}
+
+	public String getBodyHtml() {
+		return bodyHtml;
+	}
+
+	public String getHandle() {
+		return handle;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public DateTime getPublishedAt() {
+		return publishedAt;
+	}
+
+	public String getPublishedScope() {
+		return publishedScope;
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+
+	public String getTemplateSuffix() {
+		return templateSuffix;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setHandle(String handle) {
+		this.handle = handle;
+	}
+
+	public boolean isPublished() {
+		return published;
+	}
+
+	public void setPublished(boolean published) {
+		this.published = published;
+	}
+
+	public void setBodyHtml(String bodyHtml) {
+		this.bodyHtml = bodyHtml;
+	}
+
+	public void setPublishedScope(String publishedScope) {
+		this.publishedScope = publishedScope;
+	}
+
+	public void setSortOrder(String sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public void setTemplateSuffix(String templateSuffix) {
+		this.templateSuffix = templateSuffix;
+	}
+
+	public void setPublishedAt(DateTime publishedAt) {
+		this.publishedAt = publishedAt;
+	}
+
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public void setAdminGraphqlApiId(String adminGraphqlApiId) {
+		this.adminGraphqlApiId = adminGraphqlApiId;
+	}
 }

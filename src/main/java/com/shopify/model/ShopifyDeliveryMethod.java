@@ -1,17 +1,15 @@
 package com.shopify.model;
 
-import org.joda.time.DateTime;
-
-import com.shopify.model.adapters.DateTimeAdapter;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.Data;
 
-@Data
+import org.joda.time.DateTime;
+
+import com.shopify.model.adapters.DateTimeAdapter;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyDeliveryMethod {
@@ -91,5 +89,37 @@ public class ShopifyDeliveryMethod {
 	@XmlElement(name = "max_delivery_date_time")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private DateTime maxDeliveryDateTime;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMethodType() {
+		return methodType;
+	}
+
+	public void setMethodType(String methodType) {
+		this.methodType = methodType;
+	}
+
+	public DateTime getMinDeliveryDateTime() {
+		return minDeliveryDateTime;
+	}
+
+	public void setMinDeliveryDateTime(DateTime minDeliveryDateTime) {
+		this.minDeliveryDateTime = minDeliveryDateTime;
+	}
+
+	public DateTime getMaxDeliveryDateTime() {
+		return maxDeliveryDateTime;
+	}
+
+	public void setMaxDeliveryDateTime(DateTime maxDeliveryDateTime) {
+		this.maxDeliveryDateTime = maxDeliveryDateTime;
+	}
 
 }

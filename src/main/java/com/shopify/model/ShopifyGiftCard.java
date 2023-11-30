@@ -8,12 +8,10 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import lombok.Data;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.DateTimeAdapter;
 
-@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyGiftCard {
@@ -49,5 +47,133 @@ public class ShopifyGiftCard {
 	private String userId;
 	@XmlElement(name = "template_suffix")
 	private String templateSuffix;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(final String note) {
+		this.note = note;
+	}
+
+	public String getApiClientId() {
+		return apiClientId;
+	}
+
+	public void setApiClientId(final String apiClientId) {
+		this.apiClientId = apiClientId;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(final BigDecimal balance) {
+		this.balance = balance;
+	}
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(final DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public BigDecimal getInitialValue() {
+		return initialValue;
+	}
+
+	public void setInitialValue(final BigDecimal initialValue) {
+		this.initialValue = initialValue;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(final String currency) {
+		this.currency = currency;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(final String customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(final String code) {
+		this.code = code;
+	}
+
+	public DateTime getDisabledAt() {
+		return disabledAt;
+	}
+
+	public void setDisabledAt(final DateTime disabledAt) {
+		this.disabledAt = disabledAt;
+	}
+
+	public DateTime getExpiresOn() {
+		return expiresOn;
+	}
+
+	public void setExpiresOn(final DateTime expiresOn) {
+		this.expiresOn = expiresOn;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(final DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getLastCharacters() {
+		return lastCharacters;
+	}
+
+	public void setLastCharacters(final String lastCharacters) {
+		this.lastCharacters = lastCharacters;
+	}
+
+	public String getLineItemId() {
+		return lineItemId;
+	}
+
+	public void setLineItemId(final String lineItemId) {
+		this.lineItemId = lineItemId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(final String userId) {
+		this.userId = userId;
+	}
+
+	public String getTemplateSuffix() {
+		return templateSuffix;
+	}
+
+	public void setTemplateSuffix(final String templateSuffix) {
+		this.templateSuffix = templateSuffix;
+	}
 
 }

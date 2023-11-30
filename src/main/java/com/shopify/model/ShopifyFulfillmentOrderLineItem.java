@@ -4,9 +4,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.Data;
 
-@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyFulfillmentOrderLineItem {
@@ -25,4 +23,68 @@ public class ShopifyFulfillmentOrderLineItem {
 	private long fulfillableQuantity;
 	@XmlElement(name = "variant_id")
 	private String variantId;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(String shopId) {
+		this.shopId = shopId;
+	}
+
+	public String getFulfillmentOrderId() {
+		return fulfillmentOrderId;
+	}
+
+	public void setFulfillmentOrderId(String fulfillmentOrderId) {
+		this.fulfillmentOrderId = fulfillmentOrderId;
+	}
+
+	public String getLineItemId() {
+		return lineItemId;
+	}
+
+	public void setLineItemId(String lineItemId) {
+		this.lineItemId = lineItemId;
+	}
+
+	public String getInventoryItemId() {
+		return inventoryItemId;
+	}
+
+	public void setInventoryItemId(String inventoryItemId) {
+		this.inventoryItemId = inventoryItemId;
+	}
+
+	public long getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(long quantity) {
+		this.quantity = quantity;
+	}
+
+	public long getFulfillableQuantity() {
+		return fulfillableQuantity;
+	}
+
+	public void setFulfillableQuantity(long fulfillableQuantity) {
+		this.fulfillableQuantity = fulfillableQuantity;
+	}
+
+	public String getVariantId() {
+		return variantId;
+	}
+
+	public void setVariantId(String variantId) {
+		this.variantId = variantId;
+	}
 }

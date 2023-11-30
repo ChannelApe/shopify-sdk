@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import lombok.Data;
-
-@Data
 public class ShopifyGetCustomersRequest {
 	private int limit;
 	private List<String> ids;
@@ -93,5 +90,53 @@ public class ShopifyGetCustomersRequest {
 			this.pageInfo = pageInfo;
 			return this;
 		}
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(final int limit) {
+		this.limit = limit;
+	}
+
+	public List<String> getIds() {
+		return ids;
+	}
+
+	public void setIds(final List<String> ids) {
+		this.ids = ids;
+	}
+
+	public String getSinceId() {
+		return sinceId;
+	}
+
+	public void setSinceId(final String sinceId) {
+		this.sinceId = sinceId;
+	}
+
+	public DateTime getCreatedAtMin() {
+		return createdAtMin;
+	}
+
+	public void setCreatedAtMin(final DateTime createdAtMin) {
+		this.createdAtMin = createdAtMin;
+	}
+
+	public DateTime getCreatedAtMax() {
+		return createdAtMax;
+	}
+
+	public void setCreatedAtMax(final DateTime createdAtMax) {
+		this.createdAtMax = createdAtMax;
+	}
+
+	public String getPageInfo() {
+		return pageInfo;
+	}
+
+	public void setPageInfo(final String pageInfo) {
+		this.pageInfo = pageInfo;
 	}
 }
