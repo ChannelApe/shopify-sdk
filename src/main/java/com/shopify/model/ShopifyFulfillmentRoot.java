@@ -1,18 +1,12 @@
 package com.shopify.model;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 public class ShopifyFulfillmentRoot {
 
 	private ShopifyFulfillment fulfillment;
-
-	public ShopifyFulfillment getFulfillment() {
-		return fulfillment;
-	}
-
-	public void setFulfillment(ShopifyFulfillment fulfillment) {
-		this.fulfillment = fulfillment;
-	}
 
 }

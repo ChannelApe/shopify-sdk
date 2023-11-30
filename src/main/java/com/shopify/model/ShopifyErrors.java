@@ -7,20 +7,14 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyErrors {
 
 	@XmlElement(name = "shipping_address")
 	private List<String> shippingAddressErrors = new LinkedList<>();
-
-	public List<String> getShippingAddressErrors() {
-		return shippingAddressErrors;
-	}
-
-	public void setShippingAddressErrors(final List<String> shippingAddressErrors) {
-		this.shippingAddressErrors = shippingAddressErrors;
-	}
 
 }

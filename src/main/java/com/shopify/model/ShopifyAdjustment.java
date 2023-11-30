@@ -6,7 +6,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyAdjustment {
@@ -21,61 +23,5 @@ public class ShopifyAdjustment {
 	private BigDecimal taxAmount;
 	private String kind;
 	private String reason;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(final String orderId) {
-		this.orderId = orderId;
-	}
-
-	public String getRefundId() {
-		return refundId;
-	}
-
-	public void setRefundId(final String refundId) {
-		this.refundId = refundId;
-	}
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(final BigDecimal amount) {
-		this.amount = amount;
-	}
-
-	public BigDecimal getTaxAmount() {
-		return taxAmount;
-	}
-
-	public void setTaxAmount(final BigDecimal taxAmount) {
-		this.taxAmount = taxAmount;
-	}
-
-	public String getKind() {
-		return kind;
-	}
-
-	public void setKind(final String kind) {
-		this.kind = kind;
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
-	public void setReason(final String reason) {
-		this.reason = reason;
-	}
 
 }

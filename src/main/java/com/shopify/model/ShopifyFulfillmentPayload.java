@@ -7,7 +7,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyFulfillmentPayload {
@@ -19,36 +21,4 @@ public class ShopifyFulfillmentPayload {
 	private ShopifyTrackingInfo trackingInfo;
 	@XmlElement(name = "line_items_by_fulfillment_order")
 	private List<ShopifyLineItemsByFulfillmentOrder> lineItemsByFulfillmentOrder = new LinkedList<>();
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public boolean isNotifyCustomer() {
-		return notifyCustomer;
-	}
-
-	public void setNotifyCustomer(boolean notifyCustomer) {
-		this.notifyCustomer = notifyCustomer;
-	}
-
-	public ShopifyTrackingInfo getTrackingInfo() {
-		return trackingInfo;
-	}
-
-	public void setTrackingInfo(ShopifyTrackingInfo trackingInfo) {
-		this.trackingInfo = trackingInfo;
-	}
-
-	public List<ShopifyLineItemsByFulfillmentOrder> getLineItemsByFulfillmentOrder() {
-		return lineItemsByFulfillmentOrder;
-	}
-
-	public void setLineItemsByFulfillmentOrder(List<ShopifyLineItemsByFulfillmentOrder> lineItemsByFulfillmentOrder) {
-		this.lineItemsByFulfillmentOrder = lineItemsByFulfillmentOrder;
-	}
 }
