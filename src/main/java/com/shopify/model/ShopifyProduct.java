@@ -13,11 +13,13 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.TagsAdapter;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyProduct {
@@ -47,116 +49,8 @@ public class ShopifyProduct {
 	private String publishedAt;
 	private Boolean published;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getProductType() {
-		return productType;
-	}
-
-	public void setProductType(String productType) {
-		this.productType = productType;
-	}
-
-	public String getBodyHtml() {
-		return bodyHtml;
-	}
-
-	public void setBodyHtml(String bodyHtml) {
-		this.bodyHtml = bodyHtml;
-	}
-
-	public String getVendor() {
-		return vendor;
-	}
-
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
-	}
-
-	public Set<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<String> tags) {
-		this.tags = tags;
-	}
-
-	public List<Option> getOptions() {
-		return options;
-	}
-
-	public void setOptions(List<Option> options) {
-		this.options = options;
-	}
-
-	public String getMetafieldsGlobalTitleTag() {
-		return metafieldsGlobalTitleTag;
-	}
-
-	public void setMetafieldsGlobalTitleTag(String metafieldsGlobalTitleTag) {
-		this.metafieldsGlobalTitleTag = metafieldsGlobalTitleTag;
-	}
-
-	public String getMetafieldsGlobalDescriptionTag() {
-		return metafieldsGlobalDescriptionTag;
-	}
-
-	public void setMetafieldsGlobalDescriptionTag(String metafieldsGlobalDescriptionTag) {
-		this.metafieldsGlobalDescriptionTag = metafieldsGlobalDescriptionTag;
-	}
-
-	public List<Image> getImages() {
-		return images;
-	}
-
-	public void setImages(List<Image> images) {
-		this.images = images;
-	}
-
-	public Image getImage() {
-		return image;
-	}
-
-	public void setImage(Image image) {
-		this.image = image;
-	}
-
-	public List<ShopifyVariant> getVariants() {
-		return variants;
-	}
-
-	public void setVariants(List<ShopifyVariant> variants) {
-		this.variants = variants;
-	}
-
-	public String getPublishedAt() {
-		return publishedAt;
-	}
-
-	public void setPublishedAt(String publishedAt) {
-		this.publishedAt = publishedAt;
-	}
-
 	public Boolean isPublished() {
 		return (published == null) ? StringUtils.isNotBlank(publishedAt) : published;
-	}
-
-	public void setPublished(Boolean published) {
-		this.published = published;
 	}
 
 	public List<String> getSortedOptionNames() {
