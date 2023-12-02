@@ -9,10 +9,12 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import lombok.Data;
 import org.joda.time.DateTime;
 
 import com.shopify.model.adapters.DateTimeAdapter;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyFulfillment {
@@ -44,7 +46,7 @@ public class ShopifyFulfillment {
 				return Status.FAILURE;
 			}
 
-			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
+			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
 		}
 
 		@Override
@@ -77,101 +79,5 @@ public class ShopifyFulfillment {
 	private List<String> trackingUrls = new LinkedList<>();
 	@XmlElement(name = "location_id")
 	private String locationId;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(final String orderId) {
-		this.orderId = orderId;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(final String status) {
-		this.status = status;
-	}
-
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public String getTrackingCompany() {
-		return trackingCompany;
-	}
-
-	public void setTrackingCompany(final String trackingCompany) {
-		this.trackingCompany = trackingCompany;
-	}
-
-	public String getTrackingNumber() {
-		return trackingNumber;
-	}
-
-	public void setTrackingNumber(final String trackingNumber) {
-		this.trackingNumber = trackingNumber;
-	}
-
-	public String getTrackingUrl() {
-		return trackingUrl;
-	}
-
-	public void setTrackingUrl(final String trackingUrl) {
-		this.trackingUrl = trackingUrl;
-	}
-
-	public List<String> getTrackingUrls() {
-		return trackingUrls;
-	}
-
-	public void setTrackingUrls(final List<String> trackingUrls) {
-		this.trackingUrls = trackingUrls;
-	}
-
-	public boolean isNotifyCustomer() {
-		return notifyCustomer;
-	}
-
-	public void setNotifyCustomer(final boolean notifyCustomer) {
-		this.notifyCustomer = notifyCustomer;
-	}
-
-	public List<ShopifyLineItem> getLineItems() {
-		return lineItems;
-	}
-
-	public void setLineItems(final List<ShopifyLineItem> lineItems) {
-		this.lineItems = lineItems;
-	}
-
-	public String getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(final String locationId) {
-		this.locationId = locationId;
-	}
 
 }

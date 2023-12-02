@@ -44,7 +44,7 @@ class ShopifyErrorResponseExceptionTest {
 
 		final String expectedResponseHeaders = "{Transfer-Encoding=[chunked], X-Request-Id=[ce729803-84ce-4063-a672-816f03c2c9a2], X-Shopify-API-Deprecated-Reason=[https://help.shopify.com/api/guides/inventory-migration-guide], Content-Type=[application/json, charset=utf-8]}";
 
-		assertEquals(ShopifyErrorResponseException.MESSAGE.formatted(expectedStatusCode, expectedResponseHeaders,
+		assertEquals(String.format(ShopifyErrorResponseException.MESSAGE, expectedStatusCode, expectedResponseHeaders,
 				expectedResponseBodyString), actualShopifyErrorResponseException.getMessage());
 		assertTrue(actualShopifyErrorResponseException instanceof RuntimeException);
 		assertEquals(1, actualShopifyErrorResponseException.getShopifyErrorCodes().size());
@@ -78,7 +78,7 @@ class ShopifyErrorResponseExceptionTest {
 
 		final String expectedResponseHeaders = "{Transfer-Encoding=[chunked], X-Request-Id=[ce729803-84ce-4063-a672-816f03c2c9a2], X-Shopify-API-Deprecated-Reason=[https://help.shopify.com/api/guides/inventory-migration-guide], Content-Type=[application/json, charset=utf-8]}";
 
-		assertEquals(ShopifyErrorResponseException.MESSAGE.formatted(expectedStatusCode, expectedResponseHeaders,
+		assertEquals(String.format(ShopifyErrorResponseException.MESSAGE, expectedStatusCode, expectedResponseHeaders,
 				expectedResponseBodyString), actualShopifyErrorResponseException.getMessage());
 		assertTrue(actualShopifyErrorResponseException instanceof RuntimeException);
 		assertEquals(1, actualShopifyErrorResponseException.getShopifyErrorCodes().size());
@@ -103,15 +103,9 @@ class ShopifyErrorResponseExceptionTest {
 				Arrays.asList("https://help.shopify.com/api/guides/inventory-migration-guide"));
 		when(response.getStringHeaders()).thenReturn(responseHeaders);
 
-		final String expectedResponseBodyString = """
-				{
-				    "errors": {
-				        "shipping_address": [
-				            "address1 can't be blank, zip is not valid for united states, and city can't be blank"
-				        ]
-				    }
-				}\
-				""";
+		final String expectedResponseBodyString = "{\n" + "    \"errors\": {\n" + "        \"shipping_address\": [\n"
+				+ "            \"address1 can't be blank, zip is not valid for united states, and city can't be blank\"\n"
+				+ "        ]\n" + "    }\n" + "}";
 
 		final InputStream expectedResponseStream = new ByteArrayInputStream(
 				expectedResponseBodyString.getBytes(StandardCharsets.UTF_8));
@@ -121,7 +115,7 @@ class ShopifyErrorResponseExceptionTest {
 
 		final String expectedResponseHeaders = "{Transfer-Encoding=[chunked], X-Request-Id=[ce729803-84ce-4063-a672-816f03c2c9a2], X-Shopify-API-Deprecated-Reason=[https://help.shopify.com/api/guides/inventory-migration-guide], Content-Type=[application/json, charset=utf-8]}";
 
-		assertEquals(ShopifyErrorResponseException.MESSAGE.formatted(expectedStatusCode, expectedResponseHeaders,
+		assertEquals(String.format(ShopifyErrorResponseException.MESSAGE, expectedStatusCode, expectedResponseHeaders,
 				expectedResponseBodyString), actualShopifyErrorResponseException.getMessage());
 		assertTrue(actualShopifyErrorResponseException instanceof RuntimeException);
 		assertEquals(1, actualShopifyErrorResponseException.getShopifyErrorCodes().size());

@@ -19,7 +19,7 @@ public enum OrderRiskRecommendation {
 		} else if (CANCEL.toString().equals(value)) {
 			return OrderRiskRecommendation.CANCEL;
 		}
-		throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
+		throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
 	}
 
 	@Override

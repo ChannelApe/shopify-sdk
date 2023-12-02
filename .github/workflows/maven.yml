@@ -29,7 +29,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: 17
+        java-version: 11
         server-id: ossrh
         distribution: adopt
         server-username: MAVEN_USERNAME

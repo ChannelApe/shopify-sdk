@@ -62,7 +62,7 @@ public enum MetafieldType {
 		} else if (RATING.toString().equals(type)) {
 			return MetafieldType.RATING;
 		}
-		throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(type));
+		throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, type));
 	}
 
 	@Override

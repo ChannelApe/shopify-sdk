@@ -11,7 +11,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.shopify.model.adapters.EscapedStringAdapter;
 import com.shopify.model.adapters.EscapedStringsAdapter;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Option {
@@ -24,45 +26,5 @@ public class Option {
 	private int position;
 	@XmlJavaTypeAdapter(EscapedStringsAdapter.class)
 	private List<String> values = new LinkedList<>();
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public String getProductId() {
-		return productId;
-	}
-
-	public void setProductId(final String productId) {
-		this.productId = productId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(final int position) {
-		this.position = position;
-	}
-
-	public List<String> getValues() {
-		return values;
-	}
-
-	public void setValues(final List<String> values) {
-		this.values = values;
-	}
 
 }

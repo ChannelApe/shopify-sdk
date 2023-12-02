@@ -1105,7 +1105,7 @@ public class ShopifySdk {
 			throw new ShopifyErrorResponseException(response);
 		} catch (final Exception e) {
 			throw new ShopifyClientException(
-					GENERAL_ACCESS_TOKEN_EXCEPTION_MESSAGE.formatted(shopSubdomain, this.authorizationToken), e);
+					String.format(GENERAL_ACCESS_TOKEN_EXCEPTION_MESSAGE, shopSubdomain, this.authorizationToken), e);
 		}
 	}
 

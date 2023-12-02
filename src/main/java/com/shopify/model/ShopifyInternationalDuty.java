@@ -3,7 +3,9 @@ package com.shopify.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyInternationalDuty {
@@ -38,7 +40,7 @@ public class ShopifyInternationalDuty {
 				return Inconterm.DDP;
 			}
 
-			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
+			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
 		}
 
 		@Override
@@ -48,13 +50,5 @@ public class ShopifyInternationalDuty {
 	}
 
 	private String incoterm;
-
-	public String getIncoterm() {
-		return incoterm;
-	}
-
-	public void setIncoterm(String incoterm) {
-		this.incoterm = incoterm;
-	}
 
 }

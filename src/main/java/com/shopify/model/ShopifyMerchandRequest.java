@@ -4,7 +4,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyMerchandRequest {
@@ -30,7 +32,7 @@ public class ShopifyMerchandRequest {
 				return Kind.LEGACY_FULFILL_REQUEST;
 			}
 
-			throw new IllegalArgumentException(NO_MATCHING_ENUMS_ERROR_MESSAGE.formatted(value));
+			throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, value));
 		}
 
 		@Override
@@ -43,29 +45,5 @@ public class ShopifyMerchandRequest {
 	@XmlElement(name = "request_options")
 	private String requestOptions;
 	private String kind;
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public String getRequestOptions() {
-		return requestOptions;
-	}
-
-	public void setRequestOptions(String requestOptions) {
-		this.requestOptions = requestOptions;
-	}
-
-	public String getKind() {
-		return kind;
-	}
-
-	public void setKind(String kind) {
-		this.kind = kind;
-	}
 
 }
