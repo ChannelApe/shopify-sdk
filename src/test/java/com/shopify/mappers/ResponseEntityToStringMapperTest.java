@@ -1,7 +1,7 @@
 package com.shopify.mappers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,14 +9,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ResponseEntityToStringMapperTest {
+class ResponseEntityToStringMapperTest {
 
 	@Test
-	public void givenSomeValuesWhenMappingResponseEntityToAStringThenExpectCorrectValues() throws Exception {
+	void givenSomeValuesWhenMappingResponseEntityToAStringThenExpectCorrectValues() throws Exception {
 		final Response response = mock(Response.class);
 
 		final String expectedResponseBodyString = "{\"error\": \"something went wrong.\"}";
@@ -29,7 +29,7 @@ public class ResponseEntityToStringMapperTest {
 	}
 
 	@Test
-	public void givenSomeExceptionOccursWhenMappingResponseEntityToAStringThenExpectNullValue() throws Exception {
+	void givenSomeExceptionOccursWhenMappingResponseEntityToAStringThenExpectNullValue() throws Exception {
 		final Response response = mock(Response.class);
 
 		when(response.getEntity()).thenThrow(new NullPointerException());

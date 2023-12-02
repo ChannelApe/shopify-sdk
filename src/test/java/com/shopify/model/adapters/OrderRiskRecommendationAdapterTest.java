@@ -1,64 +1,67 @@
 package com.shopify.model.adapters;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.shopify.model.OrderRiskRecommendation;
 
-public class OrderRiskRecommendationAdapterTest {
+class OrderRiskRecommendationAdapterTest {
 
 	private OrderRiskRecommendationAdapter orderRiskRecommendationAdapter;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		orderRiskRecommendationAdapter = new OrderRiskRecommendationAdapter();
 	}
 
 	@Test
-	public void giveAcceptOrderRiskRecommendationWhenMarshallingThenReturnMarshalledString() throws Exception {
+	void giveAcceptOrderRiskRecommendationWhenMarshallingThenReturnMarshalledString() throws Exception {
 		final String actualMarshalledString = orderRiskRecommendationAdapter.marshal(OrderRiskRecommendation.ACCEPT);
 		assertEquals(OrderRiskRecommendation.ACCEPT.toString(), actualMarshalledString);
 	}
 
 	@Test
-	public void givenAcceptStringWhenUnmarshallingThenReturnOrderRiskRecommendation() throws Exception {
+	void givenAcceptStringWhenUnmarshallingThenReturnOrderRiskRecommendation() throws Exception {
 		final OrderRiskRecommendation actualOrderRiskRecommendation = orderRiskRecommendationAdapter
 				.unmarshal(OrderRiskRecommendation.ACCEPT.toString());
 		assertEquals(OrderRiskRecommendation.ACCEPT, actualOrderRiskRecommendation);
 	}
 
 	@Test
-	public void giveInvestigateOrderRiskRecommendationWhenMarshallingThenReturnMarshalledString() throws Exception {
+	void giveInvestigateOrderRiskRecommendationWhenMarshallingThenReturnMarshalledString() throws Exception {
 		final String actualMarshalledString = orderRiskRecommendationAdapter
 				.marshal(OrderRiskRecommendation.INVESTIGATE);
 		assertEquals(OrderRiskRecommendation.INVESTIGATE.toString(), actualMarshalledString);
 	}
 
 	@Test
-	public void givenInvestigateStringWhenUnmarshallingThenReturnOrderRiskRecommendation() throws Exception {
+	void givenInvestigateStringWhenUnmarshallingThenReturnOrderRiskRecommendation() throws Exception {
 		final OrderRiskRecommendation actualOrderRiskRecommendation = orderRiskRecommendationAdapter
 				.unmarshal(OrderRiskRecommendation.INVESTIGATE.toString());
 		assertEquals(OrderRiskRecommendation.INVESTIGATE, actualOrderRiskRecommendation);
 	}
 
 	@Test
-	public void giveCancelOrderRiskRecommendationWhenMarshallingThenReturnMarshalledString() throws Exception {
+	void giveCancelOrderRiskRecommendationWhenMarshallingThenReturnMarshalledString() throws Exception {
 		final String actualMarshalledString = orderRiskRecommendationAdapter.marshal(OrderRiskRecommendation.CANCEL);
 		assertEquals(OrderRiskRecommendation.CANCEL.toString(), actualMarshalledString);
 	}
 
 	@Test
-	public void givenCancelStringWhenUnmarshallingThenReturnOrderRiskRecommendation() throws Exception {
+	void givenCancelStringWhenUnmarshallingThenReturnOrderRiskRecommendation() throws Exception {
 		final OrderRiskRecommendation actualOrderRiskRecommendation = orderRiskRecommendationAdapter
 				.unmarshal(OrderRiskRecommendation.CANCEL.toString());
 		assertEquals(OrderRiskRecommendation.CANCEL, actualOrderRiskRecommendation);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void givenMaybeStringWhenUnmarshallingThenThrowNewIllegalArgumentException() throws Exception {
-		orderRiskRecommendationAdapter.unmarshal("maybe");
+	@Test
+	void givenMaybeStringWhenUnmarshallingThenThrowNewIllegalArgumentException() throws Exception {
+		assertThrows(IllegalArgumentException.class, () -> {
+			orderRiskRecommendationAdapter.unmarshal("maybe");
+		});
 	}
 
 }

@@ -1,16 +1,16 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyGetCustomersRequestTest {
+class ShopifyGetCustomersRequestTest {
 	@Test
-	public void givenSomeValuesWhenShopifyCustomersGetRequestThenExpectCorrectValues() {
+	void givenSomeValuesWhenShopifyCustomersGetRequestThenExpectCorrectValues() {
 		final DateTime minimumCreationDate = new DateTime();
 		final DateTime maximumCreationDate = minimumCreationDate.plusDays(1);
 		final List<String> ids = new ArrayList<>();

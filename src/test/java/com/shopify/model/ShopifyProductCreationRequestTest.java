@@ -1,10 +1,10 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -14,9 +14,9 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyProductCreationRequestTest {
+class ShopifyProductCreationRequestTest {
 
 	private static final String SOME_SKU = "10004";
 	private static final String SOME_BARCODE = "144141141";
@@ -35,7 +35,7 @@ public class ShopifyProductCreationRequestTest {
 	private static final String SOME_FIRST_IMAGE_SOURCE = "image2133";
 
 	@Test
-	public void givenValuesSetAndPublishedWhenBuildingShopifyProductCreationRequestThenExpectCorrectValues() {
+	void givenValuesSetAndPublishedWhenBuildingShopifyProductCreationRequestThenExpectCorrectValues() {
 		final String firstVariantFirstOptionValue = "Red";
 		final String firstVariantSecondOptionValue = "Lemon";
 		final String firstVariantThirdOptionValue = "24 ea";
@@ -130,7 +130,7 @@ public class ShopifyProductCreationRequestTest {
 	}
 
 	@Test
-	public void givenValuesSetAndUnpublishedWhenBuildingShopifyProductCreationRequestThenExpectCorrectValues() {
+	void givenValuesSetAndUnpublishedWhenBuildingShopifyProductCreationRequestThenExpectCorrectValues() {
 		final String firstVariantFirstOptionValue = "Red";
 		final String firstVariantSecondOptionValue = "Lemon";
 		final String firstVariantThirdOptionValue = "24 ea";

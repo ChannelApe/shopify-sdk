@@ -10,14 +10,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Link;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import com.github.rholder.retry.Attempt;
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.RetryListener;
@@ -1056,7 +1056,7 @@ public class ShopifySdk {
 	}
 
 	private Retryer<Response> buildResponseRetyer() {
-		return RetryerBuilder.<Response> newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
+		return RetryerBuilder.<Response>newBuilder().retryIfResult(ShopifySdk::shouldRetryResponse).retryIfException()
 				.withWaitStrategy(WaitStrategies.randomWait(minimumRequestRetryRandomDelayMilliseconds,
 						TimeUnit.MILLISECONDS, maximumRequestRetryRandomDelayMilliseconds, TimeUnit.MILLISECONDS))
 				.withStopStrategy(
@@ -1142,7 +1142,7 @@ public class ShopifySdk {
 
 	private static Client buildClient() {
 		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
-		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
+		final JacksonJsonProvider provider = new JacksonJsonProvider();
 		provider.setMapper(mapper);
 
 		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);

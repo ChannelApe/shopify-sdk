@@ -1,29 +1,29 @@
 package com.shopify.model.adapters;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.shopify.model.InventoryPolicy;
 
-public class InventoryPolicyAdapterTest {
+class InventoryPolicyAdapterTest {
 
 	private InventoryPolicyAdapter inventoryPolicyAdapter;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		inventoryPolicyAdapter = new InventoryPolicyAdapter();
 	}
 
 	@Test
-	public void giveSomeInventoryPolicyWhenMarshallingThenReturnMarshalledString() throws Exception {
+	void giveSomeInventoryPolicyWhenMarshallingThenReturnMarshalledString() throws Exception {
 		final String actualMarshalledString = inventoryPolicyAdapter.marshal(InventoryPolicy.CONTINUE);
 		assertEquals(InventoryPolicy.CONTINUE.toString(), actualMarshalledString);
 	}
 
 	@Test
-	public void givenSomeStringWhenUnmarshallingThenReturnInventoryPolicy() throws Exception {
+	void givenSomeStringWhenUnmarshallingThenReturnInventoryPolicy() throws Exception {
 		final InventoryPolicy actualInventoryPolicy = inventoryPolicyAdapter
 				.unmarshal(InventoryPolicy.CONTINUE.toString());
 		assertEquals(InventoryPolicy.CONTINUE, actualInventoryPolicy);

@@ -1,12 +1,12 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyAddressUpdateRequestTest {
+class ShopifyAddressUpdateRequestTest {
 
 	private static final String SOME_PROVINCE_CODE = "PA";
 	private static final String SOME_PROVINCE = "Pennsylvania";
@@ -23,7 +23,7 @@ public class ShopifyAddressUpdateRequestTest {
 	private static final String SOME_ADDRESS_1 = "224 Wyoming Ave";
 
 	@Test
-	public void givenSomeValuesWhenBuildingShopifyAddressUpdateRequestThenExpectCorrectValues() {
+	void givenSomeValuesWhenBuildingShopifyAddressUpdateRequestThenExpectCorrectValues() {
 
 		final ShopifyAddressUpdateRequest shopifyAddressUpdateRequest = new ShopifyAddressUpdateRequest();
 		shopifyAddressUpdateRequest.setAddress1(SOME_ADDRESS_1);

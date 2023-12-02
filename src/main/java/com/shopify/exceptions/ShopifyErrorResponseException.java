@@ -2,10 +2,14 @@ package com.shopify.exceptions;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import com.shopify.mappers.ResponseEntityToStringMapper;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class ShopifyErrorResponseException extends RuntimeException {
 
 	static final String MESSAGE = "Received unexpected Response Status Code of %d\nResponse Headers of:\n%s\nResponse Body of:\n%s";
@@ -24,18 +28,6 @@ public class ShopifyErrorResponseException extends RuntimeException {
 	private static String buildMessage(final Response response) {
 		final String readEntity = ResponseEntityToStringMapper.map(response);
 		return String.format(MESSAGE, response.getStatus(), response.getStringHeaders(), readEntity);
-	}
-
-	public int getStatusCode() {
-		return statusCode;
-	}
-
-	public String getResponseBody() {
-		return responseBody;
-	}
-
-	public List<ShopifyErrorCode> getShopifyErrorCodes() {
-		return shopifyErrorCodes;
 	}
 
 }

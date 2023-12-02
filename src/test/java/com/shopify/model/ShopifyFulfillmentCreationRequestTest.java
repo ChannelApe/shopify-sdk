@@ -1,15 +1,15 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyFulfillmentCreationRequestTest {
+class ShopifyFulfillmentCreationRequestTest {
 
 	private static final List<String> SOME_TRACKING_URLS = Arrays.asList("https://ups.com/123", "https://ups.com/456");
 	private static final String SOME_LOCATION_ID = "987483724";
@@ -21,7 +21,7 @@ public class ShopifyFulfillmentCreationRequestTest {
 			new ShopifyLineItem());
 
 	@Test
-	public void givenSomeOrderIdAndSomeTrackingNumberAndSomeTrackingCompanyAndSomeLineItemsWhenCreatingFulfillmentCreationRequestThenReturnCorrectRequest() {
+	void givenSomeOrderIdAndSomeTrackingNumberAndSomeTrackingCompanyAndSomeLineItemsWhenCreatingFulfillmentCreationRequestThenReturnCorrectRequest() {
 		final ShopifyFulfillmentCreationRequest shopifyFulfillmentCreationRequest = ShopifyFulfillmentCreationRequest
 				.newBuilder().withOrderId(SOME_ORDER_ID).withTrackingCompany(SOME_TRACKING_COMPANY)
 				.withTrackingNumber(SOME_TRACKING_NUMBER).withNotifyCustomer(SOME_NOTIFY_CUSTOMER)

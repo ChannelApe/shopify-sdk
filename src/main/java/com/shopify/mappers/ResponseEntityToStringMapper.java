@@ -3,7 +3,7 @@ package com.shopify.mappers;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

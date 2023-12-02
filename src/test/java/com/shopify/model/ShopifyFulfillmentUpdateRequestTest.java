@@ -1,15 +1,15 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyFulfillmentUpdateRequestTest {
+class ShopifyFulfillmentUpdateRequestTest {
 
 	private static final List<String> SOME_TRACKING_URLS = Arrays.asList("123.com");
 	private static final String SOME_LOCATION_ID = "93284234";
@@ -20,7 +20,7 @@ public class ShopifyFulfillmentUpdateRequestTest {
 			new ShopifyLineItem());
 
 	@Test
-	public void givenSomeShopifyFulfillmentAndSomeTrackingNumberAndSomeTrackingCompanyAndSomeLineItemsWhenUpdatingFulfillmentUpdateRequestThenReturnCorrectRequest() {
+	void givenSomeShopifyFulfillmentAndSomeTrackingNumberAndSomeTrackingCompanyAndSomeLineItemsWhenUpdatingFulfillmentUpdateRequestThenReturnCorrectRequest() {
 		final ShopifyFulfillment currentShopifyFulfillment = new ShopifyFulfillment();
 		currentShopifyFulfillment.setId(UUID.randomUUID().toString());
 		currentShopifyFulfillment.setOrderId(UUID.randomUUID().toString());

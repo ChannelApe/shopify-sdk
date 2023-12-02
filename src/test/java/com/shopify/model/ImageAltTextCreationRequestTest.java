@@ -1,15 +1,15 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ImageAltTextCreationRequestTest {
+class ImageAltTextCreationRequestTest {
 
 	@Test
-	public void givenSomeImageAltTextWhenBuildingMetafieldsThenExpectCorrectMetafields() {
+	void givenSomeImageAltTextWhenBuildingMetafieldsThenExpectCorrectMetafields() {
 		final String expectedImageAltText = "banana";
 		final List<Metafield> actualMetafields = ImageAltTextCreationRequest.newBuilder()
 				.withImageAltText(expectedImageAltText).build();

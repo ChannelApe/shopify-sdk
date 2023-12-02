@@ -1,18 +1,12 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 public class ShopifyShop {
 
 	private Shop shop;
-
-	public Shop getShop() {
-		return shop;
-	}
-
-	public void setShop(Shop shop) {
-		this.shop = shop;
-	}
 
 }

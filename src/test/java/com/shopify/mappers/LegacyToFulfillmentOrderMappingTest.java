@@ -1,13 +1,14 @@
 package com.shopify.mappers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.shopify.exceptions.ShopifyEmptyLineItemsException;
 import com.shopify.model.ShopifyFulfillment;
@@ -18,7 +19,7 @@ import com.shopify.model.ShopifyFulfillmentPayloadRoot;
 import com.shopify.model.ShopifyLineItem;
 import com.shopify.model.ShopifyUpdateFulfillmentPayloadRoot;
 
-public class LegacyToFulfillmentOrderMappingTest {
+class LegacyToFulfillmentOrderMappingTest {
 	private static final DateTime SOME_DATE_TIME = new DateTime();
 
 	private ShopifyFulfillment buildShopifyFulfillment(final ShopifyLineItem lineItem) {
@@ -37,7 +38,7 @@ public class LegacyToFulfillmentOrderMappingTest {
 	}
 
 	@Test
-	public void whenMappingToFulfillmentOrderWithAnArrayOfTrackingUrlsTheTrackingUrlShouldMatchTheArraysFirstItem()
+	void whenMappingToFulfillmentOrderWithAnArrayOfTrackingUrlsTheTrackingUrlShouldMatchTheArraysFirstItem()
 			throws Exception {
 		final String lineItemId = "987";
 		final String fulfillmentOrderId = "1234";
@@ -76,11 +77,11 @@ public class LegacyToFulfillmentOrderMappingTest {
 		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
 				.toShopifyFulfillmentPayloadRoot(request.getRequest(), fulfillmentOrders);
 
-		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url1");
+		assertEquals("tracking_url1", payload.getFulfillment().getTrackingInfo().getUrl());
 	}
 
 	@Test
-	public void whenMappingToFulfillmentOrderWithASingleTrackingUrlTheTrackingUrlShouldMatchIt() throws Exception {
+	void whenMappingToFulfillmentOrderWithASingleTrackingUrlTheTrackingUrlShouldMatchIt() throws Exception {
 		final String lineItemId = "987";
 		final String fulfillmentOrderId = "1234";
 
@@ -117,52 +118,54 @@ public class LegacyToFulfillmentOrderMappingTest {
 		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
 				.toShopifyFulfillmentPayloadRoot(request.getRequest(), fulfillmentOrders);
 
-		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url");
-	}
-
-	@Test(expected = ShopifyEmptyLineItemsException.class)
-	public void whenMappingToFulfillmentOrderWithoutMatchingFulfillmentOrder() throws Exception {
-		final String lineItemId = "987";
-		final String fulfillmentOrderId = "1234";
-
-		final ShopifyLineItem lineItem = new ShopifyLineItem();
-		lineItem.setId(lineItemId);
-		lineItem.setSku("some_sku");
-		lineItem.setQuantity(5L);
-
-		List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
-		ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
-		fulfillmentOrderLineItem.setQuantity(1);
-		fulfillmentOrderLineItem.setLineItemId("002");
-		fulfillmentOrderLineItem.setFulfillableQuantity(1);
-		fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
-		fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
-
-		final List<String> supportedActions = new LinkedList<>();
-		supportedActions.add("move");
-		supportedActions.add("create_fulfillment");
-
-		final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
-		fulfillmentOrder.setId(fulfillmentOrderId);
-		fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
-		fulfillmentOrder.setSupportedActions(supportedActions);
-		fulfillmentOrder.setAssignedLocationId("5678");
-		final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
-		fulfillmentOrders.add(fulfillmentOrder);
-
-		final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
-				.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
-				.withLineItems(Arrays.asList(lineItem)).withLocationId("1").withTrackingUrls(Arrays.asList()).build();
-
-		request.getRequest().setTrackingUrl("tracking_url");
-		final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
-				.toShopifyFulfillmentPayloadRoot(request.getRequest(), fulfillmentOrders);
-
-		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url");
+		assertEquals("tracking_url", payload.getFulfillment().getTrackingInfo().getUrl());
 	}
 
 	@Test
-	public void whenUpdatingAFulfillmentOrderWithAnArrayOfTrackingUrlsTheTrackingUrlShouldMatchTheArraysFirstItem()
+	void whenMappingToFulfillmentOrderWithoutMatchingFulfillmentOrder() throws Exception {
+		assertThrows(ShopifyEmptyLineItemsException.class, () -> {
+			final String lineItemId = "987";
+			final String fulfillmentOrderId = "1234";
+
+			final ShopifyLineItem lineItem = new ShopifyLineItem();
+			lineItem.setId(lineItemId);
+			lineItem.setSku("some_sku");
+			lineItem.setQuantity(5L);
+
+			List<ShopifyFulfillmentOrderLineItem> fulfillmentOrderLineItems = new LinkedList<>();
+			ShopifyFulfillmentOrderLineItem fulfillmentOrderLineItem = new ShopifyFulfillmentOrderLineItem();
+			fulfillmentOrderLineItem.setQuantity(1);
+			fulfillmentOrderLineItem.setLineItemId("002");
+			fulfillmentOrderLineItem.setFulfillableQuantity(1);
+			fulfillmentOrderLineItem.setFulfillmentOrderId(fulfillmentOrderId);
+			fulfillmentOrderLineItems.add(fulfillmentOrderLineItem);
+
+			final List<String> supportedActions = new LinkedList<>();
+			supportedActions.add("move");
+			supportedActions.add("create_fulfillment");
+
+			final ShopifyFulfillmentOrder fulfillmentOrder = new ShopifyFulfillmentOrder();
+			fulfillmentOrder.setId(fulfillmentOrderId);
+			fulfillmentOrder.setLineItems(fulfillmentOrderLineItems);
+			fulfillmentOrder.setSupportedActions(supportedActions);
+			fulfillmentOrder.setAssignedLocationId("5678");
+			final List<ShopifyFulfillmentOrder> fulfillmentOrders = new LinkedList<>();
+			fulfillmentOrders.add(fulfillmentOrder);
+
+			final ShopifyFulfillmentCreationRequest request = ShopifyFulfillmentCreationRequest.newBuilder()
+					.withOrderId("1234").withTrackingCompany("USPS").withTrackingNumber("12341234").withNotifyCustomer(true)
+					.withLineItems(Arrays.asList(lineItem)).withLocationId("1").withTrackingUrls(Arrays.asList()).build();
+
+			request.getRequest().setTrackingUrl("tracking_url");
+			final ShopifyFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
+					.toShopifyFulfillmentPayloadRoot(request.getRequest(), fulfillmentOrders);
+
+			assertEquals("tracking_url", payload.getFulfillment().getTrackingInfo().getUrl());
+		});
+	}
+
+	@Test
+	void whenUpdatingAFulfillmentOrderWithAnArrayOfTrackingUrlsTheTrackingUrlShouldMatchTheArraysFirstItem()
 			throws Exception {
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
@@ -177,11 +180,11 @@ public class LegacyToFulfillmentOrderMappingTest {
 		final ShopifyUpdateFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
 				.toUpdateShopifyFulfillmentPayloadRoot(currentFulfillment);
 
-		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url1");
+		assertEquals("tracking_url1", payload.getFulfillment().getTrackingInfo().getUrl());
 	}
 
 	@Test
-	public void whenUpdatingAFulfillmentOrderWithASingleTrackingUrlTheTrackingUrlShouldMatchIt() throws Exception {
+	void whenUpdatingAFulfillmentOrderWithASingleTrackingUrlTheTrackingUrlShouldMatchIt() throws Exception {
 		final ShopifyLineItem lineItem = new ShopifyLineItem();
 		lineItem.setId("some_line_item_id");
 		lineItem.setSku("some_sku");
@@ -195,6 +198,6 @@ public class LegacyToFulfillmentOrderMappingTest {
 		final ShopifyUpdateFulfillmentPayloadRoot payload = LegacyToFulfillmentOrderMapping
 				.toUpdateShopifyFulfillmentPayloadRoot(currentFulfillment);
 
-		assertEquals(payload.getFulfillment().getTrackingInfo().getUrl(), "tracking_url");
+		assertEquals("tracking_url", payload.getFulfillment().getTrackingInfo().getUrl());
 	}
 }

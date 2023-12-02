@@ -1,10 +1,12 @@
 package com.shopify.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
+@Data
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ShopifyMerchandRequest {
@@ -43,29 +45,5 @@ public class ShopifyMerchandRequest {
 	@XmlElement(name = "request_options")
 	private String requestOptions;
 	private String kind;
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public String getRequestOptions() {
-		return requestOptions;
-	}
-
-	public void setRequestOptions(String requestOptions) {
-		this.requestOptions = requestOptions;
-	}
-
-	public String getKind() {
-		return kind;
-	}
-
-	public void setKind(String kind) {
-		this.kind = kind;
-	}
 
 }

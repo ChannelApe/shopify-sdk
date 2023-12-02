@@ -1,19 +1,19 @@
 package com.shopify.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ShopifyCustomCollectionCreationRequestTest {
+class ShopifyCustomCollectionCreationRequestTest {
 
 	private static final String SOME_TITLE = "Basic collection";
 	private static final String SOME_HANDLE = "basic-collection";
 
 	@Test
-	public void givenSomeValuesWhenBuildingProductCreationRequestThenExpectAllValuesToBeCorrect() {
+	void givenSomeValuesWhenBuildingProductCreationRequestThenExpectAllValuesToBeCorrect() {
 		final ShopifyCustomCollectionCreationRequest customCollectionCreationRequest = ShopifyCustomCollectionCreationRequest
 				.newBuilder().withTitle(SOME_TITLE).withHandle(SOME_HANDLE).isPublished(true).build();
 
@@ -24,7 +24,7 @@ public class ShopifyCustomCollectionCreationRequestTest {
 	}
 
 	@Test
-	public void givenMinimalValuesWhenBuildingShopifyCustomCollectionCreationRequestThenExpectCorrectValues() {
+	void givenMinimalValuesWhenBuildingShopifyCustomCollectionCreationRequestThenExpectCorrectValues() {
 		final ShopifyCustomCollectionCreationRequest customCollectionCreationRequest = ShopifyCustomCollectionCreationRequest
 				.newBuilder().withTitle(SOME_TITLE).build();
 
