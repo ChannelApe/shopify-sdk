@@ -707,6 +707,11 @@ public class ShopifySdk {
 		return shopifyRecurringApplicationChargeRootResponse.getRecurringApplicationCharge();
 	}
 
+	public boolean deleteCharge(final String chargeId) {
+		final Response response = delete(getWebTarget().path(RECURRING_APPLICATION_CHARGES).path(chargeId));
+		return Status.OK.getStatusCode() == response.getStatus();
+	}
+
 	public ShopifyRecurringApplicationCharge getRecurringApplicationCharge(final String chargeId) {
 		final Response response = get(getWebTarget().path(RECURRING_APPLICATION_CHARGES).path(chargeId));
 		final ShopifyRecurringApplicationChargeRoot shopifyRecurringApplicationChargeRootResponse = response
