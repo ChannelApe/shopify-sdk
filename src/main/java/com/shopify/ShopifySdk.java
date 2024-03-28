@@ -478,6 +478,10 @@ public class ShopifySdk {
 		final ShopifyThemeRoot result = response.readEntity(ShopifyThemeRoot.class);
 		return result.getTheme();
 	}
+	public boolean deleteTheme(final String themeId) {
+		final Response response = delete(getWebTarget().path(THEMES).path(themeId));
+		return Status.OK.getStatusCode() == response.getStatus();
+	}
 	public ShopifyWebhook createWebhook(ShopifyWebhook request) {
 		final ShopifyWebhookRoot webhookRoot = new ShopifyWebhookRoot();
 		webhookRoot.setWebhook(request);
