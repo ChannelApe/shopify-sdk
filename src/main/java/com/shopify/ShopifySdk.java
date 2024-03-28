@@ -1,14 +1,8 @@
 package com.shopify;
 
 import com.shopify.mappers.ObjectMapperProvider;
-import com.shopify.model.ShopifyAssertsRoot;
-import com.shopify.model.ShopifyAsset;
-import com.shopify.model.ShopifyAssetRoot;
-import com.shopify.model.ShopifyTheme;
-import com.shopify.model.ShopifyThemesRoot;
-import com.shopify.model.ShopifyWebhook;
-import com.shopify.model.ShopifyWebhookRoot;
-import com.shopify.model.ShopifyWebhooksRoot;
+import com.shopify.model.*;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -51,73 +45,6 @@ import com.shopify.exceptions.ShopifyIncompatibleApiException;
 import com.shopify.mappers.LegacyToFulfillmentOrderMapping;
 import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Count;
-import com.shopify.model.Image;
-import com.shopify.model.ImageAltTextCreationRequest;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldsRoot;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAccessTokenRoot;
-import com.shopify.model.ShopifyCancelOrderRequest;
-import com.shopify.model.ShopifyCustomCollection;
-import com.shopify.model.ShopifyCustomCollectionCreationRequest;
-import com.shopify.model.ShopifyCustomCollectionRoot;
-import com.shopify.model.ShopifyCustomCollectionsRoot;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerRoot;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyCustomerUpdateRoot;
-import com.shopify.model.ShopifyCustomersRoot;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentOrder;
-import com.shopify.model.ShopifyFulfillmentOrderMoveRequestRoot;
-import com.shopify.model.ShopifyFulfillmentOrderMoveResponseRoot;
-import com.shopify.model.ShopifyFulfillmentOrdersRoot;
-import com.shopify.model.ShopifyFulfillmentPayloadRoot;
-import com.shopify.model.ShopifyFulfillmentRoot;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGetCustomersRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyImageRoot;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyLocationsRoot;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderRisksRoot;
-import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyOrderUpdateRoot;
-import com.shopify.model.ShopifyOrdersRoot;
-import com.shopify.model.ShopifyPage;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductCreationRequest;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-import com.shopify.model.ShopifyProductRequest;
-import com.shopify.model.ShopifyProductRoot;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyProductsRoot;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyShop;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyTransactionsRoot;
-import com.shopify.model.ShopifyUpdateFulfillmentPayloadRoot;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRoot;
-import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
@@ -543,6 +470,13 @@ public class ShopifySdk {
 	}
 	public ShopifyPage<ShopifyAsset> getAssets(final int pageSize, String themeId) {
 		return this.getAssets(null, pageSize, themeId);
+	}
+	public ShopifyTheme createTheme(ShopifyTheme request) {
+		final ShopifyThemeRoot themeRoot = new ShopifyThemeRoot();
+		themeRoot.setTheme(request);
+		final Response response =  post(getWebTarget().path(THEMES), themeRoot);
+		final ShopifyThemeRoot result = response.readEntity(ShopifyThemeRoot.class);
+		return result.getTheme();
 	}
 	public ShopifyWebhook createWebhook(ShopifyWebhook request) {
 		final ShopifyWebhookRoot webhookRoot = new ShopifyWebhookRoot();
