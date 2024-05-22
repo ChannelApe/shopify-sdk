@@ -1,5 +1,8 @@
 package com.shopify;
 
+import com.shopify.mappers.ObjectMapperProvider;
+import com.shopify.model.*;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -42,73 +45,6 @@ import com.shopify.exceptions.ShopifyIncompatibleApiException;
 import com.shopify.mappers.LegacyToFulfillmentOrderMapping;
 import com.shopify.mappers.ResponseEntityToStringMapper;
 import com.shopify.mappers.ShopifySdkObjectMapper;
-import com.shopify.model.Count;
-import com.shopify.model.Image;
-import com.shopify.model.ImageAltTextCreationRequest;
-import com.shopify.model.Metafield;
-import com.shopify.model.MetafieldRoot;
-import com.shopify.model.MetafieldsRoot;
-import com.shopify.model.Shop;
-import com.shopify.model.ShopifyAccessTokenRoot;
-import com.shopify.model.ShopifyCancelOrderRequest;
-import com.shopify.model.ShopifyCustomCollection;
-import com.shopify.model.ShopifyCustomCollectionCreationRequest;
-import com.shopify.model.ShopifyCustomCollectionRoot;
-import com.shopify.model.ShopifyCustomCollectionsRoot;
-import com.shopify.model.ShopifyCustomer;
-import com.shopify.model.ShopifyCustomerRoot;
-import com.shopify.model.ShopifyCustomerUpdateRequest;
-import com.shopify.model.ShopifyCustomerUpdateRoot;
-import com.shopify.model.ShopifyCustomersRoot;
-import com.shopify.model.ShopifyFulfillment;
-import com.shopify.model.ShopifyFulfillmentCreationRequest;
-import com.shopify.model.ShopifyFulfillmentOrder;
-import com.shopify.model.ShopifyFulfillmentOrderMoveRequestRoot;
-import com.shopify.model.ShopifyFulfillmentOrderMoveResponseRoot;
-import com.shopify.model.ShopifyFulfillmentOrdersRoot;
-import com.shopify.model.ShopifyFulfillmentPayloadRoot;
-import com.shopify.model.ShopifyFulfillmentRoot;
-import com.shopify.model.ShopifyFulfillmentUpdateRequest;
-import com.shopify.model.ShopifyGetCustomersRequest;
-import com.shopify.model.ShopifyGiftCard;
-import com.shopify.model.ShopifyGiftCardCreationRequest;
-import com.shopify.model.ShopifyGiftCardRoot;
-import com.shopify.model.ShopifyImageRoot;
-import com.shopify.model.ShopifyInventoryLevel;
-import com.shopify.model.ShopifyInventoryLevelRoot;
-import com.shopify.model.ShopifyLocation;
-import com.shopify.model.ShopifyLocationsRoot;
-import com.shopify.model.ShopifyOrder;
-import com.shopify.model.ShopifyOrderCreationRequest;
-import com.shopify.model.ShopifyOrderRisk;
-import com.shopify.model.ShopifyOrderRisksRoot;
-import com.shopify.model.ShopifyOrderRoot;
-import com.shopify.model.ShopifyOrderShippingAddressUpdateRequest;
-import com.shopify.model.ShopifyOrderUpdateRoot;
-import com.shopify.model.ShopifyOrdersRoot;
-import com.shopify.model.ShopifyPage;
-import com.shopify.model.ShopifyProduct;
-import com.shopify.model.ShopifyProductCreationRequest;
-import com.shopify.model.ShopifyProductMetafieldCreationRequest;
-import com.shopify.model.ShopifyProductRequest;
-import com.shopify.model.ShopifyProductRoot;
-import com.shopify.model.ShopifyProductUpdateRequest;
-import com.shopify.model.ShopifyProducts;
-import com.shopify.model.ShopifyProductsRoot;
-import com.shopify.model.ShopifyRecurringApplicationCharge;
-import com.shopify.model.ShopifyRecurringApplicationChargeCreationRequest;
-import com.shopify.model.ShopifyRecurringApplicationChargeRoot;
-import com.shopify.model.ShopifyRefund;
-import com.shopify.model.ShopifyRefundCreationRequest;
-import com.shopify.model.ShopifyRefundRoot;
-import com.shopify.model.ShopifyShop;
-import com.shopify.model.ShopifyTransaction;
-import com.shopify.model.ShopifyTransactionsRoot;
-import com.shopify.model.ShopifyUpdateFulfillmentPayloadRoot;
-import com.shopify.model.ShopifyVariant;
-import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
-import com.shopify.model.ShopifyVariantRoot;
-import com.shopify.model.ShopifyVariantUpdateRequest;
 
 public class ShopifySdk {
 
@@ -133,6 +69,9 @@ public class ShopifySdk {
 	static final String REVOKE = "revoke";
 	static final String ACCESS_TOKEN = "access_token";
 	static final String PRODUCTS = "products";
+	static final String THEMES = "themes";
+	static final String ASSETS = "assets";
+	static final String WEBHOOKS = "webhooks";
 	static final String VARIANTS = "variants";
 	static final String CUSTOM_COLLECTIONS = "custom_collections";
 	static final String RECURRING_APPLICATION_CHARGES = "recurring_application_charges";
@@ -153,6 +92,7 @@ public class ShopifySdk {
 	static final String INVENTORY_LEVELS = "inventory_levels";
 	static final String JSON = ".json";
 	static final String LIMIT_QUERY_PARAMETER = "limit";
+	static final String ASSET_KEY_PARAMETER="asset[key]";
 	static final String PAGE_INFO_QUERY_PARAMETER = "page_info";
 	static final String STATUS_QUERY_PARAMETER = "status";
 	static final String ANY_STATUSES = "any";
@@ -175,6 +115,7 @@ public class ShopifySdk {
 	private static final String AUTHORIZATION_CODE = "code";
 
 	private static final int DEFAULT_REQUEST_LIMIT = 50;
+	private static final int MAX_REQUEST_LIMIT = 250;
 	private static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
 	private static final int UNPROCESSABLE_ENTITY_STATUS_CODE = 422;
 	private static final int LOCKED_STATUS_CODE = 423;
@@ -481,7 +422,105 @@ public class ShopifySdk {
 		}
 		return new ShopifyProducts(shopifyProducts);
 	}
+	public List<ShopifyTheme> getThemes() {
+		final List<ShopifyTheme> shopifyThemes = new LinkedList<>();
+		ShopifyPage<ShopifyTheme> shopifyThemesPage = getThemes(MAX_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} themes from first page", shopifyThemesPage.size());
+		shopifyThemes.addAll(shopifyThemesPage);
+		while (shopifyThemesPage.getNextPageInfo() != null) {
+			shopifyThemesPage = getThemes(shopifyThemesPage.getNextPageInfo(), MAX_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} themes from page {}", shopifyThemesPage.size(),
+					shopifyThemesPage.getNextPageInfo());
+			shopifyThemes.addAll(shopifyThemesPage);
+		}
+		return shopifyThemes;
+	}
+	public ShopifyPage<ShopifyTheme> getThemes(final int pageSize) {
+		return this.getThemes(null, pageSize);
+	}
+	public ShopifyPage<ShopifyTheme> getThemes(final String pageInfo, final int pageSize) {
+		final Response response = get(getWebTarget().path(THEMES).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyThemesRoot shopifyThemesRoot = response.readEntity(ShopifyThemesRoot.class);
+		return mapPagedResponse(shopifyThemesRoot.getThemes(), response);
+	}
+	public ShopifyAsset getAsset(String themeId, String assetKey) {
+		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(ASSET_KEY_PARAMETER,assetKey));
+		final ShopifyAssetRoot shopifyAssetRootResponse = response.readEntity(ShopifyAssetRoot.class);
+		return shopifyAssetRootResponse.getAsset();
+	}
+	public List<ShopifyAsset> getAssets(String themeId) {
+		final List<ShopifyAsset> shopifyAssets = new LinkedList<>();
+		ShopifyPage<ShopifyAsset> shopifyAssetsPage = getAssets(MAX_REQUEST_LIMIT, themeId);
+		LOGGER.info("Retrieved {} assets from first page", shopifyAssetsPage.size());
+		shopifyAssets.addAll(shopifyAssetsPage);
+		while (shopifyAssetsPage.getNextPageInfo() != null) {
+			shopifyAssetsPage = getAssets(shopifyAssetsPage.getNextPageInfo(), MAX_REQUEST_LIMIT, themeId);
+			LOGGER.info("Retrieved {} assets from page {}", shopifyAssetsPage.size(),
+					shopifyAssetsPage.getNextPageInfo());
+			shopifyAssets.addAll(shopifyAssetsPage);
+		}
+		return shopifyAssets;
+	}
+	public ShopifyPage<ShopifyAsset> getAssets(final String pageInfo, final int pageSize, String themeId) {
+		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyAssertsRoot shopifyAsseRoot = response.readEntity(ShopifyAssertsRoot.class);
+		return mapPagedResponse(shopifyAsseRoot.getAssets(), response);
+	}
+	public ShopifyPage<ShopifyAsset> getAssets(final int pageSize, String themeId) {
+		return this.getAssets(null, pageSize, themeId);
+	}
+	public ShopifyTheme createTheme(ShopifyTheme request) {
+		final ShopifyThemeRoot themeRoot = new ShopifyThemeRoot();
+		themeRoot.setTheme(request);
+		final Response response =  post(getWebTarget().path(THEMES), themeRoot);
+		final ShopifyThemeRoot result = response.readEntity(ShopifyThemeRoot.class);
+		return result.getTheme();
+	}
+	public boolean deleteTheme(final String themeId) {
+		final Response response = delete(getWebTarget().path(THEMES).path(themeId));
+		return Status.OK.getStatusCode() == response.getStatus();
+	}
+	public ShopifyWebhook createWebhook(ShopifyWebhook request) {
+		final ShopifyWebhookRoot webhookRoot = new ShopifyWebhookRoot();
+		webhookRoot.setWebhook(request);
+		final Response response =  post(getWebTarget().path(WEBHOOKS), webhookRoot);
+		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
+		return result.getWebhook();
+	}
+	public ShopifyWebhook getWebhook(String webhookId) {
+		final Response response =  get(getWebTarget().path(WEBHOOKS).path(webhookId));
+		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
+		return result.getWebhook();
+	}
 
+	public boolean deleteWebhook(final String webhookId) {
+		final Response response = delete(getWebTarget().path(WEBHOOKS).path(webhookId));
+		return Status.OK.getStatusCode() == response.getStatus();
+	}
+	public List<ShopifyWebhook> getWebhooks() {
+		final List<ShopifyWebhook> shopifyWebhooks = new LinkedList<>();
+		ShopifyPage<ShopifyWebhook> shopifyWebhooksPage = getWebhooks(MAX_REQUEST_LIMIT);
+		LOGGER.info("Retrieved {} Webhooks from first page", shopifyWebhooksPage.size());
+		shopifyWebhooks.addAll(shopifyWebhooksPage);
+		while (shopifyWebhooksPage.getNextPageInfo() != null) {
+			shopifyWebhooksPage = getWebhooks(shopifyWebhooksPage.getNextPageInfo(), MAX_REQUEST_LIMIT);
+			LOGGER.info("Retrieved {} Webhooks from page {}", shopifyWebhooksPage.size(),
+					shopifyWebhooksPage.getNextPageInfo());
+			shopifyWebhooks.addAll(shopifyWebhooksPage);
+		}
+		return shopifyWebhooks;
+	}
+	public ShopifyPage<ShopifyWebhook> getWebhooks(final String pageInfo, final int pageSize) {
+		final Response response = get(getWebTarget().path(WEBHOOKS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
+				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
+		final ShopifyWebhooksRoot shopifyWebhooksRoot = response.readEntity(ShopifyWebhooksRoot.class);
+		return mapPagedResponse(shopifyWebhooksRoot.getWebhooks(), response);
+	}
+	public ShopifyPage<ShopifyWebhook> getWebhooks(final int pageSize) {
+		return this.getWebhooks(null, pageSize);
+	}
 	public int getProductCount() {
 		final Response response = get(getWebTarget().path(PRODUCTS).path(COUNT));
 		final Count count = response.readEntity(Count.class);
@@ -604,6 +643,11 @@ public class ShopifySdk {
 		final ShopifyRecurringApplicationChargeRoot shopifyRecurringApplicationChargeRootResponse = response
 				.readEntity(ShopifyRecurringApplicationChargeRoot.class);
 		return shopifyRecurringApplicationChargeRootResponse.getRecurringApplicationCharge();
+	}
+
+	public boolean deleteCharge(final String chargeId) {
+		final Response response = delete(getWebTarget().path(RECURRING_APPLICATION_CHARGES).path(chargeId));
+		return Status.OK.getStatusCode() == response.getStatus();
 	}
 
 	public ShopifyRecurringApplicationCharge getRecurringApplicationCharge(final String chargeId) {
@@ -1141,11 +1185,7 @@ public class ShopifySdk {
 	}
 
 	private static Client buildClient() {
-		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
-		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
-		provider.setMapper(mapper);
-
-		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+		return ClientBuilder.newClient().register(JacksonFeature.class).register(ObjectMapperProvider.class);
 	}
 
 	public class ShopifySdkRetryListener implements RetryListener {
