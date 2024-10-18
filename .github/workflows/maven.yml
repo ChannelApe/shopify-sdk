@@ -40,13 +40,10 @@ jobs:
     - name: list-keys
       run: |
         gpg --list-keys --keyid-format LONG
-    - name: Get GPG Key ID
-      id: gpg-key-id
-      run: |
-        gpg --list-secret-keys --keyid-format LONG | grep '^sec' | awk '{print $2}' | cut -d'/' -f2
     - name: Extend GPG key expiration
       run: |
-        echo -e "expire\n1y\nsave" | gpg --batch --command-fd 0 --edit-key C2B7EEEC51372BAB
+        echo -e "expire\n1y\nsave" > gpg_commands.txt
+        gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --command-file gpg_commands.txt --edit-key C2B7EEEC51372BAB
     - name: Publish package to maven central
       run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true --update-snapshots -Prelease
       env:
