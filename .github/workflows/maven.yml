@@ -7,6 +7,7 @@ on:
   push:
     branches:
     - 'master'
+    - 'hotfix/**'
 
 jobs:
   build:
@@ -36,6 +37,16 @@ jobs:
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
+    - name: list-keys
+      run: |
+        gpg --list-keys --keyid-format LONG
+    - name: Get GPG Key ID
+      id: gpg-key-id
+      run: |
+        gpg --list-secret-keys --keyid-format LONG | grep '^sec' | awk '{print $2}' | cut -d'/' -f2
+    - name: Extend GPG key expiration
+      run: |
+        echo -e "expire\n1y\nsave" | gpg --batch --command-fd 0 --edit-key ${{ steps.gpg-key-id.outputs.key-id }}
     - name: Publish package to maven central
       run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true --update-snapshots -Prelease
       env:
