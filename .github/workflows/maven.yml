@@ -36,6 +36,10 @@ jobs:
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
+    - name: Extend GPG key expiration
+      run: |
+        echo -e "expire\n1y\nsave" > gpg_commands.txt
+        gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --command-file gpg_commands.txt --edit-key C2B7EEEC51372BAB
     - name: Publish package to maven central
       run: mvn --batch-mode clean deploy -P central-deploy -DskipTests=true --update-snapshots -Prelease
       env:
