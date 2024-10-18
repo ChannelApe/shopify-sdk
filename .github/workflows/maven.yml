@@ -36,9 +36,6 @@ jobs:
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
-    - name: list-keys
-      run: |
-        gpg --list-keys --keyid-format LONG
     - name: Extend GPG key expiration
       run: |
         echo -e "expire\n1y\nsave" > gpg_commands.txt
