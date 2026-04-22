@@ -38,6 +38,7 @@ import com.shopify.model.ShopifyCustomer;
 import com.shopify.model.ShopifyCustomerUpdateRequest;
 import com.shopify.model.ShopifyFulfillment;
 import com.shopify.model.ShopifyFulfillmentCreationRequest;
+import com.shopify.model.ShopifyFulfillmentOrder;
 import com.shopify.model.ShopifyFulfillmentUpdateRequest;
 import com.shopify.model.ShopifyGetCustomersRequest;
 import com.shopify.model.ShopifyGiftCard;
@@ -733,6 +734,14 @@ public class ShopifySdkDriver {
 
 		final ShopifyCustomer updatedCustomer = shopifySdk.updateCustomer(shopifyOrderUpdateRequest);
 		assertEquals("RyanTest", updatedCustomer.getFirstName());
+	}
+
+	@Test
+	public void givenSomeValueWhenRetrievingFulfillmentOrderThenExpectCorrectResponse() {
+		List<ShopifyFulfillmentOrder> fulfillmentOrdersFromOrder = shopifySdk
+				.getFulfillmentOrdersFromOrder("6263341285548");
+		assertEquals(1, fulfillmentOrdersFromOrder.size());
+
 	}
 
 	@Test

@@ -1,5 +1,7 @@
 package com.shopify.model;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ShopifyMerchandRequest {
 
 	public enum Kind {
-		FULFILLMENT_REQUEST("fulfillment_request"),
-		CANCELLATION_REQUEST("cancellation_request"),
+		FULFILLMENT_REQUEST("fulfillment_request"), CANCELLATION_REQUEST("cancellation_request"),
 		LEGACY_FULFILL_REQUEST("legacy_fulfill_request");
 
 		static final String NO_MATCHING_ENUMS_ERROR_MESSAGE = "No matching enum found for status: %s";
@@ -41,7 +42,7 @@ public class ShopifyMerchandRequest {
 
 	private String message;
 	@XmlElement(name = "request_options")
-	private String requestOptions;
+	private Map<String, String> requestOptions;
 	private String kind;
 
 	public String getMessage() {
@@ -52,11 +53,11 @@ public class ShopifyMerchandRequest {
 		this.message = message;
 	}
 
-	public String getRequestOptions() {
+	public Map<String, String> getRequestOptions() {
 		return requestOptions;
 	}
 
-	public void setRequestOptions(String requestOptions) {
+	public void setRequestOptions(Map<String, String> requestOptions) {
 		this.requestOptions = requestOptions;
 	}
 
